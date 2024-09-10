@@ -1,6 +1,6 @@
 # Fur-get Me Not 
 
-- is a comprehensive mobile application designed for pet lovers and adoption agencies, providing a streamlined platform to manage pet care routines and promote pet adoption. Whether you're a pet owner looking to keep track of your furry friend's health or an adoption shelter aiming to connect with potential adopters, this app has you covered.
+- Fur-get Me Not is a comprehensive mobile application designed for pet lovers and adoption agencies, providing a streamlined platform to manage pet care routines and promote pet adoption. Whether you're a pet owner looking to keep track of your furry friend's health or an adoption shelter aiming to connect with potential adopters, this app has you covered.
 
 Features
 For Pet Owners:
