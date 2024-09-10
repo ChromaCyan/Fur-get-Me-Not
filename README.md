@@ -1,16 +1,22 @@
-# fur_get_me_not
+# Fur-get Me Not 
 
-A new Flutter project.
+- is a comprehensive mobile application designed for pet lovers and adoption agencies, providing a streamlined platform to manage pet care routines and promote pet adoption. Whether you're a pet owner looking to keep track of your furry friend's health or an adoption shelter aiming to connect with potential adopters, this app has you covered.
 
-## Getting Started
+Features
+For Pet Owners:
+* Pet Profiles: Create and manage detailed profiles for your pets, including medical history, vaccination records, and care instructions.
+* Care Reminders: Set and receive reminders for important tasks such as vaccinations, vet visits, and medication schedules.
+* Adoption Listings: Browse a curated list of pets available for adoption from local shelters.
+* Messaging: Contact adoption shelters directly via integrated messaging to inquire about adoption processes and available pets.
 
-This project is a starting point for a Flutter application.
+For Shelter Admins:
+* Adoption Listings Management: Post and manage adoption listings, including adding new pets and updating existing listings.
+* Message Management: Communicate with pet owners who reach out via messaging, ensuring prompt and efficient responses.
+* Pet Management: Remove pets from adoption listings when they are adopted or add them to a pet owner's list if adopted.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Technologies and Tools
+* Frontend: Flutter for cross-platform mobile development (iOS and Android).
+* Backend: Node.js (or Laravel) for server-side logic and API management.
+* Database: MongoDB for data storage and management.
+* Version Control: Git and GitHub for version control and collaboration.
+* Design: GIMP, Adobe Photoshop, and Canva for design and visual content.
