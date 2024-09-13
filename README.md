@@ -1,13 +1,13 @@
 # Fur-get Me Not 
 
-- Fur-get Me Not is a comprehensive mobile application designed for pet lovers and adoption agencies, providing a streamlined platform to manage pet care routines and promote pet adoption. Whether you're a pet owner looking to keep track of your furry friend's health or an adoption shelter aiming to connect with potential adopters, this app has you covered.
+- Fur-get Me Not is a comprehensive mobile application designed for pet lovers and potential adopters, providing a streamlined platform to manage pet care routines and promote pet adoption. Whether you're a pet owner looking to keep track of your furry friend's health or a potential adopter looking to get a feline friend home, this app has you covered.
 
 Features
 For Pet Owners:
 * Pet Profiles: Create and manage detailed profiles for your pets, including medical history, vaccination records, and care instructions.
 * Care Reminders: Set and receive reminders for important tasks such as vaccinations, vet visits, and medication schedules.
-* Adoption Listings: Browse a curated list of pets available for adoption from local shelters.
-* Messaging: Contact adoption shelters directly via integrated messaging to inquire about adoption processes and available pets.
+* Adoption Listings: Browse a curated list of pets available for adoption from our app.
+* Messaging: Contact us directly via integrated messaging to inquire about adoption processes and available pets.
 
 For Shelter Admins:
 * Adoption Listings Management: Post and manage adoption listings, including adding new pets and updating existing listings.
