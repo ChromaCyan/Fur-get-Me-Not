@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/screens/login_screen.dart';
+import 'package:fur_get_me_not/screens/register_screen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const LoginScreen(),
+      home: const RegisterScreen(),
     );
   }
 }
