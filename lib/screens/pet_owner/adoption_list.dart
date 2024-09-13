@@ -4,23 +4,28 @@ import 'package:flutter/widgets.dart';
 import 'package:fur_get_me_not/models/const.dart';
 import 'package:fur_get_me_not/models/cats_model.dart';
 import 'package:fur_get_me_not/screens/pet_owner/pet_details_screen.dart';
-import 'package:fur_get_me_not/screens/pet_owner/adoption_list.dart';
-import 'package:fur_get_me_not/screens/pet_owner/pet_form_screen.dart';
-import 'package:fur_get_me_not/screens/pet_owner/reminder_screen.dart';
+import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
 import 'package:fur_get_me_not/screens/pet_owner/menu.dart';
-import 'dart:async';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
+import 'package:fur_get_me_not/screens/pet_owner/reminder_screen.dart';
+import 'dart:async';
 
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class AdoptionScreen extends StatefulWidget {
+  const AdoptionScreen({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AdoptionScreen> createState() => _PetsHomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int selectedIndex = 0;
+class _PetsHomeScreenState extends State<AdoptionScreen> {
+  int selectedCategory = 0;
+  int selectedIndex = 1;
+  List<IconData> icons = [
+    Icons.home_outlined,
+    Icons.favorite_outline_rounded,
+    Icons.chat,
+    Icons.person_outline_rounded,
+  ];
 
   final List<Widget> _pages = [
     HomePage(),
@@ -41,6 +46,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -53,20 +59,7 @@ class _HomePageState extends State<HomePage> {
             joinNow(),
             const SizedBox(height: 30),
             const SizedBox(height: 25),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Your Pets",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
+            categoryItems(),
             const SizedBox(height: 20),
             const SizedBox(height: 10),
             SingleChildScrollView(
@@ -80,18 +73,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddPetForm(),
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
-        backgroundColor: buttonColor,
       ),
       bottomNavigationBar: BottomNavBar(
         selectedIndex: selectedIndex,
@@ -190,6 +171,56 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  SingleChildScrollView categoryItems() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          const SizedBox(width: 20),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.black12.withOpacity(0.03),
+            ),
+            child: const Icon(Icons.tune_rounded),
+          ),
+          ...List.generate(
+            categories.length,
+                (index) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {});
+                  selectedCategory = index;
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 18,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: selectedCategory == index
+                        ? buttonColor
+                        : Colors.black12.withOpacity(0.03),
+                  ),
+                  child: Text(
+                    categories[index],
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: selectedCategory == index ? Colors.white : black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Padding joinNow() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -247,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Josh Brian Bugarin\nPet Owner",
+                      "Adopt Pet Now!\nGet a feline in your home.",
                       style: TextStyle(
                         fontSize: 18,
                         height: 1.1,

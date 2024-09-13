@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fur_get_me_not/screens/pet_owner/adoption_list.dart';
 import 'package:fur_get_me_not/screens/splash_screen.dart';
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const SplashWidget(),
+      home: PetsOnBoardingScreen(),
     );
   }
 }

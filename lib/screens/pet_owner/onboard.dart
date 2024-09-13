@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/models/const.dart';
 import 'package:fur_get_me_not/models/onboarding_model.dart';
 
-import 'package:fur_get_me_not/screens/login_screen.dart';
-
+import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
 
 class PetsOnBoardingScreen extends StatefulWidget {
   const PetsOnBoardingScreen({super.key});
@@ -45,7 +44,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const LoginScreen(),
+                      builder: (_) => const HomePage(),
                     ),
                         (route) => false);
               } else {
@@ -179,15 +178,15 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
               height: 1.2,
             ),
             children: [
-              TextSpan(text: "Pet Reminder/"),
+              TextSpan(text: "Find You "),
               TextSpan(
-                text: "Adoption\n",
+                text: "Dream\n",
                 style: TextStyle(
                   color: Colors.lightBlue,
                   fontWeight: FontWeight.w900,
                 ),
               ),
-              TextSpan(text: "App!"),
+              TextSpan(text: "Pet Here"),
             ],
           ),
           textAlign: TextAlign.center,

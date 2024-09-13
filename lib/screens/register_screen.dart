@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'dart:async';
 
@@ -11,10 +10,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
   late StreamSubscription<bool> _keyboardVisibilitySubscription;
@@ -33,18 +28,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    _fullNameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
     _keyboardVisibilitySubscription.cancel();
     super.dispose();
-  }
-
-  void _register() {
-    if (_formKey.currentState!.validate()) {
-      // Blank for now, this is for API later.
-    }
   }
 
   @override
@@ -60,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Register',
                   style: TextStyle(
                     fontSize: 24,
@@ -76,7 +61,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const Text('Full Name'),
                       const SizedBox(height: 8),
                       TextFormField(
-                        controller: _fullNameController,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.grey[200],
@@ -96,7 +80,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const Text('Email'),
                       const SizedBox(height: 8),
                       TextFormField(
-                        controller: _emailController,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.grey[200],
@@ -117,7 +100,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const Text('Password'),
                       const SizedBox(height: 8),
                       TextFormField(
-                        controller: _passwordController,
                         obscureText: !_passwordVisible,
                         decoration: InputDecoration(
                           filled: true,
@@ -150,7 +132,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const Text('Confirm Password'),
                       const SizedBox(height: 8),
                       TextFormField(
-                        controller: _confirmPasswordController,
                         obscureText: !_passwordVisible,
                         decoration: InputDecoration(
                           filled: true,
@@ -173,11 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please confirm your password';
-                          } else if (value != _passwordController.text) {
-                            return 'Passwords do not match';
-                          }
+                          //
                           return null;
                         },
                       ),
@@ -186,7 +163,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: _register,
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Handle registration logic later
+                    }
+                  },
                   child: const Text('Register'),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
