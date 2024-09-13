@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:fur_get_me_not/screens/register_screen.dart';
 import 'dart:async';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Handle sign in logic here
+                      // Handle sign-in logic here
                     }
                   },
                   child: const Text('Sign In'),
@@ -140,8 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                if (!_isKeyboardVisible)
-                  Spacer(),
+                if (!_isKeyboardVisible) Spacer(),
                 if (!_isKeyboardVisible)
                   Center(
                     child: Column(
@@ -149,7 +148,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text('Don\'t have an account yet?'),
                         TextButton(
                           onPressed: () {
-                            // Handle create account action
+                            // Navigate to RegisterScreen when "Create Account" is clicked
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterScreen(),
+                              ),
+                            );
                           },
                           child: const Text('Create Account'),
                         ),
