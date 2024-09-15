@@ -19,13 +19,11 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             height: size.height * 0.7,
-            color: Colors.white,
             child: PageView.builder(
               itemCount: onBoardData.length,
               onPageChanged: (value) {
@@ -69,7 +67,6 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                       : "Continue",
                   style: const TextStyle(
                     fontSize: 20,
-                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -111,7 +108,6 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
           height: size.height * 0.4,
           width: size.width * 0.9,
           decoration: BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.circular(30),
           ),
           child: Stack(
@@ -133,8 +129,8 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                           width: 130,
                           child: Transform.rotate(
                             angle: -11,
-                            child: Image.network(
-                              "https://clipart-library.com/images/rTnrpap6c.png",
+                            child: Image.asset(
+                              "images/pet-cat2.png",
                               color: pawColor1,
                             ),
                           ),
@@ -146,8 +142,8 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                           width: 130,
                           child: Transform.rotate(
                             angle: -12,
-                            child: Image.network(
-                              "https://clipart-library.com/images/rTnrpap6c.png",
+                            child: Image.asset(
+                              "images/pet-cat2.png",
                               color: pawColor1,
                             ),
                           ),
@@ -159,13 +155,13 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
               ),
               Positioned(
                 bottom: 0,
-                right: 60,
+                right: 120,
                 child: Image.asset(
                   onBoardData[index].image,
-                  height: 375,
-                  fit: BoxFit.fill,
+                  height: size.height * 0.4,  // Responsive height
+                  fit: BoxFit.contain,  // Preserve aspect ratio
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -179,9 +175,9 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
               height: 1.2,
             ),
             children: [
-              TextSpan(text: "Pet Reminder/"),
+              TextSpan(text: "Pet Adoption/"),
               TextSpan(
-                text: "Adoption\n",
+                text: "Reminder\n",
                 style: TextStyle(
                   color: Colors.lightBlue,
                   fontWeight: FontWeight.w900,
@@ -198,7 +194,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 15.5,
-            color: Colors.black38,
+            color: Colors.black,
           ),
         )
       ],
