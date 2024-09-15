@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
 import 'dart:async';
+import 'package:fur_get_me_not/screens/shelter_admin/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -20,10 +22,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.initState();
     _keyboardVisibilitySubscription =
         KeyboardVisibilityController().onChange.listen((bool visible) {
-          setState(() {
-            _isKeyboardVisible = visible;
-          });
-        });
+      setState(() {
+        _isKeyboardVisible = visible;
+      });
+    });
   }
 
   @override
@@ -166,6 +168,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Handle registration logic later
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeAdminPage(),
+                        ),
+                      );
                     }
                   },
                   child: const Text('Register'),
