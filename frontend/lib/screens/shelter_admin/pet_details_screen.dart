@@ -1,138 +1,185 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/models/const.dart';
-import 'package:fur_get_me_not/models/cats_model.dart';
+import 'package:fur_get_me_not/models/pet.dart'; // Updated import
 import 'package:readmore/readmore.dart';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
+import 'package:fur_get_me_not/screens/pet_owner/pet_form_screen.dart';
 
 class PetsDetailPage extends StatefulWidget {
-  final Cat cat;
-  const PetsDetailPage({super.key, required this.cat});
+  final Pet pet;
+  const PetsDetailPage({super.key, required this.pet});
 
   @override
   State<PetsDetailPage> createState() => _PetsDetailPageState();
 }
 
 class _PetsDetailPageState extends State<PetsDetailPage> {
+  bool showPetInfo = true; // To toggle between pet info and vaccine/medical history
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         body: SizedBox(
-      height: size.height,
-      child: Stack(
-        children: [
-          itemsImageAndBackground(size),
-          // for back button and more icon
-          backButton(size, context),
-          // for name location and favorite icon
-          Positioned(
-            bottom: 0,
-            child: Container(
-              height: size.height * 0.52,
-              width: size.width,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(30),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      nameAddressAndFavoriteButton(),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          height: size.height,
+          child: Stack(
+            children: [
+              itemsImageAndBackground(size),
+              backButton(size, context),
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  height: size.height * 0.52,
+                  width: size.width,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SingleChildScrollView(
+                      child: Column(
                         children: [
-                          moreInfo(
-                            color1,
-                            color1.withOpacity(0.5),
-                            widget.cat.sex,
-                            "Sex",
+                          const SizedBox(height: 20),
+                          nameAddressAndFavoriteButton(),
+                          const SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              moreInfo(
+                                color1,
+                                color1.withOpacity(0.5),
+                                widget.pet.gender,
+                                "Gender",
+                              ),
+                              moreInfo(
+                                color2,
+                                color2.withOpacity(0.5),
+                                "${widget.pet.breed}",
+                                "Breed",
+                              ),
+                              moreInfo(
+                                color2,
+                                color2.withOpacity(0.5),
+                                "${widget.pet.age} Years",
+                                "Age",
+                              ),
+                            ],
                           ),
-                          moreInfo(
-                            color2,
-                            color2.withOpacity(0.5),
-                            "${widget.cat.age.toString()} Years",
-                            "Age",
+                          const SizedBox(height: 20),
+                          ownerInfo(),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showPetInfo = true;
+                                  });
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                    showPetInfo ? Colors.blue : Colors.grey,
+                                  ),
+                                ),
+                                child: const Text('Pet Info'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    showPetInfo = false;
+                                  });
+                                },
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                    showPetInfo ? Colors.grey : Colors.blue,
+                                  ),
+                                ),
+                                child: const Text('Vaccine/Medical History'),
+                              ),
+                            ],
                           ),
-                          moreInfo(
-                            color3,
-                            color3.withOpacity(0.5),
-                            "${widget.cat.weight.toString()} KG",
-                            "Weight",
-                          ),
+                          const SizedBox(height: 20),
+                          showPetInfo ? petInfo() : vaccineMedicalHistory(),
+                          const SizedBox(height: 20),
+                          adoptMeButton(),
+                          const SizedBox(height: 20),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      WonerInfo(),
-                      // for description
-                      const SizedBox(height: 20),
-                      ReadMoreText(
-                        widget.cat.description,
-                        textAlign: TextAlign.justify,
-                        trimCollapsedText: 'See More',
-                        colorClickableText: Colors.orange,
-                        trimLength: 100,
-                        trimMode: TrimMode.Length,
-                        style: const TextStyle(
-                          color: Colors.black54,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        height: 70,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: buttonColor,
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Adopt Me',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 
-  Row WonerInfo() {
+  Widget petInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Name: ${widget.pet.name}"),
+        Text("Age: ${widget.pet.age} years old"),
+        Text("Breed: ${widget.pet.breed}"),
+        Text("Height: ${widget.pet.height} cm"),
+        Text("Weight: ${widget.pet.weight} kg"),
+        Text("Special Care: ${widget.pet.specialCareInstructions}"),
+      ],
+    );
+  }
+
+  Widget vaccineMedicalHistory() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.network(widget.pet.vaccineHistoryImageUrl),
+        const SizedBox(height: 10),
+        Image.network(widget.pet.medicalHistoryImageUrl),
+      ],
+    );
+  }
+
+  Widget adoptMeButton() {
+    return Container(
+      height: 70,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        color: Colors.green,
+      ),
+      child: const Center(
+        child: Text(
+          'Adopt Me',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Row ownerInfo() {
     return Row(
       children: [
         CircleAvatar(
           radius: 30,
-          backgroundColor: widget.cat.color,
-          backgroundImage: AssetImage(
-            widget.cat.owner.image,
-          ),
+          backgroundColor: widget.pet.gender == 'Male' ? Colors.blue : Colors.pink,
+          backgroundImage: const AssetImage('images/image2.png'), // Replace with actual owner image
         ),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: const [
               Text(
-                widget.cat.owner.name,
-                style: const TextStyle(
+                'Sophia Black', // Placeholder name, replace with actual owner name if available
+                style: TextStyle(
                   fontSize: 18,
-                  color: black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -141,18 +188,12 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatScreen(), // Navigate to ChatScreen
-              ),
-            );
+            // Handle chat action
           },
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.blue
-                  .withOpacity(0.3), // Replace `color3` with your color
+              color: Colors.blue.withOpacity(0.3),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
@@ -175,21 +216,19 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.cat.name,
+                widget.pet.name,
                 style: const TextStyle(
                   fontSize: 25,
-                  color: black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
         ),
-        // for favorite icon
         Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: black),
+              icon: const Icon(Icons.edit, color: Colors.black),
               onPressed: () {
                 // Handle edit action
               },
@@ -226,7 +265,7 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
               },
               child: const Icon(
                 Icons.arrow_back_ios_rounded,
-                color: black,
+                color: Colors.black,
               ),
             ),
           ),
@@ -240,7 +279,7 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
       height: size.height * 0.50,
       width: size.width,
       decoration: BoxDecoration(
-        color: widget.cat.color.withOpacity(0.5),
+        color: Colors.grey.withOpacity(0.5),
       ),
       child: Stack(
         children: [
@@ -249,10 +288,10 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
             top: 30,
             child: Transform.rotate(
               angle: -11.5,
-              child: Image.network(
-                "https://clipart-library.com/images/rTnrpap6c.png",
-                color: widget.cat.color,
-                height: 200,
+              child: Image.asset(
+                'images/pet-cat2.png',  // path to the local image asset
+                color: Colors.black,
+                height: 55,
               ),
             ),
           ),
@@ -261,10 +300,10 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
             bottom: 0,
             child: Transform.rotate(
               angle: 12,
-              child: Image.network(
-                "https://clipart-library.com/images/rTnrpap6c.png",
-                color: widget.cat.color,
-                height: 200,
+              child: Image.asset(
+                'images/pet-cat2.png',  // path to the local image asset
+                color: Colors.black,
+                height: 55,
               ),
             ),
           ),
@@ -273,9 +312,9 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
             left: 0,
             right: 0,
             child: Hero(
-              tag: widget.cat.image,
-              child: Image.asset(
-                widget.cat.image,
+              tag: widget.pet.petImageUrl,
+              child: Image.network(
+                widget.pet.petImageUrl,
                 height: size.height * 0.45,
               ),
             ),
@@ -284,53 +323,53 @@ class _PetsDetailPageState extends State<PetsDetailPage> {
       ),
     );
   }
-}
 
-ClipRRect moreInfo(pawColor, backgroundColr, title, value) {
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(20),
-    child: Stack(
-      children: [
-        Positioned(
-          bottom: -20,
-          right: 0,
-          child: Transform.rotate(
-            angle: 12,
-            child: Image.network(
-              'https://clipart-library.com/images/rTnrpap6c.png',
-              color: pawColor,
-              height: 55,
+  ClipRRect moreInfo(Color pawColor, Color backgroundColr, String title, String value) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: -20,
+            right: 0,
+            child: Transform.rotate(
+              angle: 12,
+              child: Image.asset(
+                'images/pet-cat2.png',  // path to the local image asset
+                color: Colors.black,
+                height: 55,
+              ),
             ),
           ),
-        ),
-        Container(
-          height: 100,
-          width: 120,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: backgroundColr,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
+          Container(
+            height: 100,
+            width: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: backgroundColr,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                ),
-              )
-            ],
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }

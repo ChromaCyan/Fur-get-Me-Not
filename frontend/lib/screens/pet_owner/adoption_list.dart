@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fur_get_me_not/models/const.dart';
-import 'package:fur_get_me_not/models/cats_model.dart';
 import 'package:fur_get_me_not/screens/pet_owner/pet_details_screen.dart';
 import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
 import 'package:fur_get_me_not/screens/pet_owner/menu.dart';
