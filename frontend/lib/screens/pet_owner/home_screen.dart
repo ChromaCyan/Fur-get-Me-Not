@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/nav_bar/nav_cubit.dart';
-import 'package:fur_get_me_not/screens/pet_owner/menu.dart';
+import 'package:fur_get_me_not/screens/pet_owner/reminder_screen.dart';
+import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
 import 'package:fur_get_me_not/screens/pet_owner/pages.dart';
+import 'adoption_status.dart';
 
 class AdopterHomeScreen extends StatefulWidget {
-  const AdopterHomeScreen({Key? key}) : super(key: key);
+  const AdopterHomeScreen({super.key});
 
   @override
   _AdopterHomeScreenState createState() => _AdopterHomeScreenState();
@@ -31,23 +33,49 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
     return BlocProvider(
       create: (context) => BottomNavCubit(),
       child: Scaffold(
-        body: SafeArea(  // Use SafeArea to remove the black top bar and display content under the system's status bar.
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Text(
+            _getDynamicTitle(context),
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.black54,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.person, color: Colors.black),
+              onPressed: () {
+                // Navigate to Profile Screen
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ProfileScreen()),
+                // );
+              },
+            ),
+          ],
+        ),
+        body: SafeArea(
           child: PageView(
             controller: _pageController,
             onPageChanged: (index) {
               BlocProvider.of<BottomNavCubit>(context).changeSelectedIndex(index);
             },
             children: [
-              AdoptionScreen(),  // Initial screen for Adoption List
+              AdoptionScreen(),
               ReminderScreen(),
+              ChatScreen(),
+              AdoptionStatusScreen(),
               // Other screens
             ],
           ),
         ),
         bottomNavigationBar: BottomAppBar(
-          color: const Color(0xFFA54E4E),  // Maroon color background
+          color: const Color(0xFFF5E6CA),
           child: SizedBox(
-            height: 30,  // Adjust height to make the nav smaller
+            height: 50,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -55,7 +83,7 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
                   context,
                   icon: Icons.home_outlined,
                   page: 0,
-                  label: "Adopt",
+                  label: "Home",
                   filledIcon: Icons.home,
                 ),
                 _bottomNavBarItem(
@@ -65,13 +93,50 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
                   label: "Reminder",
                   filledIcon: Icons.notifications,
                 ),
-                // Add more items here if needed
+                _bottomNavBarItem(
+                  context,
+                  icon: Icons.pets,
+                  page: 2,
+                  label: "Pet",
+                  filledIcon: Icons.pets,
+                ),
+                _bottomNavBarItem(
+                  context,
+                  icon: Icons.message_outlined,
+                  page: 3,
+                  label: "Chat",
+                  filledIcon: Icons.message_outlined,
+                ),
+                _bottomNavBarItem(
+                  context,
+                  icon: Icons.fact_check,
+                  page: 4,
+                  label: "Status",
+                  filledIcon: Icons.fact_check,
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  String _getDynamicTitle(BuildContext context) {
+    switch (context.watch<BottomNavCubit>().state) {
+      case 0:
+        return 'Adopt a pet';
+      case 1:
+        return 'Reminders';
+      case 2:
+        return 'My Adopted Pet List';
+      case 3:
+        return 'Chat';
+      case 4:
+        return 'Adoption Status';
+      default:
+        return 'Home';
+    }
   }
 
   Widget _bottomNavBarItem(
@@ -92,14 +157,14 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
         children: [
           Icon(
             context.watch<BottomNavCubit>().state == page ? filledIcon : icon,
-            color: context.watch<BottomNavCubit>().state == page ? const Color(0xFFFEC107) : Colors.white,  // Yellow for selected, white for unselected
-            size: 24,  // Slightly smaller icon size
+            color: context.watch<BottomNavCubit>().state == page ? Colors.black : Colors.red,
+            size: 24,
           ),
           Text(
             label,
             style: TextStyle(
-              color: context.watch<BottomNavCubit>().state == page ? const Color(0xFFFEC107) : Colors.white,
-              fontSize: 12,  // Slightly smaller font size
+              color: context.watch<BottomNavCubit>().state == page ? Colors.black : Colors.red,
+              fontSize: 12,
               fontWeight: context.watch<BottomNavCubit>().state == page
                   ? FontWeight.w600
                   : FontWeight.w400,

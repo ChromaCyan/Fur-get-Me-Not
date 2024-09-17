@@ -36,28 +36,10 @@ class _ChatScreenState extends State<ChatScreen> {
     ChatScreen(),
   ];
 
-  void _onNavBarItemSelected(int index) {
-    setState(() {
-      selectedIndex = index;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => _pages[index],
-        ),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Chat'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
       body: Column(
         children: [
           Expanded(
@@ -112,10 +94,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: selectedIndex,
-        onItemSelected: _onNavBarItemSelected,
       ),
     );
   }

@@ -1,13 +1,37 @@
-enum ReminderType { petRoutine, checkUp, vaccineSchedule }
-
 class Reminder {
-  final String name; // The reminder name (e.g., "Vet Visit", "Feed Pet")
-  final ReminderType type; // The type of reminder (pet routine, check-up, vaccine schedule)
-  final DateTime dateTime; // The date and time for the reminder
+  final String id;
+  final String title;
+  final String description;
+  final DateTime reminderDate;
+  final bool repeat;
 
   Reminder({
-    required this.name,
-    required this.type,
-    required this.dateTime,
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.reminderDate,
+    required this.repeat,
   });
+
+  // Factory constructor to create a Reminder from JSON
+  factory Reminder.fromJson(Map<String, dynamic> json) {
+    return Reminder(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      reminderDate: DateTime.parse(json['reminderDate']),
+      repeat: json['repeat'],
+    );
+  }
+
+  // Method to convert a Reminder to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'reminderDate': reminderDate.toIso8601String(),
+      'repeat': repeat,
+    };
+  }
 }

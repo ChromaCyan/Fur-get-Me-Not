@@ -3,40 +3,68 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'reminder_event.dart';
 import 'reminder_state.dart';
 import 'package:fur_get_me_not/models/reminder.dart';
+import 'package:fur_get_me_not/repositories/reminder_repository.dart';
 
 class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
-  ReminderBloc() : super(ReminderLoading()) {
-    // Handle LoadReminders event
-    on<LoadReminders>((event, emit) {
-      // Dummy data for now
-      final dummyReminders = [
-        Reminder(
-          name: 'Feed the Pet',
-          type: ReminderType.petRoutine,
-          dateTime: DateTime.now().add(Duration(hours: 2)),
-        ),
-        Reminder(
-          name: 'Vet Check-up',
-          type: ReminderType.checkUp,
-          dateTime: DateTime.now().add(Duration(days: 1)),
-        ),
-        Reminder(
-          name: 'Vaccination',
-          type: ReminderType.vaccineSchedule,
-          dateTime: DateTime.now().add(Duration(days: 7)),
-        ),
-      ];
+  final ReminderRepository reminderRepository;
 
-      emit(ReminderLoaded(dummyReminders));
+  ReminderBloc(this.reminderRepository) : super(ReminderLoading()) {
+    print("ReminderBloc initialized");
+
+    on<LoadReminders>((event, emit) async {
+      print("LoadReminders event received");
+      try {
+        final reminders = await reminderRepository.getReminders();
+        print("Reminders fetched: ${reminders.length}");
+        emit(ReminderLoaded(reminders));
+      } catch (_) {
+        print("Error loading reminders");
+        emit(ReminderError("Failed to load reminders"));
+      }
     });
 
     // Handle AddReminder event
-    on<AddReminder>((event, emit) {
-      if (state is ReminderLoaded) {
-        final loadedState = state as ReminderLoaded;
-        final updatedReminders = List<Reminder>.from(loadedState.reminders)
-          ..add(event.reminder);
-        emit(ReminderLoaded(updatedReminders));
+    on<AddReminder>((event, emit) async {
+      try {
+        final addedReminder = await reminderRepository.addReminder(event.reminder);
+        if (state is ReminderLoaded) {
+          final loadedState = state as ReminderLoaded;
+          final updatedReminders = List<Reminder>.from(loadedState.reminders)
+            ..add(addedReminder);
+          emit(ReminderLoaded(updatedReminders));
+        }
+      } catch (_) {
+        emit(ReminderError("Failed to add reminder"));
+      }
+    });
+
+    // Handle UpdateReminder event
+    on<UpdateReminder>((event, emit) async {
+      try {
+        final updatedReminder = await reminderRepository.updateReminder(event.reminder);
+        if (state is ReminderLoaded) {
+          final loadedState = state as ReminderLoaded;
+          final updatedReminders = loadedState.reminders.map((reminder) =>
+          reminder.id == updatedReminder.id ? updatedReminder : reminder
+          ).toList();
+          emit(ReminderLoaded(updatedReminders));
+        }
+      } catch (_) {
+        emit(ReminderError("Failed to update reminder"));
+      }
+    });
+
+    // Handle DeleteReminder event
+    on<DeleteReminder>((event, emit) async {
+      try {
+        await reminderRepository.deleteReminder(event.id);
+        if (state is ReminderLoaded) {
+          final loadedState = state as ReminderLoaded;
+          final updatedReminders = loadedState.reminders.where((reminder) => reminder.id != event.id).toList();
+          emit(ReminderLoaded(updatedReminders));
+        }
+      } catch (_) {
+        emit(ReminderError("Failed to delete reminder"));
       }
     });
   }

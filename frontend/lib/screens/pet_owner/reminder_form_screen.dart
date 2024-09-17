@@ -12,16 +12,14 @@ class AddReminderScreen extends StatefulWidget {
 
 class _AddReminderScreenState extends State<AddReminderScreen> {
   final _formKey = GlobalKey<FormState>();
-  String _name = '';
-  ReminderType _type = ReminderType.petRoutine;
+  String _title = '';
+  String _description = '';
   DateTime _selectedDate = DateTime.now();
+  bool _repeat = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Add Reminder'),
-      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -29,20 +27,14 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           child: Column(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Reminder Name'),
-                onSaved: (value) => _name = value!,
-                validator: (value) => value!.isEmpty ? 'Enter a name' : null,
+                decoration: InputDecoration(labelText: 'Title'),
+                onSaved: (value) => _title = value!,
+                validator: (value) => value!.isEmpty ? 'Enter a title' : null,
               ),
-              DropdownButtonFormField<ReminderType>(
-                value: _type,
-                decoration: InputDecoration(labelText: 'Reminder Type'),
-                items: ReminderType.values.map((ReminderType type) {
-                  return DropdownMenuItem<ReminderType>(
-                    value: type,
-                    child: Text(type.toString().split('.').last),
-                  );
-                }).toList(),
-                onChanged: (value) => setState(() => _type = value!),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Description'),
+                onSaved: (value) => _description = value!,
+                validator: (value) => value!.isEmpty ? 'Enter a description' : null,
               ),
               TextButton(
                 onPressed: () async {
@@ -60,14 +52,25 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                 },
                 child: Text('Select Date: ${_selectedDate.toLocal()}'),
               ),
+              CheckboxListTile(
+                title: Text('Repeat'),
+                value: _repeat,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _repeat = value!;
+                  });
+                },
+              ),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     final newReminder = Reminder(
-                      name: _name,
-                      type: _type,
-                      dateTime: _selectedDate,
+                      id: DateTime.now().toString(), // Generate a new ID
+                      title: _title,
+                      description: _description,
+                      reminderDate: _selectedDate,
+                      repeat: _repeat,
                     );
                     BlocProvider.of<ReminderBloc>(context)
                         .add(AddReminder(newReminder));

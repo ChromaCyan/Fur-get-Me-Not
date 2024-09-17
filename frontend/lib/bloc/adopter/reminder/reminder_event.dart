@@ -1,7 +1,6 @@
 // blocs/reminder_event.dart
 import 'package:equatable/equatable.dart';
 import 'package:fur_get_me_not/models/reminder.dart';
-import 'package:fur_get_me_not/models/reminder.dart';
 
 abstract class ReminderEvent extends Equatable {
   const ReminderEvent();
@@ -21,4 +20,24 @@ class AddReminder extends ReminderEvent {
 
   @override
   List<Object?> get props => [reminder];
+}
+
+// Event to update an existing reminder
+class UpdateReminder extends ReminderEvent {
+  final Reminder reminder;
+
+  const UpdateReminder(this.reminder);
+
+  @override
+  List<Object?> get props => [reminder];
+}
+
+// Event to delete a reminder
+class DeleteReminder extends ReminderEvent {
+  final String id;
+
+  const DeleteReminder(this.id);
+
+  @override
+  List<Object?> get props => [id];
 }

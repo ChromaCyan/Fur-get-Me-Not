@@ -159,7 +159,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
                     Text(
-                      "Adopt Pet Now!\nGet a furry friend in your home.",
+                      "This is a banner\n placeholder",
                       style: TextStyle(
                         fontSize: 18,
                         height: 1.1,
