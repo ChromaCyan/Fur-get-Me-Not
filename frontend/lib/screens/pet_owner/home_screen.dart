@@ -31,42 +31,43 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
     return BlocProvider(
       create: (context) => BottomNavCubit(),
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: const Text("Adopter Home"),
-        ),
-        body: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            BlocProvider.of<BottomNavCubit>(context).changeSelectedIndex(index);
-          },
-          children: [
-            AdoptionScreen(),  // Initial screen for Adoption List
-            ReminderScreen(),
-            // Other screens
-          ],
+        body: SafeArea(  // Use SafeArea to remove the black top bar and display content under the system's status bar.
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              BlocProvider.of<BottomNavCubit>(context).changeSelectedIndex(index);
+            },
+            children: [
+              AdoptionScreen(),  // Initial screen for Adoption List
+              ReminderScreen(),
+              // Other screens
+            ],
+          ),
         ),
         bottomNavigationBar: BottomAppBar(
-          color: Colors.black,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _bottomNavBarItem(
-                context,
-                icon: Icons.home_outlined,
-                page: 0,
-                label: "Adopt",
-                filledIcon: Icons.home,
-              ),
-              _bottomNavBarItem(
-                context,
-                icon: Icons.notifications_outlined,
-                page: 1,
-                label: "Reminder",
-                filledIcon: Icons.notifications,
-              ),
-              // Add more items here
-            ],
+          color: const Color(0xFFA54E4E),  // Maroon color background
+          child: SizedBox(
+            height: 30,  // Adjust height to make the nav smaller
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _bottomNavBarItem(
+                  context,
+                  icon: Icons.home_outlined,
+                  page: 0,
+                  label: "Adopt",
+                  filledIcon: Icons.home,
+                ),
+                _bottomNavBarItem(
+                  context,
+                  icon: Icons.notifications_outlined,
+                  page: 1,
+                  label: "Reminder",
+                  filledIcon: Icons.notifications,
+                ),
+                // Add more items here if needed
+              ],
+            ),
           ),
         ),
       ),
@@ -91,14 +92,14 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
         children: [
           Icon(
             context.watch<BottomNavCubit>().state == page ? filledIcon : icon,
-            color: context.watch<BottomNavCubit>().state == page ? Colors.amber : Colors.grey,
-            size: 26,
+            color: context.watch<BottomNavCubit>().state == page ? const Color(0xFFFEC107) : Colors.white,  // Yellow for selected, white for unselected
+            size: 24,  // Slightly smaller icon size
           ),
           Text(
             label,
             style: TextStyle(
-              color: context.watch<BottomNavCubit>().state == page ? Colors.amber : Colors.grey,
-              fontSize: 13,
+              color: context.watch<BottomNavCubit>().state == page ? const Color(0xFFFEC107) : Colors.white,
+              fontSize: 12,  // Slightly smaller font size
               fontWeight: context.watch<BottomNavCubit>().state == page
                   ? FontWeight.w600
                   : FontWeight.w400,

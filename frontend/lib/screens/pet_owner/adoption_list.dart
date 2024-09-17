@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_state.dart';
+import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_bloc.dart';
+import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/screens/pet_owner/reminder_screen.dart';
 import 'menu.dart';
 import 'package:fur_get_me_not/models/pet.dart';
@@ -16,31 +18,6 @@ class AdoptionScreen extends StatefulWidget {
 }
 
 class _AdoptionScreenState extends State<AdoptionScreen> {
-  int selectedIndex = 1;
-  List<IconData> icons = [
-    Icons.home_outlined,
-    Icons.favorite_outline_rounded,
-    Icons.chat,
-    Icons.person_outline_rounded,
-  ];
-
-  final List<Widget> _pages = [
-    const AdoptionScreen(),
-    ReminderScreen(),
-    // const ChatScreen(),
-  ];
-
-  void _onNavBarItemSelected(int index) {
-    setState(() {
-      selectedIndex = index;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => _pages[index],
-        ),
-      );
-    });
-  }
 
   @override
   void initState() {
@@ -84,10 +61,6 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavBar(
-        selectedIndex: selectedIndex,
-        onItemSelected: _onNavBarItemSelected,
-      ),
     );
   }
 
@@ -99,10 +72,11 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PetsDetailPage(petId: pet.id), // Use petId instead of pet
+              builder: (context) => PetsDetailPage(petId: pet.id),
             ),
           );
         },
+
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30),
           child: Container(
