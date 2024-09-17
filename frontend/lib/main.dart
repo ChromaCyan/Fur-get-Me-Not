@@ -1,8 +1,10 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/screens/pet_owner/adoption_list.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/screens/splash_screen.dart';
-import 'package:fur_get_me_not/app_theme.dart';  // Import your theme file
+import 'package:fur_get_me_not/app_theme.dart';
+import 'package:fur_get_me_not/bloc/authentication/login_bloc.dart';
+import 'package:fur_get_me_not/repositories/login_repository.dart';
+import 'package:fur_get_me_not/providers/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,11 +15,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fur-get Me Not',
-      theme: AppTheme.theme,
-      debugShowCheckedModeBanner: false,
-      home: const PetsOnBoardingScreen(),
+    return MultiBlocProvider(
+      providers: AppProviders.getProviders(),
+      child: MaterialApp(
+        title: 'Fur-get Me Not',
+        theme: AppTheme.theme,
+        debugShowCheckedModeBanner: false,
+        home: PetsOnBoardingScreen(),
+      ),
     );
   }
 }

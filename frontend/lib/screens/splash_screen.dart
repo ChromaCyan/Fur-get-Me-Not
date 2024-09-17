@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/models/const.dart';
 import 'package:fur_get_me_not/models/onboarding_model.dart';
-
 import 'package:fur_get_me_not/screens/login_screen.dart';
 
 
@@ -43,7 +42,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const LoginScreen(),
+                      builder: (_) => LoginScreen(),
                     ),
                         (route) => false);
               } else {
@@ -158,8 +157,8 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                 right: 120,
                 child: Image.asset(
                   onBoardData[index].image,
-                  height: size.height * 0.4,  // Responsive height
-                  fit: BoxFit.contain,  // Preserve aspect ratio
+                  height: size.height * 0.4,
+                  fit: BoxFit.contain,
                 ),
               ),
             ],

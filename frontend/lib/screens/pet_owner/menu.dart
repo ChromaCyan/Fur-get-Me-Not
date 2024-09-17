@@ -2,22 +2,21 @@ import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int selectedIndex;
-  final ValueChanged<int> onItemSelected;
+  final Function(int) onItemSelected;
 
   const BottomNavBar({
-    Key? key,
     required this.selectedIndex,
     required this.onItemSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      backgroundColor: const Color(0xFFA54E4E),
+      selectedItemColor: const Color(0xFFFEC107),
+      unselectedItemColor: Colors.white,
       currentIndex: selectedIndex,
       onTap: onItemSelected,
-      backgroundColor: Color(0xFFA54E4E),
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.grey,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),
@@ -25,15 +24,16 @@ class BottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.pets),
-          label: 'Pets',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.notifications),
-          label: 'Reminders',
+          label: 'Adopter Pets',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.chat),
           label: 'Chat',
+        ),
+        
+        BottomNavigationBarItem(
+          icon: Icon(Icons.request_page),
+          label: 'Status',
         ),
       ],
     );

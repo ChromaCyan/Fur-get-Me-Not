@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/models/const.dart';
-import 'package:fur_get_me_not/models/pet.dart'; // Updated import
+import 'package:fur_get_me_not/models/pet.dart';
 import 'package:readmore/readmore.dart';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
-import 'package:fur_get_me_not/screens/pet_owner/pet_form_screen.dart';
+import 'package:fur_get_me_not/screens/pet_owner/adoption_form.dart';
 
 class PetsDetailPage extends StatefulWidget {
   final Pet pet;
