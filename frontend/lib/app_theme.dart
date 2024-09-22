@@ -19,7 +19,7 @@ class AppTheme {
         brightness: Brightness.light,
       ),
       useMaterial3: true,
-      scaffoldBackgroundColor: const Color(0xFFF5E6CA),
+      scaffoldBackgroundColor: Colors.white,
       buttonTheme: ButtonThemeData(
         buttonColor: const Color(0xFFFEC107),
         textTheme: ButtonTextTheme.primary,

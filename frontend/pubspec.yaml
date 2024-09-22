@@ -86,6 +86,8 @@ flutter:
     - images/horse.png
     - images/parrot.png
     - images/rabbit.png
+    - images/pet_medical_image.png
+    - images/pet_vaccine_image.jpg
 
   fonts:
     - family: Circular

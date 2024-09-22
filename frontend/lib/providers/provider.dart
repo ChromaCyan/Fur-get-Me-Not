@@ -12,37 +12,39 @@ import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/repositories/register_repository.dart';
 import 'package:fur_get_me_not/repositories/reminder_repository.dart';
 import 'package:fur_get_me_not/repositories/adoption_status_repository.dart';
-import 'package:fur_get_me_not/screens/pet_owner/pet_details_screen.dart';
 
 final ReminderRepository reminderRepository = ReminderRepository();
 
 class AppProviders {
   static List<BlocProvider> getProviders() {
+    final PetRepository petRepository = PetRepository();
+    final LoginRepository loginRepository = LoginRepository();
+    final RegisterRepository registerRepository = RegisterRepository();
+    final ReminderRepository reminderRepository = ReminderRepository();
+    final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
+
     return [
       BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(loginRepository: LoginRepository()),
+        create: (context) => LoginBloc(loginRepository: loginRepository),
       ),
       BlocProvider<RegisterBloc>(
-        create: (context) => RegisterBloc(registerRepository: RegisterRepository()),
+        create: (context) => RegisterBloc(registerRepository: registerRepository),
       ),
       BlocProvider<BottomNavCubit>(
         create: (context) => BottomNavCubit(),
       ),
       BlocProvider<AdoptionBrowseBloc>(
-        create: (context) => AdoptionBrowseBloc(petRepository: PetRepository()),
+        create: (context) => AdoptionBrowseBloc(petRepository: petRepository),
       ),
       BlocProvider<PetDetailsBloc>(
-        create: (context) => PetDetailsBloc(
-          petRepository: context.read<PetRepository>(),
-        ),
+        create: (context) => PetDetailsBloc(petRepository: petRepository),
       ),
       BlocProvider<ReminderBloc>(
         create: (context) => ReminderBloc(reminderRepository),
       ),
       BlocProvider<AdoptionStatusBloc>(
-        create: (context) => AdoptionStatusBloc(AdoptionStatusRepository()),
+        create: (context) => AdoptionStatusBloc(adoptionStatusRepository),
       ),
     ];
   }
 }
-

@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/nav_bar/nav_cubit.dart';
 import 'package:fur_get_me_not/screens/pet_owner/reminder_screen.dart';
+import 'package:fur_get_me_not/screens/pet_owner/pet_details_screen.dart';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
 import 'package:fur_get_me_not/screens/pet_owner/pages.dart';
 import 'adoption_status.dart';
 
 class AdopterHomeScreen extends StatefulWidget {
-  const AdopterHomeScreen({super.key});
+  final Widget? initialPage;
+
+  const AdopterHomeScreen({Key? key, this.initialPage}) : super(key: key);
 
   @override
   _AdopterHomeScreenState createState() => _AdopterHomeScreenState();
@@ -26,6 +29,13 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _navigateToChat() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ChatScreen()),
+    );
   }
 
   @override

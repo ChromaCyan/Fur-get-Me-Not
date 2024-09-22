@@ -9,7 +9,8 @@ class PetDetailsLoading extends PetDetailsState {}
 
 class PetDetailsLoaded extends PetDetailsState {
   final Pet pet;
-  PetDetailsLoaded({required this.pet});
+  final bool showPetInfo; // Add this flag to control the view toggle
+  PetDetailsLoaded({required this.pet, this.showPetInfo = true});
 }
 
 class PetDetailsError extends PetDetailsState {
@@ -22,12 +23,12 @@ class PetDetailsUpdated extends PetDetailsState {
   PetDetailsUpdated({required this.pet});
 }
 
-class PetUploaded extends PetDetailsState{
+class PetUploaded extends PetDetailsState {
   final String imageUrl;
   PetUploaded({required this.imageUrl});
 }
 
-class MedicalHistoryUploaded extends PetDetailsState{
+class MedicalHistoryUploaded extends PetDetailsState {
   final String imageUrl;
   MedicalHistoryUploaded({required this.imageUrl});
 }

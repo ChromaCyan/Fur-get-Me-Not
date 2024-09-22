@@ -13,8 +13,8 @@ class PetRepository {
       height: 60.0,
       weight: 30.0,
       petImageUrl: 'images/pet-cat2.png',
-      medicalHistoryImageUrl: '',
-      vaccineHistoryImageUrl: '',
+      medicalHistoryImageUrl: 'images/pet_medical_image.png',
+      vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
       specialCareInstructions: '*Needs daily walks, \n *30 mins bath, \n *Daily brush',
     ),
     '2': Pet(
@@ -26,8 +26,8 @@ class PetRepository {
       height: 55.0,
       weight: 28.0,
       petImageUrl: 'images/pet-cat1.png',
-      medicalHistoryImageUrl: '',
-      vaccineHistoryImageUrl: '',
+      medicalHistoryImageUrl: 'images/pet_medical_image.png',
+      vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
       specialCareInstructions: 'None',
     ),
     // Add more pets here as needed

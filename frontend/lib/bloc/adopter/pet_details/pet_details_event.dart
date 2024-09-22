@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:fur_get_me_not/models/pet.dart';
 
-abstract class PetDetailsEvent{}
+abstract class PetDetailsEvent {}
 
 class LoadPetDetailsEvent extends PetDetailsEvent {
   final String petId;
@@ -13,17 +13,23 @@ class UpdatePetDetailsEvent extends PetDetailsEvent {
   UpdatePetDetailsEvent({required this.pet});
 }
 
-class UploadPetEvent extends PetDetailsEvent{
+class UploadPetEvent extends PetDetailsEvent {
   final File imageFile;
   UploadPetEvent({required this.imageFile});
 }
 
-class UploadMedicalHistoryEvent extends PetDetailsEvent{
+class UploadMedicalHistoryEvent extends PetDetailsEvent {
   final File imageFile;
   UploadMedicalHistoryEvent({required this.imageFile});
 }
 
-class UploadVaccineHistoryEvent extends PetDetailsEvent{
+class UploadVaccineHistoryEvent extends PetDetailsEvent {
   final File imageFile;
   UploadVaccineHistoryEvent({required this.imageFile});
+}
+
+// New Event to toggle between Pet Info and Medical History views
+class TogglePetInfoViewEvent extends PetDetailsEvent {
+  final bool showPetInfo;
+  TogglePetInfoViewEvent({required this.showPetInfo});
 }

@@ -62,7 +62,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
               child: Center(
                 child: Text(
                   currentPage == onBoardData.length - 1
-                      ? "Get Stared"
+                      ? "Get Started!"
                       : "Continue",
                   style: const TextStyle(
                     fontSize: 20,

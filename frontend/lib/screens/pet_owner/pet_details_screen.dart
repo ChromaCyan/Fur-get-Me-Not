@@ -1,52 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/models/pet.dart';
-import 'package:fur_get_me_not/models/const.dart';
-import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_state.dart';
 import 'package:fur_get_me_not/repositories/pet_repository.dart';
+import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
+import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
 
-class PetsDetailPage extends StatelessWidget {
+class PetDetailsPage extends StatelessWidget {
   final String petId;
+  final Function onNavigateToChat;
 
-  const PetsDetailPage({super.key, required this.petId});
+  const PetDetailsPage({
+    Key? key,
+    required this.petId,
+    required this.onNavigateToChat,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    // Use BlocProvider to provide the PetDetailsBloc
     return BlocProvider(
-      create: (context) => PetDetailsBloc(
-        petRepository: context.read<PetRepository>(),
-      )..add(LoadPetDetailsEvent(petId: petId)), // Trigger the loading of pet details
+      create: (context) => PetDetailsBloc(petRepository: RepositoryProvider.of<PetRepository>(context))
+        ..add(LoadPetDetailsEvent(petId: petId)),
       child: Scaffold(
         body: BlocBuilder<PetDetailsBloc, PetDetailsState>(
           builder: (context, state) {
             if (state is PetDetailsLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is PetDetailsLoaded) {
-              return buildPetDetailsPage(context, state.pet, size);
+              final pet = state.pet;
+              return _PetDetailsView(pet: pet, onNavigateToChat: onNavigateToChat);
             } else if (state is PetDetailsError) {
               return Center(child: Text('Error: ${state.message}'));
             }
-            return Container(); // Fallback if no valid state is provided
+            return Container();
           },
         ),
       ),
     );
   }
+}
 
-  Widget buildPetDetailsPage(BuildContext context, Pet pet, Size size) {
-    bool showPetInfo = true;
 
+class _PetDetailsView extends StatefulWidget {
+  final Pet pet;
+  final Function onNavigateToChat;
+
+  const _PetDetailsView({
+    Key? key,
+    required this.pet,
+    required this.onNavigateToChat,
+  }) : super(key: key);
+
+  @override
+  State<_PetDetailsView> createState() => _PetDetailsViewState();
+}
+
+class _PetDetailsViewState extends State<_PetDetailsView> {
+  bool showPetInfo = true;
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return SizedBox(
       height: size.height,
       child: Stack(
         children: [
-          itemsImageAndBackground(size, pet.petImageUrl),
+          itemsImageAndBackground(size),
           backButton(size, context),
           Positioned(
             bottom: 0,
@@ -65,20 +86,13 @@ class PetsDetailPage extends StatelessWidget {
                   child: Column(
                     children: [
                       const SizedBox(height: 20),
-                      nameAddressAndFavoriteButton(context, pet),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          moreInfo(color1, color1.withOpacity(0.5), pet.gender, "Gender"),
-                          moreInfo(color2, color2.withOpacity(0.5), pet.breed, "Breed"),
-                          moreInfo(color2, color2.withOpacity(0.5), "${pet.age} Years", "Age"),
-                        ],
-                      ),
+                      nameAddressAndFavoriteButton(),
                       const SizedBox(height: 20),
-                      ownerInfo(context, pet),
+                      ownerInfo(),
                       const SizedBox(height: 20),
-                      toggleInfoButtons(context, showPetInfo, pet),
+                      buildToggleButtons(),
+                      const SizedBox(height: 20),
+                      showPetInfo ? petInfo() : vaccineMedicalHistory(),
                       const SizedBox(height: 20),
                       adoptMeButton(),
                       const SizedBox(height: 20),
@@ -93,27 +107,54 @@ class PetsDetailPage extends StatelessWidget {
     );
   }
 
-  Widget toggleInfoButtons(BuildContext context, bool showPetInfo, Pet pet) {
+  Widget nameAddressAndFavoriteButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.pet.name,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const Text(
+              "Address or location", // Replace with actual address
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildToggleButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ElevatedButton(
           onPressed: () {
-            context.read<PetDetailsBloc>().add(LoadPetDetailsEvent(petId: pet.id)); // Load pet info
-            showPetInfo = true;
+            setState(() {
+              showPetInfo = true;
+            });
           },
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(showPetInfo ? Colors.blue : Colors.grey),
+            backgroundColor: MaterialStateProperty.all(
+              showPetInfo ? Colors.blue : Colors.grey,
+            ),
           ),
           child: const Text('Pet Info'),
         ),
         ElevatedButton(
           onPressed: () {
-            context.read<PetDetailsBloc>().add(LoadPetDetailsEvent(petId: pet.id)); // Load medical history
-            showPetInfo = false;
+            setState(() {
+              showPetInfo = false;
+            });
           },
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(showPetInfo ? Colors.grey : Colors.blue),
+            backgroundColor: MaterialStateProperty.all(
+              showPetInfo ? Colors.grey : Colors.blue,
+            ),
           ),
           child: const Text('Vaccine/Medical History'),
         ),
@@ -121,28 +162,93 @@ class PetsDetailPage extends StatelessWidget {
     );
   }
 
-  Widget itemsImageAndBackground(Size size, String petImageUrl) {
-    return Container(
-      height: size.height * 0.50,
-      width: size.width,
-      decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.5),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 10,
-            left: 0,
-            right: 0,
-            child: Hero(
-              tag: petImageUrl,
-              child: Image.network(
-                petImageUrl,
-                height: size.height * 0.45,
+  Widget ownerInfo() {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 30,
+          backgroundColor: widget.pet.gender == 'Male' ? Colors.blue : Colors.pink,
+          backgroundImage: const AssetImage('images/image2.png'),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'Sophia Black',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+            ],
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            widget.onNavigateToChat();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.chat_outlined,
+              color: Colors.lightBlue,
+              size: 16,
             ),
           ),
-        ],
+        ),
+        const SizedBox(width: 10),
+      ],
+    );
+  }
+
+
+  Widget petInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Name: ${widget.pet.name}"),
+        Text("Age: ${widget.pet.age} years old"),
+        Text("Breed: ${widget.pet.breed}"),
+        Text("Height: ${widget.pet.height} cm"),
+        Text("Weight: ${widget.pet.weight} kg"),
+        Text("Special Care: ${widget.pet.specialCareInstructions}"),
+      ],
+    );
+  }
+
+  Widget vaccineMedicalHistory() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Image.network(widget.pet.vaccineHistoryImageUrl),
+        const SizedBox(height: 10),
+        Image.network(widget.pet.medicalHistoryImageUrl),
+      ],
+    );
+  }
+
+  Widget adoptMeButton() {
+    return Container(
+      height: 70,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        color: Colors.green,
+      ),
+      child: const Center(
+        child: Text(
+          'Adopt Me',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
@@ -176,106 +282,53 @@ class PetsDetailPage extends StatelessWidget {
     );
   }
 
-  Widget adoptMeButton() {
+  Container itemsImageAndBackground(Size size) {
     return Container(
-      height: 70,
+      height: size.height * 0.50,
+      width: size.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        color: Colors.green,
+        color: Colors.grey.withOpacity(0.5),
       ),
-      child: const Center(
-        child: Text(
-          'Adopt Me',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget nameAddressAndFavoriteButton(BuildContext context, Pet pet) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                pet.name,
-                style: const TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: -60,
+            top: 30,
+            child: Transform.rotate(
+              angle: -11.5,
+              child: Image.asset(
+                'images/pet-cat2.png',  // path to the local image asset
+                color: Colors.black,
+                height: 55,
               ),
-            ],
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.black),
-          onPressed: () {
-            // Handle edit action
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () {
-            context.read<PetDetailsBloc>().add(UpdatePetDetailsEvent(pet: pet));
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget ownerInfo(BuildContext context, Pet pet) {
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: pet.gender == 'Male' ? Colors.blue : Colors.pink,
-          backgroundImage: const AssetImage('images/image2.png'),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'Sophia Black',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatScreen(),
-              ),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.chat_outlined,
-              color: Colors.lightBlue,
-              size: 16,
             ),
           ),
-        ),
-        const SizedBox(width: 10),
-      ],
+          Positioned(
+            right: -60,
+            bottom: 0,
+            child: Transform.rotate(
+              angle: 12,
+              child: Image.asset(
+                'images/pet-cat2.png',  // path to the local image asset
+                color: Colors.black,
+                height: 55,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 0,
+            right: 0,
+            child: Hero(
+              tag: widget.pet.petImageUrl,
+              child: Image.network(
+                widget.pet.petImageUrl,
+                height: size.height * 0.45,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -286,45 +339,48 @@ class PetsDetailPage extends StatelessWidget {
         children: [
           Positioned(
             bottom: -20,
-            right: 0,
-            child: Transform.rotate(
-              angle: 12,
-              child: Image.asset(
-                'images/pet-cat2.png',
-                color: Colors.black,
-                height: 55,
+            right: -20,
+            child: Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: backgroundColor,
               ),
             ),
           ),
           Container(
-            height: 100,
-            width: 120,
+            height: 60,
+            width: 100,
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(20),
-              color: backgroundColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 5),
-                  child: Text(
-                    value,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 5),
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                const SizedBox(height: 5),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
