@@ -6,7 +6,6 @@ import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_state.dart';
 import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
-import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final String petId;
@@ -108,10 +107,10 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               widget.pet.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const Text(
-              "Address or location", // Replace with actual address
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
+            // const Text(
+            //   "Address or location",
+            //   style: TextStyle(fontSize: 16, color: Colors.grey),
+            // ),
           ],
         ),
       ],
@@ -290,7 +289,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             child: Transform.rotate(
               angle: -11.5,
               child: Image.asset(
-                'images/pet-cat2.png',  // path to the local image asset
+                'images/pet-cat2.png',
                 color: Colors.black,
                 height: 55,
               ),
@@ -302,7 +301,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             child: Transform.rotate(
               angle: 12,
               child: Image.asset(
-                'images/pet-cat2.png',  // path to the local image asset
+                'images/pet-cat2.png',
                 color: Colors.black,
                 height: 55,
               ),

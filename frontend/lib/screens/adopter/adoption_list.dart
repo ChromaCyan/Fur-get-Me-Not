@@ -6,7 +6,7 @@ import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_stat
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_event.dart';
-import 'package:fur_get_me_not/screens/pet_owner/pet_details_screen.dart';
+import 'package:fur_get_me_not/screens/adopter/pet_details_screen.dart';
 import 'package:fur_get_me_not/screens/widgets/pet_card.dart';
 import 'package:fur_get_me_not/screens/widgets/banner_card.dart';
 

@@ -4,7 +4,7 @@ import 'package:fur_get_me_not/bloc/authentication/login_bloc.dart';
 import 'package:fur_get_me_not/bloc/authentication/login_event.dart';
 import 'package:fur_get_me_not/bloc/authentication/login_state.dart';
 import 'package:fur_get_me_not/repositories/login_repository.dart';
-import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
+import 'package:fur_get_me_not/screens/adopter/home_screen.dart';
 import 'package:fur_get_me_not/screens/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
