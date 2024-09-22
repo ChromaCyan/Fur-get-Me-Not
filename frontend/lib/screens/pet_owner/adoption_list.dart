@@ -9,7 +9,6 @@ import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/screens/pet_owner/pet_details_screen.dart';
 import 'package:fur_get_me_not/screens/widgets/pet_card.dart';
 import 'package:fur_get_me_not/screens/widgets/banner_card.dart';
-import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
 
 class AdoptionScreen extends StatefulWidget {
   const AdoptionScreen({super.key});
@@ -24,13 +23,6 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
     super.initState();
     // Trigger event to load pets when the screen initializes
     context.read<AdoptionBrowseBloc>().add(LoadAdoptionBrowseEvent(filter: ''));
-  }
-
-  void _navigateToChat() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ChatScreen()),
-    );
   }
 
   @override
@@ -61,10 +53,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PetDetailsPage(
-                                  petId: pet.id,
-                                  onNavigateToChat: _navigateToChat,
-                                ),
+                                builder: (context) => PetDetailsPage(petId: pet.id,),
                               ),
                             );
                           },

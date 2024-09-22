@@ -10,13 +10,8 @@ import 'package:fur_get_me_not/screens/pet_owner/home_screen.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final String petId;
-  final Function onNavigateToChat;
 
-  const PetDetailsPage({
-    Key? key,
-    required this.petId,
-    required this.onNavigateToChat,
-  }) : super(key: key);
+  const PetDetailsPage({Key? key, required this.petId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +25,7 @@ class PetDetailsPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (state is PetDetailsLoaded) {
               final pet = state.pet;
-              return _PetDetailsView(pet: pet, onNavigateToChat: onNavigateToChat);
+              return _PetDetailsView(pet: pet);
             } else if (state is PetDetailsError) {
               return Center(child: Text('Error: ${state.message}'));
             }
@@ -45,13 +40,8 @@ class PetDetailsPage extends StatelessWidget {
 
 class _PetDetailsView extends StatefulWidget {
   final Pet pet;
-  final Function onNavigateToChat;
 
-  const _PetDetailsView({
-    Key? key,
-    required this.pet,
-    required this.onNavigateToChat,
-  }) : super(key: key);
+  const _PetDetailsView({Key? key, required this.pet,}) : super(key: key);
 
   @override
   State<_PetDetailsView> createState() => _PetDetailsViewState();
@@ -187,7 +177,10 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
         ),
         GestureDetector(
           onTap: () {
-            widget.onNavigateToChat();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatListScreen()),
+            );
           },
           child: Container(
             padding: const EdgeInsets.all(10),
