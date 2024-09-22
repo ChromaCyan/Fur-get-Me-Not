@@ -10,6 +10,9 @@ class ReminderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dispatch LoadReminders event
+    BlocProvider.of<ReminderBloc>(context).add(LoadReminders());
+
     return Scaffold(
       body: BlocBuilder<ReminderBloc, ReminderState>(
         builder: (context, state) {
@@ -30,13 +33,16 @@ class ReminderScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(Icons.edit),
                         onPressed: () {
-                          Navigator.pushNamed(context, '/update_reminder', arguments: reminder);
+                          Navigator.pushNamed(context, '/update_reminder',
+                              arguments: reminder);
                         },
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          context.read<ReminderBloc>().add(DeleteReminder(reminder.id));
+                          context
+                              .read<ReminderBloc>()
+                              .add(DeleteReminder(reminder.id));
                         },
                       ),
                     ],
