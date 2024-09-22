@@ -32,7 +32,7 @@ class PetsDetailPage extends StatelessWidget {
             } else if (state is PetDetailsError) {
               return Center(child: Text('Error: ${state.message}'));
             }
-            return Container();
+            return Container(); // Fallback if no valid state is provided
           },
         ),
       ),
@@ -76,7 +76,7 @@ class PetsDetailPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      ownerInfo(context, pet), // Pass context here
+                      ownerInfo(context, pet),
                       const SizedBox(height: 20),
                       toggleInfoButtons(context, showPetInfo, pet),
                       const SizedBox(height: 20),
@@ -92,7 +92,6 @@ class PetsDetailPage extends StatelessWidget {
       ),
     );
   }
-
 
   Widget toggleInfoButtons(BuildContext context, bool showPetInfo, Pet pet) {
     return Row(
@@ -280,62 +279,59 @@ class PetsDetailPage extends StatelessWidget {
     );
   }
 
-
   ClipRRect moreInfo(Color pawColor, Color backgroundColor, String title, String value) {
     return ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-    child: Stack(
-    children: [
-    Positioned(
-    bottom: -20,
-    right: 0,
-    child: Transform.rotate(
-    angle: 12,
-    child: Image.asset(
-    'images/pet-cat2.png',
-    color: Colors.black,
-    height: 55,
-    ),
-    ),
-    ),
-    Container(
-    height: 100,
-    width: 120,
-    decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(20),
-    color: backgroundColor,
-    ),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10, top: 5),
-          child: Text(
-            value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+      borderRadius: BorderRadius.circular(20),
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: -20,
+            right: 0,
+            child: Transform.rotate(
+              angle: 12,
+              child: Image.asset(
+                'images/pet-cat2.png',
+                color: Colors.black,
+                height: 55,
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 10, top: 5),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black54,
+          Container(
+            height: 100,
+            width: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: backgroundColor,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 5),
+                  child: Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 5),
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
-    ),
-    ),
-    ],
-    ),
+        ],
+      ),
     );
   }
 }
-

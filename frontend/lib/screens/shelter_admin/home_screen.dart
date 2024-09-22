@@ -44,8 +44,8 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
               BlocProvider.of<BottomNavCubit>(context).changeSelectedIndex(index);
             },
             children: [
-              AdoptionScreen(),
-              ReminderScreen(),
+              //AdoptionScreen(),
+              //ReminderScreen(),
               // Other screens
             ],
           ),

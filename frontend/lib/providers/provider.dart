@@ -12,6 +12,7 @@ import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/repositories/register_repository.dart';
 import 'package:fur_get_me_not/repositories/reminder_repository.dart';
 import 'package:fur_get_me_not/repositories/adoption_status_repository.dart';
+import 'package:fur_get_me_not/screens/pet_owner/pet_details_screen.dart';
 
 final ReminderRepository reminderRepository = ReminderRepository();
 
@@ -31,14 +32,17 @@ class AppProviders {
         create: (context) => AdoptionBrowseBloc(petRepository: PetRepository()),
       ),
       BlocProvider<PetDetailsBloc>(
-        create: (context) => PetDetailsBloc(petRepository: PetRepository()),
+        create: (context) => PetDetailsBloc(
+          petRepository: context.read<PetRepository>(),
+        ),
       ),
       BlocProvider<ReminderBloc>(
         create: (context) => ReminderBloc(reminderRepository),
       ),
       BlocProvider<AdoptionStatusBloc>(
         create: (context) => AdoptionStatusBloc(AdoptionStatusRepository()),
-      )
+      ),
     ];
   }
 }
+

@@ -66,6 +66,7 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
             children: [
               AdoptionScreen(),
               ReminderScreen(),
+              AdoptionScreen(),
               ChatScreen(),
               AdoptionStatusScreen(),
               // Other screens

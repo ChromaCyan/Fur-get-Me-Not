@@ -23,26 +23,23 @@ class PetDetailsBloc extends Bloc<PetDetailsEvent, PetDetailsState> {
     } else if (event is UploadVaccineHistoryEvent) {
       yield PetDetailsLoading();
       try {
-        final imageUrl = await petRepository.uploadMedicalHistory(
-            event.imageFile);
-        yield MedicalHistoryUploaded(imageUrl: imageUrl);
+        final imageUrl = await petRepository.uploadVaccineHistory(event.imageFile);
+        yield VaccineHistoryUploaded(imageUrl: imageUrl);
       } catch (e) {
         yield PetDetailsError(message: e.toString());
       }
-    } else if (event is UploadVaccineHistoryEvent) {
+    } else if (event is UploadMedicalHistoryEvent) {  // Corrected this part
       yield PetDetailsLoading();
       try {
-        final imageUrl = await petRepository.uploadVaccineHistory(
-            event.imageFile);
-        yield VaccineHistoryUploaded(imageUrl: imageUrl);
+        final imageUrl = await petRepository.uploadMedicalHistory(event.imageFile);
+        yield MedicalHistoryUploaded(imageUrl: imageUrl);
       } catch (e) {
         yield PetDetailsError(message: e.toString());
       }
     } else if (event is UploadPetEvent) {
       yield PetDetailsLoading();
       try {
-        final imageUrl = await petRepository.uploadPet(
-            event.imageFile);
+        final imageUrl = await petRepository.uploadPet(event.imageFile);
         yield PetUploaded(imageUrl: imageUrl);
       } catch (e) {
         yield PetDetailsError(message: e.toString());
