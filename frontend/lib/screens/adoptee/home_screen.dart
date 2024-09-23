@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/nav_bar/nav_cubit.dart';
 import 'pages.dart';
 
-class AdopterHomeScreen extends StatefulWidget {
-  const AdopterHomeScreen({Key? key}) : super(key: key);
+class AdopteeHomeScreen extends StatefulWidget {
+  const AdopteeHomeScreen({Key? key}) : super(key: key);
 
   @override
   _AdopterHomeScreenState createState() => _AdopterHomeScreenState();
 }
 
-class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
+class _AdopterHomeScreenState extends State<AdopteeHomeScreen> {
   late PageController _pageController;
 
   @override
@@ -31,7 +31,7 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
       create: (context) => BottomNavCubit(),
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFFF5E6CA),
+          backgroundColor: Colors.white,
           title: Text(
             'Fur-get Me Not',
             style: TextStyle(color: Colors.black),

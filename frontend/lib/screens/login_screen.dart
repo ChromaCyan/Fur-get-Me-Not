@@ -5,11 +5,13 @@ import 'package:fur_get_me_not/bloc/authentication/login_event.dart';
 import 'package:fur_get_me_not/bloc/authentication/login_state.dart';
 import 'package:fur_get_me_not/repositories/login_repository.dart';
 import 'package:fur_get_me_not/screens/adopter/home_screen.dart';
+import 'package:fur_get_me_not/screens/adoptee/home_screen.dart';
 import 'package:fur_get_me_not/screens/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  int? userType; // Variable to store user type
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +25,7 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Sign In',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                const Text('Sign In', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 24),
                 const Text('Email'),
                 const SizedBox(height: 8),
@@ -65,11 +61,19 @@ class LoginScreen extends StatelessWidget {
                 BlocConsumer<LoginBloc, LoginState>(
                   listener: (context, state) {
                     if (state is LoginSuccess) {
-                      // Navigate to the next screen on success
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => AdopterHomeScreen()),
-                      );
+                      // Navigate based on userType
+                      if (state.userType == 1) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdopterHomeScreen()),
+                        );
+                      } else {
+                        // Navigate to Adoptee home screen
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdopteeHomeScreen()),
+                        );
+                      }
                     } else if (state is LoginFailure) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.error)),
@@ -101,6 +105,7 @@ class LoginScreen extends StatelessWidget {
                     );
                   },
                 ),
+
                 const SizedBox(height: 12),
                 const Spacer(),
                 Center(

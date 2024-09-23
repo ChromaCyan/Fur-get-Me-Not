@@ -1,16 +1,22 @@
+import 'package:fur_get_me_not/models/user.dart';
+
 class LoginRepository {
   // Dummy data for now
-  final String _dummyEmail = '123';
-  final String _dummyPassword = '123';
+  final List<User> _dummyUsers = [
+    User(id: 'dummy-id', fullName: 'josh',email: '456', password: '456', userType: 0), // Adoptee
+    User(id: 'dummy-id2', fullName: 'bogart', email: '123', password: '123', userType: 1), // Adopter
+  ];
 
-  Future<bool> login({required String email, required String password}) async {
+  Future<Map<String, dynamic>> login({required String email, required String password}) async {
     // Simulate a network delay
     await Future.delayed(const Duration(seconds: 1));
 
-    // Check if email and password match dummy data
-    if (email == _dummyEmail && password == _dummyPassword) {
-      return true; // Login success
+    // Check for matching user
+    for (var user in _dummyUsers) {
+      if (user.email == email && user.password == password) {
+        return {'success': true, 'userType': user.userType}; // Return userType
+      }
     }
-    return false; // Login failed
+    return {'success': false}; // Login failed
   }
 }

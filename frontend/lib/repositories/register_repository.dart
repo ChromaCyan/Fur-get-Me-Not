@@ -19,6 +19,7 @@ class RegisterRepository {
       fullName: fullName,
       email: email,
       password: password,
+      userType: 1,
     );
   }
 }
