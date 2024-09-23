@@ -23,7 +23,7 @@ class CustomBottomNavBar extends StatelessWidget {
               context,
               icon: Icons.home_outlined,
               page: 0,
-              label: "Home",
+              label: "Adoption List",
               filledIcon: Icons.home,
             ),
             _bottomNavBarItem(

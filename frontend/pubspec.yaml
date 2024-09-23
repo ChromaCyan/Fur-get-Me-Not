@@ -75,7 +75,8 @@ flutter:
   assets:
     - images/pet-cat1.png
     - images/pet-cat2.png
-    - images/pet-cat3.png
+    - images/pet_cat4.png
+    - images/pet_cat5.png
     - images/cat1.png
     - images/image1.png
     - images/image2.png

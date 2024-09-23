@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/models/pet.dart';
+import 'package:fur_get_me_not/models/admin_pet.dart';
 
 class PetCard extends StatelessWidget {
-  final Pet pet;
+  final AdminPet pet;
   final Size size;
   final VoidCallback onTap;
 
