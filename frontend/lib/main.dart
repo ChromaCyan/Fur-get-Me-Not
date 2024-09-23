@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:fur_get_me_not/screens/splash_screen.dart';
 import 'package:fur_get_me_not/app_theme.dart';
-import 'package:fur_get_me_not/bloc/authentication/login_bloc.dart';
-import 'package:fur_get_me_not/repositories/login_repository.dart';
 import 'package:fur_get_me_not/repositories/pet_repository.dart';
+import 'package:fur_get_me_not/repositories/chat_list_repository.dart';
+import 'package:fur_get_me_not/repositories/chat_repository.dart';
 import 'package:fur_get_me_not/providers/provider.dart';
 
 void main() {
@@ -20,7 +19,13 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<PetRepository>(
-          create: (_) => PetRepository(), // Add PetRepository provider
+          create: (_) => PetRepository(),
+        ),
+        Provider<ChatListRepository>(
+          create: (_) => ChatListRepository(),
+        ),
+        Provider<ChatRepository>( // Add ChatRepository here
+          create: (_) => ChatRepository(),
         ),
         ...AppProviders.getProviders(), // Other providers
       ],
@@ -28,7 +33,7 @@ class MyApp extends StatelessWidget {
         title: 'Fur-get Me Not',
         theme: AppTheme.theme,
         debugShowCheckedModeBanner: false,
-        home: const PetsOnBoardingScreen(), // Ensure your home screen is correctly referenced
+        home: const PetsOnBoardingScreen(),
       ),
     );
   }

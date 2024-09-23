@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_status/adoption_status_bloc.dart';
+import 'package:fur_get_me_not/bloc/adopter/chat_list/chat_list_bloc.dart';
+import 'package:fur_get_me_not/bloc/adopter/chat/chat_bloc.dart'; // Import ChatBloc
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/nav_bar/nav_cubit.dart';
@@ -12,8 +14,8 @@ import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/repositories/register_repository.dart';
 import 'package:fur_get_me_not/repositories/reminder_repository.dart';
 import 'package:fur_get_me_not/repositories/adoption_status_repository.dart';
-
-final ReminderRepository reminderRepository = ReminderRepository();
+import 'package:fur_get_me_not/repositories/chat_list_repository.dart';
+import 'package:fur_get_me_not/repositories/chat_repository.dart';
 
 class AppProviders {
   static List<BlocProvider> getProviders() {
@@ -22,6 +24,8 @@ class AppProviders {
     final RegisterRepository registerRepository = RegisterRepository();
     final ReminderRepository reminderRepository = ReminderRepository();
     final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
+    final ChatListRepository chatListRepository = ChatListRepository();
+    final ChatRepository chatRepository = ChatRepository(); // Initialize ChatRepository
 
     return [
       BlocProvider<LoginBloc>(
@@ -44,6 +48,12 @@ class AppProviders {
       ),
       BlocProvider<AdoptionStatusBloc>(
         create: (context) => AdoptionStatusBloc(adoptionStatusRepository),
+      ),
+      BlocProvider<ChatListBloc>(
+        create: (context) => ChatListBloc(chatListRepository),
+      ),
+      BlocProvider<ChatBloc>( // Pass only ChatRepository here
+        create: (context) => ChatBloc(chatRepository),
       ),
     ];
   }

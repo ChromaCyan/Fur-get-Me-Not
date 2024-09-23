@@ -19,18 +19,18 @@ class ReminderRepository {
   ];
 
   Future<List<Reminder>> getReminders() async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
+    await Future.delayed(Duration(seconds: 1));
     return _reminders;
   }
 
   Future<Reminder> addReminder(Reminder reminder) async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
+    await Future.delayed(Duration(seconds: 1));
     _reminders.add(reminder);
     return reminder;
   }
 
   Future<Reminder> updateReminder(Reminder updatedReminder) async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
+    await Future.delayed(Duration(seconds: 1));
     final index = _reminders.indexWhere((r) => r.id == updatedReminder.id);
     if (index != -1) {
       _reminders[index] = updatedReminder;
@@ -41,7 +41,7 @@ class ReminderRepository {
   }
 
   Future<void> deleteReminder(String id) async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
+    await Future.delayed(Duration(seconds: 1));
     _reminders.removeWhere((r) => r.id == id);
   }
 }

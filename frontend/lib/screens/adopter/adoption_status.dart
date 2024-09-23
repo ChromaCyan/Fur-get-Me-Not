@@ -49,12 +49,6 @@ class _AdoptionStatusScreenState extends State<AdoptionStatusScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/add_adoption');
-        },
-        child: Icon(Icons.add),
-      ),
     );
   }
 }

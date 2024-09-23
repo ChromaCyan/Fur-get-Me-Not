@@ -6,6 +6,7 @@ import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_state.dart';
 import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
+import 'package:fur_get_me_not/screens/widgets/back_button.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final String petId;
@@ -57,7 +58,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       child: Stack(
         children: [
           itemsImageAndBackground(size),
-          backButton(size, context),
+          BackButtonWidget(),
           Positioned(
             bottom: 0,
             child: Container(
@@ -178,7 +179,12 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ChatListScreen()),
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  userName: 'Sophia Black',
+                  profileImageUrl: 'images/image2.png',
+                ),
+              ),
             );
           },
           child: Container(
@@ -241,35 +247,6 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             fontWeight: FontWeight.w500,
           ),
         ),
-      ),
-    );
-  }
-
-  Positioned backButton(Size size, BuildContext context) {
-    return Positioned(
-      height: size.height * 0.14,
-      right: 20,
-      left: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
-            ),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: const Icon(
-                Icons.arrow_back_ios_rounded,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
