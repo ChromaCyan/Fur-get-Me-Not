@@ -7,6 +7,7 @@ import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_state.dart';
 import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
 import 'package:fur_get_me_not/screens/widgets/back_button.dart';
+import 'adoption_form.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final String petId;
@@ -84,7 +85,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       const SizedBox(height: 20),
                       showPetInfo ? petInfo() : vaccineMedicalHistory(),
                       const SizedBox(height: 20),
-                      adoptMeButton(),
+                      adoptMeButton(context),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -231,20 +232,29 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     );
   }
 
-  Widget adoptMeButton() {
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25),
-        color: Colors.green,
-      ),
-      child: const Center(
-        child: Text(
-          'Adopt Me',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
+  Widget adoptMeButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // Navigate to the AdoptionForm
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AdoptionForm()),
+        );
+      },
+      child: Container(
+        height: 70,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: Colors.green,
+        ),
+        child: const Center(
+          child: Text(
+            'Adopt Me',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fur_get_me_not/bloc/adopter/adoption_form/adoption_form_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_status/adoption_status_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/chat_list/chat_list_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/chat/chat_bloc.dart'; // Import ChatBloc
@@ -16,6 +17,7 @@ import 'package:fur_get_me_not/repositories/reminder_repository.dart';
 import 'package:fur_get_me_not/repositories/adoption_status_repository.dart';
 import 'package:fur_get_me_not/repositories/chat_list_repository.dart';
 import 'package:fur_get_me_not/repositories/chat_repository.dart';
+import 'package:fur_get_me_not/repositories/adoption_form_repository.dart';
 
 class AppProviders {
   static List<BlocProvider> getProviders() {
@@ -25,7 +27,8 @@ class AppProviders {
     final ReminderRepository reminderRepository = ReminderRepository();
     final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
     final ChatListRepository chatListRepository = ChatListRepository();
-    final ChatRepository chatRepository = ChatRepository(); // Initialize ChatRepository
+    final ChatRepository chatRepository = ChatRepository();
+    final AdoptionRepository adoptionRepository = AdoptionRepository();
 
     return [
       BlocProvider<LoginBloc>(
@@ -54,6 +57,9 @@ class AppProviders {
       ),
       BlocProvider<ChatBloc>( // Pass only ChatRepository here
         create: (context) => ChatBloc(chatRepository),
+      ),
+      BlocProvider<AdoptionBloc>(
+        create: (context) => AdoptionBloc(adoptionRepository),
       ),
     ];
   }
