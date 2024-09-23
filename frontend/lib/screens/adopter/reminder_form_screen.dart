@@ -34,7 +34,8 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
                 onSaved: (value) => _description = value!,
-                validator: (value) => value!.isEmpty ? 'Enter a description' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Enter a description' : null,
               ),
               TextButton(
                 onPressed: () async {
