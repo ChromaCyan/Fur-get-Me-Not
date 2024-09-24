@@ -1,0 +1,25 @@
+*Screens finished for user's journey*
+*UI is still pretty shit and garbage so need revamping*
+*No API YET*
+- Josh Brian F. Bugarin (9/20/2024)
+
+1. Adoption Screens
+- Adoption List
+- Pet Details
+- Adoption Form
+- Chat with owner
+
+2. Reminder Screens
+- Reminder list
+- Add reminder/Edit reminder
+
+3. Adopted Pet List (Not done yet)
+- Pet list
+- Pet Details (Edit/Delete)
+
+4. Chat Screen
+- Chat List
+- Chat screen
+
+5. Adoption Status (Not done yet)
+- Adoption Status (to see the status of your adoption request if the owner accepted it or rejected it)

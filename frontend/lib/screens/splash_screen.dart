@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/config/const.dart';
-import 'package:fur_get_me_not/models/onboarding_model.dart';
-import 'package:fur_get_me_not/screens/login_screen.dart';
+import 'package:fur_get_me_not/models/splash/onboarding_model.dart';
+import 'package:fur_get_me_not/screens/authentication/login_screen.dart';
 
 
 class PetsOnBoardingScreen extends StatefulWidget {

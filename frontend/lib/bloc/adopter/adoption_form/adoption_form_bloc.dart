@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/repositories/adoption_form_repository.dart';
-import 'package:fur_get_me_not/models/adoption_form.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/adoption_form_repository.dart';
+import 'package:fur_get_me_not/models/adopters/adoption_list/adoption_form.dart';
 
 // Events
 abstract class AdoptionEvent extends Equatable {

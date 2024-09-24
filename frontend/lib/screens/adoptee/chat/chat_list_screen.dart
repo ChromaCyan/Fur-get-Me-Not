@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adoptee/chat_list/chat_list_bloc.dart';
 import 'package:fur_get_me_not/bloc/adoptee/chat_list/chat_list_event.dart';
 import 'package:fur_get_me_not/bloc/adoptee/chat_list/chat_list_state.dart';
-import 'package:fur_get_me_not/widgets/admin_chat_list_card.dart';
+import 'package:fur_get_me_not/widgets/cards/admin_chat_list_card.dart';
 
 class ChatListScreen extends StatelessWidget {
   @override

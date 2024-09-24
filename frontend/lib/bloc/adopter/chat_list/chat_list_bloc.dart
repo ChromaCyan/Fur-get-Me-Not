@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:fur_get_me_not/models/chat_list.dart';
-import 'package:fur_get_me_not/repositories/chat_list_repository.dart';
+import 'package:fur_get_me_not/models/adopters/chat/chat_list.dart';
+import 'package:fur_get_me_not/repositories/adopters/chat/chat_list_repository.dart';
 import 'chat_list_event.dart';
 import 'chat_list_state.dart';
 

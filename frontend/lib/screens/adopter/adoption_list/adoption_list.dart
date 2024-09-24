@@ -4,8 +4,8 @@ import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_bloc
 import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_state.dart';
 import 'package:fur_get_me_not/screens/adopter/adoption_list/pet_details_screen.dart';
-import 'package:fur_get_me_not/widgets/pet_card.dart';
-import 'package:fur_get_me_not/widgets/banner_card.dart';
+import 'package:fur_get_me_not/widgets/cards/pet_card.dart';
+import 'package:fur_get_me_not/widgets/headers/banner_card.dart';
 
 class AdoptionScreen extends StatefulWidget {
   const AdoptionScreen({super.key});
@@ -31,7 +31,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            const BannerWidget(text: "This is a banner\n placeholder"),
+            const BannerWidget(text: "Adopt a feline companion\n now!"),
             const SizedBox(height: 20),
             BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
               builder: (context, state) {

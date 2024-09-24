@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:fur_get_me_not/repositories/admin_chat_list_repository.dart';
+import 'package:fur_get_me_not/repositories/adoptee/chat/admin_chat_list_repository.dart';
 import 'chat_list_event.dart';
 import 'chat_list_state.dart';
 

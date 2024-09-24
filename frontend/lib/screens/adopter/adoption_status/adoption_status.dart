@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_status/adoption_status_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_status/adoption_status_state.dart';
-import 'package:fur_get_me_not/models/adoption_status.dart';
+import 'package:fur_get_me_not/models/adopters/adoption_status/adoption_status.dart';
 
 class AdoptionStatusScreen extends StatefulWidget {
   @override

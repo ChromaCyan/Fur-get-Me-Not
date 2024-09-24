@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/models/adoption_status.dart';
-import 'package:fur_get_me_not/repositories/adoption_status_repository.dart';
+import 'package:fur_get_me_not/models/adopters/adoption_status/adoption_status.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_status/adoption_status_repository.dart';
 import 'adoption_status_event.dart';
 import 'adoption_status_state.dart';
 

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/models/admin_chat_list.dart';
+import 'package:fur_get_me_not/models/adoptee/chat/admin_chat_list.dart';
 
 abstract class ChatState extends Equatable {
   @override

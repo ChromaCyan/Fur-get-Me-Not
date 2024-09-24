@@ -1,5 +1,5 @@
-import 'package:fur_get_me_not/repositories/chat_repository.dart';
-import 'package:fur_get_me_not/models/chat.dart';
+import 'package:fur_get_me_not/repositories/adopters/chat/chat_repository.dart';
+import 'package:fur_get_me_not/models/adopters/chat/chat.dart';
 
 abstract class ChatState {}
 

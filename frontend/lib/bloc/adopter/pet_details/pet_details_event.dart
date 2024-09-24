@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:fur_get_me_not/models/pet.dart';
+import 'package:fur_get_me_not/models/adopters/adoption_list/pet.dart';
 
 abstract class PetDetailsEvent {}
 

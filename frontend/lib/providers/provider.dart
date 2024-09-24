@@ -10,18 +10,18 @@ import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/nav_bar/nav_cubit.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_bloc.dart';
-import 'package:fur_get_me_not/bloc/authentication/login_bloc.dart';
-import 'package:fur_get_me_not/repositories/admin_pet_repository.dart';
-import 'package:fur_get_me_not/repositories/login_repository.dart';
-import 'package:fur_get_me_not/bloc/authentication/register_bloc.dart';
-import 'package:fur_get_me_not/repositories/pet_repository.dart';
-import 'package:fur_get_me_not/repositories/register_repository.dart';
-import 'package:fur_get_me_not/repositories/reminder_repository.dart';
-import 'package:fur_get_me_not/repositories/adoption_status_repository.dart';
-import 'package:fur_get_me_not/repositories/chat_list_repository.dart';
-import 'package:fur_get_me_not/repositories/chat_repository.dart';
-import 'package:fur_get_me_not/repositories/admin_chat_list_repository.dart';
-import 'package:fur_get_me_not/repositories/adoption_form_repository.dart';
+import 'package:fur_get_me_not/bloc/authentication/login/login_bloc.dart';
+import 'package:fur_get_me_not/repositories/adoptee/pet_management/admin_pet_repository.dart';
+import 'package:fur_get_me_not/repositories/authentication/login_repository.dart';
+import 'package:fur_get_me_not/bloc/authentication/registration/register_bloc.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/pet_repository.dart';
+import 'package:fur_get_me_not/repositories/authentication/register_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/reminder/reminder_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_status/adoption_status_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/chat/chat_list_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/chat/chat_repository.dart';
+import 'package:fur_get_me_not/repositories/adoptee/chat/admin_chat_list_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/adoption_form_repository.dart';
 
 class AppProviders {
   static List<BlocProvider> getProviders() {

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/models/adoption_status.dart';
+import 'package:fur_get_me_not/models/adopters/adoption_status/adoption_status.dart';
 
 
 abstract class AdoptionStatusState extends Equatable {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/models/pet.dart';
+import 'package:fur_get_me_not/models/adopters/adoption_list/pet.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_state.dart';
-import 'package:fur_get_me_not/repositories/pet_repository.dart';
-import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
-import 'package:fur_get_me_not/widgets/back_button.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/pet_repository.dart';
+import 'package:fur_get_me_not/screens/adopter/chat/chat_screen.dart';
+import 'package:fur_get_me_not/widgets/buttons/back_button.dart';
 import 'adoption_form.dart';
 
 class PetDetailsPage extends StatelessWidget {

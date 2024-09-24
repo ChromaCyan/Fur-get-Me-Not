@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'pet_management_event.dart';
 import 'pet_management_state.dart';
-import 'package:fur_get_me_not/models/admin_pet.dart';
-import 'package:fur_get_me_not/repositories/admin_pet_repository.dart';
+import 'package:fur_get_me_not/models/adoptee/pet_management/admin_pet.dart';
+import 'package:fur_get_me_not/repositories/adoptee/pet_management/admin_pet_repository.dart';
 
 class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
   final AdminPetRepository petRepository;

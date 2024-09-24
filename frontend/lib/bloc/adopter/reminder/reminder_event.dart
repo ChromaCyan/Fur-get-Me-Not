@@ -1,6 +1,6 @@
 // blocs/reminder_event.dart
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/models/reminder.dart';
+import 'package:fur_get_me_not/models/adopters/reminder/reminder.dart';
 
 abstract class ReminderEvent extends Equatable {
   const ReminderEvent();

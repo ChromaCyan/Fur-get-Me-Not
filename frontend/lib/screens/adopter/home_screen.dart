@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/screens/adopter/reminder/reminder_screen.dart';
 import 'package:fur_get_me_not/screens/adopter/adoption_list/pet_details_screen.dart';
 import 'package:fur_get_me_not/screens/adopter/pages.dart';
 import 'adoption_status/adoption_status.dart';
-import 'package:fur_get_me_not/widgets/botton_nav_bar.dart';
+import 'package:fur_get_me_not/widgets/navigations/botton_nav_bar.dart';
 
 class AdopterHomeScreen extends StatefulWidget {
   @override

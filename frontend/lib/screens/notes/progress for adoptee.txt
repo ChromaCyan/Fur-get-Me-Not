@@ -1,0 +1,17 @@
+*Screens finished for user's journey*
+*UI is still pretty shit and garbage so need revamping*
+*No API YET*
+- Josh Brian F. Bugarin (9/20/2024)
+
+1. Pet Management (Pet listed for adoption)
+- Pet List
+- Add Pet Form/Edit Pet Form
+
+2. Chat Screen
+- Chat List (list of adopters chatting the owner)
+- Chat screen (one-on-one with the chatters when the chat card is clicked)
+
+5. Adoption Request (Not done yet)
+- Adoption List (to see request of adopters to adopt specific pets)
+- Adoption Form Details (to view the details of form the adopter has filled when adopt button has been clicked)
+

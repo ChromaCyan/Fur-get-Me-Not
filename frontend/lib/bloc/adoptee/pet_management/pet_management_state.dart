@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/models/admin_pet.dart';
+import 'package:fur_get_me_not/models/adoptee/pet_management/admin_pet.dart';
 
 abstract class PetManagementState extends Equatable {
   @override

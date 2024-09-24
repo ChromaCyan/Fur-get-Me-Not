@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fur_get_me_not/screens/splash_screen.dart';
 import 'package:fur_get_me_not/config/app_theme.dart';
-import 'package:fur_get_me_not/repositories/pet_repository.dart';
-import 'package:fur_get_me_not/repositories/chat_list_repository.dart';
-import 'package:fur_get_me_not/repositories/chat_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/pet_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/chat/chat_list_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/chat/chat_repository.dart';
 import 'package:fur_get_me_not/providers/provider.dart';
 import 'package:fur_get_me_not/screens/adopter/reminder/reminder_form_screen.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adoptee/pet_management/pet_management_bloc.dart';
 import 'package:fur_get_me_not/bloc/adoptee/pet_management/pet_management_state.dart';
 import 'package:fur_get_me_not/screens/adopter/adoption_list/pet_details_screen.dart';
-import 'package:fur_get_me_not/widgets/admin_pet_card.dart';
+import 'package:fur_get_me_not/widgets/cards/admin_pet_card.dart';
 import 'add_pet_form.dart';
 
 class PetManagementScreen extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_state.dart';
-import 'package:fur_get_me_not/models/reminder.dart';
+import 'package:fur_get_me_not/models/adopters/reminder/reminder.dart';
 
 class AddReminderScreen extends StatefulWidget {
   @override

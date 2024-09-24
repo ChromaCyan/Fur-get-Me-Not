@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_state.dart';
-import 'package:fur_get_me_not/repositories/reminder_repository.dart'; // Import ReminderRepository
-import 'package:fur_get_me_not/models/reminder.dart';
+import 'package:fur_get_me_not/repositories/adopters/reminder/reminder_repository.dart'; // Import ReminderRepository
+import 'package:fur_get_me_not/models/adopters/reminder/reminder.dart';
 
 class ReminderScreen extends StatelessWidget {
   const ReminderScreen({Key? key}) : super(key: key);

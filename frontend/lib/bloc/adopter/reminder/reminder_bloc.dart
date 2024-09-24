@@ -2,8 +2,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'reminder_event.dart';
 import 'reminder_state.dart';
-import 'package:fur_get_me_not/models/reminder.dart';
-import 'package:fur_get_me_not/repositories/reminder_repository.dart';
+import 'package:fur_get_me_not/models/adopters/reminder/reminder.dart';
+import 'package:fur_get_me_not/repositories/adopters/reminder/reminder_repository.dart';
 
 class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   final ReminderRepository reminderRepository;

@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/models/pet.dart';
+import 'package:fur_get_me_not/models/adopters/adoption_list/pet.dart';
 import 'pet_details_event.dart';
 import 'pet_details_state.dart';
-import 'package:fur_get_me_not/repositories/pet_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/pet_repository.dart';
 
 class PetDetailsBloc extends Bloc<PetDetailsEvent, PetDetailsState> {
   final PetRepository petRepository;

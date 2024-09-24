@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_form/adoption_form_bloc.dart';
-import 'package:fur_get_me_not/repositories/adoption_form_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/adoption_form_repository.dart';
 
 class AdoptionForm extends StatefulWidget {
   @override
