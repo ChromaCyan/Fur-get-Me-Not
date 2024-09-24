@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/bloc/adopter/chat_list/chat_list_bloc.dart';
-import 'package:fur_get_me_not/bloc/adopter/chat_list/chat_list_event.dart';
-import 'package:fur_get_me_not/bloc/adopter/chat_list/chat_list_state.dart';
-import 'package:fur_get_me_not/screens/widgets/chat_list_card.dart';
+import 'package:fur_get_me_not/bloc/adoptee/chat_list/chat_list_bloc.dart';
+import 'package:fur_get_me_not/bloc/adoptee/chat_list/chat_list_event.dart';
+import 'package:fur_get_me_not/bloc/adoptee/chat_list/chat_list_state.dart';
+import 'package:fur_get_me_not/widgets/admin_chat_list_card.dart';
 
 class ChatListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Dispatch the FetchChats event when the screen is built
-    context.read<ChatListBloc>().add(FetchChats());
+    context.read<AdminChatListBloc>().add(FetchChats());
 
     return Scaffold(
-      body: BlocBuilder<ChatListBloc, ChatState>(
+      body: BlocBuilder<AdminChatListBloc, ChatState>(
         builder: (context, state) {
           if (state is ChatLoading) {
             return const Center(child: CircularProgressIndicator());
@@ -23,7 +23,7 @@ class ChatListScreen extends StatelessWidget {
             return ListView.builder(
               itemCount: chats.length,
               itemBuilder: (context, index) {
-                return ChatCard(chat: chats[index]);
+                return AdminChatCard(chat: chats[index]);
               },
             );
           }

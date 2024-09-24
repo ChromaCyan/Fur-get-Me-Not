@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_bloc.dart';
-import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_event.dart';
-import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_state.dart';
-import 'package:fur_get_me_not/screens/adopter/pet_details_screen.dart';
-import 'package:fur_get_me_not/screens/widgets/pet_card.dart';
-import 'package:fur_get_me_not/screens/widgets/banner_card.dart';
+import 'package:fur_get_me_not/bloc/adoptee/pet_management/pet_management_bloc.dart';
+import 'package:fur_get_me_not/bloc/adoptee/pet_management/pet_management_state.dart';
+import 'package:fur_get_me_not/screens/adopter/adoption_list/pet_details_screen.dart';
+import 'package:fur_get_me_not/widgets/admin_pet_card.dart';
+import 'add_pet_form.dart';
 
-class AdoptionScreen extends StatefulWidget {
-  const AdoptionScreen({super.key});
+class PetManagementScreen extends StatefulWidget {
+  const PetManagementScreen({super.key});
 
   @override
-  State<AdoptionScreen> createState() => _AdoptionScreenState();
+  State<PetManagementScreen> createState() => _PetManagementScreenState();
 }
 
-class _AdoptionScreenState extends State<AdoptionScreen> {
+class _PetManagementScreenState extends State<PetManagementScreen> {
   @override
   void initState() {
     super.initState();
-    // Trigger event to load pets when the screen initializes
-    context.read<AdoptionBrowseBloc>().add(LoadAdoptionBrowseEvent(filter: ''));
   }
 
   @override
@@ -31,13 +28,11 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            const BannerWidget(text: "This is a banner\n placeholder"),
-            const SizedBox(height: 20),
-            BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
+            BlocBuilder<PetManagementBloc, PetManagementState>(
               builder: (context, state) {
-                if (state is AdoptionBrowseLoading) {
+                if (state is PetManagementLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (state is AdoptionBrowseLoaded) {
+                } else if (state is PetManagementLoaded) {
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -50,7 +45,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PetDetailsPage(petId: pet.id,),
+                                builder: (context) => PetDetailsPage(petId: pet.id),
                               ),
                             );
                           },
@@ -58,7 +53,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                       }),
                     ),
                   );
-                } else if (state is AdoptionBrowseError) {
+                } else if (state is PetManagementError) {
                   return Center(child: Text(state.message));
                 } else {
                   return const Center(child: Text('Error: Unknown state'));
@@ -67,6 +62,16 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context,
+            MaterialPageRoute(
+              builder: (context) => AddPetForm(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

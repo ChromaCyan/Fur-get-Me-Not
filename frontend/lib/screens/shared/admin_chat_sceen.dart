@@ -4,7 +4,7 @@ import 'package:fur_get_me_not/bloc/adopter/chat/chat_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/chat/chat_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/chat/chat_state.dart';
 import 'package:fur_get_me_not/repositories/chat_repository.dart';
-import 'package:fur_get_me_not/screens/widgets/chat_bar.dart';
+import 'package:fur_get_me_not/widgets/chat_bar.dart';
 
 class ChatScreen extends StatelessWidget {
   final String userName;

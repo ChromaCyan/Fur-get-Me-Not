@@ -6,7 +6,7 @@ import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/pet_details/pet_details_state.dart';
 import 'package:fur_get_me_not/repositories/pet_repository.dart';
 import 'package:fur_get_me_not/screens/shared/chat_screen.dart';
-import 'package:fur_get_me_not/screens/widgets/back_button.dart';
+import 'package:fur_get_me_not/widgets/back_button.dart';
 import 'adoption_form.dart';
 
 class PetDetailsPage extends StatelessWidget {

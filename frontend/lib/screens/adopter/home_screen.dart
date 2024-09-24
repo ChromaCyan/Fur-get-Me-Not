@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/nav_bar/nav_cubit.dart';
-import 'package:fur_get_me_not/screens/adopter/reminder_screen.dart';
-import 'package:fur_get_me_not/screens/adopter/pet_details_screen.dart';
+import 'package:fur_get_me_not/screens/adopter/reminder/reminder_screen.dart';
+import 'package:fur_get_me_not/screens/adopter/adoption_list/pet_details_screen.dart';
 import 'package:fur_get_me_not/screens/adopter/pages.dart';
-import 'adoption_status.dart';
-import 'package:fur_get_me_not/screens/widgets/botton_nav_bar.dart';
+import 'adoption_status/adoption_status.dart';
+import 'package:fur_get_me_not/widgets/botton_nav_bar.dart';
 
 class AdopterHomeScreen extends StatefulWidget {
   @override
