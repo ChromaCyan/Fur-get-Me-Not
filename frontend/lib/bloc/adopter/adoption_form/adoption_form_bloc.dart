@@ -53,7 +53,7 @@ class AdoptionError extends AdoptionState {
 
 // BLoC
 class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
-  final AdoptionRepository adoptionRepository;
+  final AdoptionFormRepository adoptionRepository;
 
   AdoptionBloc(this.adoptionRepository) : super(AdoptionInitial());
 

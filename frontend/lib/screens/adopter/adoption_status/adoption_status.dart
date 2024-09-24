@@ -1,53 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_status/adoption_status_bloc.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_status/adoption_status_repository.dart';
+import 'package:fur_get_me_not/bloc/adopter/adoption_status/adoption_status_event.dart';
 import 'package:fur_get_me_not/bloc/adopter/adoption_status/adoption_status_state.dart';
-import 'package:fur_get_me_not/models/adopters/adoption_status/adoption_status.dart';
+import 'package:fur_get_me_not/widgets/cards/adoption_status_card.dart';
 
-class AdoptionStatusScreen extends StatefulWidget {
-  @override
-  _AdoptionStatusScreenState createState() => _AdoptionStatusScreenState();
-}
-
-class _AdoptionStatusScreenState extends State<AdoptionStatusScreen> {
+class AdoptionStatusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<AdoptionStatusBloc, AdoptionStatusState>(
-        builder: (context, state) {
-          if (state is AdoptionStatusInitial) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is AdoptionStatusLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is AdoptionStatusLoaded) {
-            final adoptions = state.adoptions;
-            return ListView.builder(
-              itemCount: adoptions.length,
-              itemBuilder: (context, index) {
-                final adoption = adoptions[index];
-                return ListTile(
-                  title: Text(adoption.petName),
-                  subtitle: Text('Owner: ${adoption.ownerName}, Status: ${adoption.status}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.visibility),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/adoption_details', arguments: adoption);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          } else if (state is AdoptionStatusError) {
-            return Center(child: Text(state.message));
-          } else {
-            return Center(child: Text('No adoptions found.'));
-          }
-        },
+    return BlocProvider(
+      create: (context) => AdoptionStatusBloc(adoptionStatusRepository: AdoptionStatusRepository())
+        ..add(LoadAdoptionStatus()),
+      child: Scaffold(
+        body: BlocBuilder<AdoptionStatusBloc, AdoptionStatusState>(
+          builder: (context, state) {
+            if (state is AdoptionStatusLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state is AdoptionStatusLoaded) {
+              final adoptionStatusList = state.adoptionStatusList; // Accessing adoptionStatusList here
+              return ListView.builder(
+                itemCount: adoptionStatusList.length,
+                itemBuilder: (context, index) {
+                  final adoptionStatus = adoptionStatusList[index];
+                  return AdoptionStatusCard(adoption: adoptionStatus);
+                },
+              );
+            } else if (state is AdoptionStatusError) {
+              return Center(child: Text(state.message));
+            } else {
+              return Center(child: Text('No adoptions found.'));
+            }
+          },
+        ),
       ),
     );
   }

@@ -1,11 +1,12 @@
 *Screens finished for user's journey*
 *UI is still pretty shit and garbage so need revamping*
 *No API YET*
-- Josh Brian F. Bugarin (9/20/2024)
+- Josh Brian F. Bugarin (9/25/2024)
 
 1. Pet Management (Pet listed for adoption)
 - Pet List
 - Add Pet Form/Edit Pet Form
+- Pet details (Not Done Yet)
 
 2. Chat Screen
 - Chat List (list of adopters chatting the owner)

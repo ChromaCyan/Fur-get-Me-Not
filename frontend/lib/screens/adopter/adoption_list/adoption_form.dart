@@ -34,7 +34,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AdoptionBloc(AdoptionRepository()),
+      create: (context) => AdoptionBloc(AdoptionFormRepository()),
       child: Scaffold(
         appBar: AppBar(
           title: Text('Adoption Form'),

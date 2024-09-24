@@ -2,30 +2,13 @@ import 'dart:io';
 import 'package:fur_get_me_not/models/adopters/adoption_status/adoption_status.dart';
 
 class AdoptionStatusRepository {
-  Future<List<AdoptionRequest>> getAdoptions() async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
+  Future<List<AdoptionStatus>> fetchAdoptions() async {
+    // Simulate fetching data from a remote source.
+    await Future.delayed(Duration(seconds: 2));
     return [
-      AdoptionRequest(
-        id: '1',
-        petName: 'Max',
-        ownerName: 'John Doe',
-        adoptionDate: DateTime.now().subtract(Duration(days: 30)),
-        status: 'Approved',
-      ),
-      AdoptionRequest(
-        id: '2',
-        petName: 'Whiskers',
-        ownerName: 'Jane Smith',
-        adoptionDate: DateTime.now().subtract(Duration(days: 15)),
-        status: 'Pending',
-      ),
-      AdoptionRequest(
-        id: '3',
-        petName: 'Fluffy',
-        ownerName: 'Bob Johnson',
-        adoptionDate: DateTime.now().add(Duration(days: 7)),
-        status: 'Rejected',
-      ),
+      AdoptionStatus(petName: 'Buddy', ownerName: 'John Doe', status: 'Pending', requestDate: '2024-09-20'),
+      AdoptionStatus(petName: 'Bella', ownerName: 'Jane Smith', status: 'Accepted', requestDate: '2024-09-18'),
+      AdoptionStatus(petName: 'Luna', ownerName: 'Sam Wilson', status: 'Rejected', requestDate: '2024-09-15'),
     ];
   }
 }

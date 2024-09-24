@@ -22,6 +22,7 @@ import 'package:fur_get_me_not/repositories/adopters/chat/chat_list_repository.d
 import 'package:fur_get_me_not/repositories/adopters/chat/chat_repository.dart';
 import 'package:fur_get_me_not/repositories/adoptee/chat/admin_chat_list_repository.dart';
 import 'package:fur_get_me_not/repositories/adopters/adoption_list/adoption_form_repository.dart';
+import 'package:fur_get_me_not/repositories/adopters/adoption_list/pet_repository.dart';
 
 class AppProviders {
   static List<BlocProvider> getProviders() {
@@ -29,12 +30,12 @@ class AppProviders {
     final LoginRepository loginRepository = LoginRepository();
     final RegisterRepository registerRepository = RegisterRepository();
     final ReminderRepository reminderRepository = ReminderRepository();
-    final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
     final ChatListRepository chatListRepository = ChatListRepository();
     final ChatRepository chatRepository = ChatRepository();
-    final AdoptionRepository adoptionRepository = AdoptionRepository();
+    final AdoptionFormRepository adoptionFormRepository = AdoptionFormRepository();
     final AdminChatListRepository adminChatListRepository = AdminChatListRepository();
     final AdminPetRepository adminPetRepository = AdminPetRepository();
+    final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
 
     return [
       BlocProvider<LoginBloc>(
@@ -56,7 +57,7 @@ class AppProviders {
         create: (context) => ReminderBloc(reminderRepository),
       ),
       BlocProvider<AdoptionStatusBloc>(
-        create: (context) => AdoptionStatusBloc(adoptionStatusRepository),
+        create: (context) => AdoptionStatusBloc(adoptionStatusRepository: adoptionStatusRepository),
       ),
       BlocProvider<ChatListBloc>(
         create: (context) => ChatListBloc(chatListRepository),
@@ -65,7 +66,7 @@ class AppProviders {
         create: (context) => ChatBloc(chatRepository),
       ),
       BlocProvider<AdoptionBloc>(
-        create: (context) => AdoptionBloc(adoptionRepository),
+        create: (context) => AdoptionBloc(adoptionFormRepository),
       ),
       BlocProvider<AdminChatListBloc>(
         create: (context) => AdminChatListBloc(adminChatListRepository),

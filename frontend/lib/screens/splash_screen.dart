@@ -131,6 +131,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                             child: Image.asset(
                               "images/pet-cat2.png",
                               color: pawColor1,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
@@ -144,6 +145,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                             child: Image.asset(
                               "images/pet-cat2.png",
                               color: pawColor1,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
@@ -152,13 +154,17 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                   ),
                 ),
               ),
+              // Centered main image
               Positioned(
                 bottom: 0,
                 right: 120,
-                child: Image.asset(
-                  onBoardData[index].image,
-                  height: size.height * 0.4,
-                  fit: BoxFit.contain,
+                child: SizedBox(
+                  height: size.height * 0.3,
+                  width: size.width * 0.5,
+                  child: Image.asset(
+                    onBoardData[index].image,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ],
@@ -199,4 +205,5 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
       ],
     );
   }
+
 }

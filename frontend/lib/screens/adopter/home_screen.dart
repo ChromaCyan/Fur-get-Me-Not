@@ -92,7 +92,7 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
       case 1:
         return 'Reminders';
       case 2:
-        return 'My Adopted Pet List';
+        return 'My Adopted Pets';
       case 3:
         return 'Chat';
       case 4:
