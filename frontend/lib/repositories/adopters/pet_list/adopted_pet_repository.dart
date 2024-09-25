@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:fur_get_me_not/models/adopters/adoption_list/pet.dart';
 
-class PetRepository {
+class AdoptedPetRepository {
   // Dummy data
   final Map<String, Pet> _pets = {
     '1': Pet(
@@ -17,20 +17,6 @@ class PetRepository {
       vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
       specialCareInstructions: '*Needs daily walks, \n *30 mins bath, \n *Daily brush',
     ),
-    '2': Pet(
-      id: '2',
-      name: 'Dave',
-      breed: 'Siamese',
-      gender: 'Unknown',
-      age: 9999999,
-      height: 55.0,
-      weight: 28.0,
-      petImageUrl: 'images/pet-cat1.png',
-      medicalHistoryImageUrl: 'images/pet_medical_image.png',
-      vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
-      specialCareInstructions: 'None',
-    ),
-    // Add more pets here as needed
   };
 
   // Fetch pet details by ID
@@ -39,6 +25,10 @@ class PetRepository {
     return _pets[petId]!;
   }
 
+  Future<List<Pet>> getAllPets() async {
+    await Future.delayed(Duration(seconds: 2));
+    return _pets.values.toList();
+  }
   // Update pet details
   Future<void> updatePetDetails(Pet pet) async {
     await Future.delayed(Duration(seconds: 1));
@@ -68,7 +58,6 @@ class PetRepository {
     await Future.delayed(Duration(seconds: 2));
     List<Pet> availablePets = _pets.values.toList();
 
-    // Apply filter logic (optional, based on breed for this example)
     if (filter.isNotEmpty) {
       availablePets = availablePets.where((pet) => pet.breed.toLowerCase().contains(filter.toLowerCase())).toList();
     }

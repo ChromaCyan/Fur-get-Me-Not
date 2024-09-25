@@ -25,6 +25,8 @@ import 'package:fur_get_me_not/repositories/adopters/chat/chat_repository.dart';
 import 'package:fur_get_me_not/repositories/adoptee/chat/admin_chat_list_repository.dart';
 import 'package:fur_get_me_not/repositories/adopters/adoption_list/adoption_form_repository.dart';
 import 'package:fur_get_me_not/repositories/adopters/adoption_list/pet_repository.dart';
+import 'package:fur_get_me_not/bloc/adopter/pet_list/pet_list_bloc.dart';
+import 'package:fur_get_me_not/repositories/adopters/pet_list/adopted_pet_repository.dart';
 
 class AppProviders {
   static List<BlocProvider> getProviders() {
@@ -39,6 +41,7 @@ class AppProviders {
     final AdminPetRepository adminPetRepository = AdminPetRepository();
     final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
     final AdoptionRequestRepository adoptionRequestRepository = AdoptionRequestRepository();
+    final AdoptedPetRepository adoptedPetRepository = AdoptedPetRepository();
 
     return [
       BlocProvider<LoginBloc>(
@@ -79,6 +82,9 @@ class AppProviders {
       ),
       BlocProvider<AdoptionRequestBloc>(
         create: (context) => AdoptionRequestBloc(repository: adoptionRequestRepository),
+      ),
+      BlocProvider<PetListBloc>( // Add PetListBloc here
+        create: (context) => PetListBloc(petRepository: adoptedPetRepository),
       ),
     ];
   }
