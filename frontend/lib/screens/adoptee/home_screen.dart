@@ -77,6 +77,7 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
             controller: _pageController,
             children: [
               PetManagementScreen(),
+              AdoptionRequestListScreen(),
               ChatListScreen(),
             ],
           ),

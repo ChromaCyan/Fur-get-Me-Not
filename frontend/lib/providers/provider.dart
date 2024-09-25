@@ -11,6 +11,8 @@ import 'package:fur_get_me_not/bloc/adopter/adoption_browse/adoption_browse_bloc
 import 'package:fur_get_me_not/bloc/adopter/nav_bar/nav_cubit.dart';
 import 'package:fur_get_me_not/bloc/adopter/reminder/reminder_bloc.dart';
 import 'package:fur_get_me_not/bloc/authentication/login/login_bloc.dart';
+import 'package:fur_get_me_not/bloc/adoptee/adoption_request/adoption_request_bloc.dart';
+import 'package:fur_get_me_not/repositories/adoptee/adoption_request/adoption_request_repository.dart';
 import 'package:fur_get_me_not/repositories/adoptee/pet_management/admin_pet_repository.dart';
 import 'package:fur_get_me_not/repositories/authentication/login_repository.dart';
 import 'package:fur_get_me_not/bloc/authentication/registration/register_bloc.dart';
@@ -36,6 +38,7 @@ class AppProviders {
     final AdminChatListRepository adminChatListRepository = AdminChatListRepository();
     final AdminPetRepository adminPetRepository = AdminPetRepository();
     final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
+    final AdoptionRequestRepository adoptionRequestRepository = AdoptionRequestRepository();
 
     return [
       BlocProvider<LoginBloc>(
@@ -73,6 +76,9 @@ class AppProviders {
       ),
       BlocProvider<PetManagementBloc>(
         create: (context) => PetManagementBloc(petRepository: adminPetRepository),
+      ),
+      BlocProvider<AdoptionRequestBloc>(
+        create: (context) => AdoptionRequestBloc(repository: adoptionRequestRepository),
       ),
     ];
   }

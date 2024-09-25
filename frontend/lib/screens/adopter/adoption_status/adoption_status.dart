@@ -18,7 +18,7 @@ class AdoptionStatusScreen extends StatelessWidget {
             if (state is AdoptionStatusLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is AdoptionStatusLoaded) {
-              final adoptionStatusList = state.adoptionStatusList; // Accessing adoptionStatusList here
+              final adoptionStatusList = state.adoptionStatusList;
               return ListView.builder(
                 itemCount: adoptionStatusList.length,
                 itemBuilder: (context, index) {

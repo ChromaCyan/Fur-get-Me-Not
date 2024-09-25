@@ -25,7 +25,7 @@ class PetRepository {
       age: 9999999,
       height: 55.0,
       weight: 28.0,
-      petImageUrl: 'images/cat_wizard.jpg',
+      petImageUrl: 'images/pet-cat1.png',
       medicalHistoryImageUrl: 'images/pet_medical_image.png',
       vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
       specialCareInstructions: 'None',
