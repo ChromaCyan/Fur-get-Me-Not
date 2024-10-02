@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/models/adopters/chat/chat_list.dart';
-import 'package:fur_get_me_not/screens/adopter/chat/chat_screen.dart';
+import 'package:fur_get_me_not/adopter/models/chat/chat_list.dart';
+import 'package:fur_get_me_not/adopter/screens/chat/chat_screen.dart';
 
 class ChatCard extends StatelessWidget {
   final Chat chat;

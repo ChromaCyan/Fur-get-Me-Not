@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/models/adopters/adoption_status/adoption_status.dart';
+import 'package:fur_get_me_not/adopter/models/adoption_status/adoption_status.dart';
 
 class AdoptionStatusCard extends StatelessWidget {
   final AdoptionStatus adoption;

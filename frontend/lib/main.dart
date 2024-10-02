@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:fur_get_me_not/screens/splash_screen.dart';
+import 'package:fur_get_me_not/app_splash/screens/splash_screen.dart';
 import 'package:fur_get_me_not/config/app_theme.dart';
-import 'package:fur_get_me_not/repositories/adopters/adoption_list/pet_repository.dart';
-import 'package:fur_get_me_not/repositories/adopters/chat/chat_list_repository.dart';
-import 'package:fur_get_me_not/repositories/adopters/chat/chat_repository.dart';
+import 'package:fur_get_me_not/adopter/repositories/adoption_list/pet_repository.dart';
+import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.dart';
+import 'package:fur_get_me_not/adopter/repositories/chat/chat_repository.dart';
 import 'package:fur_get_me_not/providers/provider.dart';
-import 'package:fur_get_me_not/screens/adopter/reminder/reminder_form_screen.dart';
+import 'package:fur_get_me_not/adopter/screens/reminder/reminder_form_screen.dart';
 
 void main() {
   runApp(const MyApp());

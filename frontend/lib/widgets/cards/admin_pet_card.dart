@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/models/adoptee/pet_management/admin_pet.dart';
+import 'package:fur_get_me_not/adoptee/models/pet_management/admin_pet.dart';
 
 class PetCard extends StatelessWidget {
   final AdminPet pet;

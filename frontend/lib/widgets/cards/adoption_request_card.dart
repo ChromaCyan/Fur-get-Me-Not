@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/models/adoptee/adoption_request/adoption_request.dart';
-import 'package:fur_get_me_not/screens/adopter/adoption_list/adoption_form.dart';
+import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.dart';
+import 'package:fur_get_me_not/adopter/screens/adoption_list/adoption_form.dart';
 
 class AdoptionRequestCard extends StatefulWidget {
   final AdoptionRequest adoptionRequest;

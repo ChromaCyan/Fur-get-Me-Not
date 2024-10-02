@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/models/adoptee/chat/admin_chat_list.dart';
-import 'package:fur_get_me_not/screens/adoptee/chat/admin_chat_sceen.dart';
+import 'package:fur_get_me_not/adoptee/models/chat/admin_chat_list.dart';
+import 'package:fur_get_me_not/adoptee/screens/chat/admin_chat_sceen.dart';
 
 class AdminChatCard extends StatelessWidget {
   final Chat chat;
