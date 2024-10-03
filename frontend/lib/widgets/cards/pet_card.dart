@@ -24,7 +24,7 @@ class PetCard extends StatelessWidget {
           child: Container(
             height: size.height * 0.3,
             width: size.width * 0.55,
-            color: const Color.fromRGBO(248, 198, 59, 0.5),
+            color: const Color(0xFF21899C),
             child: Stack(
               children: [
                 Positioned(

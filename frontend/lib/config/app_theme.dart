@@ -6,9 +6,9 @@ class AppTheme {
     return ThemeData(
       colorScheme: ColorScheme(
         primary: const Color(0xFFA54E4E),
-        primaryContainer: const Color(0xFFFEC107),
-        secondary: const Color(0xFFF5E6CA),
-        background: const Color(0xFFF5E6CA),
+        primaryContainer: const Color(0xFF21899C),
+        secondary: Color(0xFFFE9879),
+        background: Color(0xFFFE9879),
         surface: const Color(0xFFF5E6CA),
         onPrimary: Colors.white,
         onSecondary: Colors.black,
@@ -21,7 +21,7 @@ class AppTheme {
       useMaterial3: true,
       scaffoldBackgroundColor: Colors.white,
       buttonTheme: ButtonThemeData(
-        buttonColor: const Color(0xFFFEC107),
+        buttonColor: const Color(0xFF21899C),
         textTheme: ButtonTextTheme.primary,
       ),
       appBarTheme: const AppBarTheme(

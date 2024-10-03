@@ -8,7 +8,7 @@ class BannerWidget extends StatelessWidget {
   const BannerWidget({
     Key? key,
     required this.text,
-    this.backgroundColor = Colors.blueAccent,
+    this.backgroundColor = const Color(0xFFFE9879),
     this.height = 180,
   }) : super(key: key);
 

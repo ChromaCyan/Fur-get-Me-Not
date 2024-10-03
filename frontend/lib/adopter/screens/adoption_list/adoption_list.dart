@@ -6,6 +6,9 @@ import 'package:fur_get_me_not/adopter/bloc/adoption_browse/adoption_browse_stat
 import 'package:fur_get_me_not/adopter/screens/adoption_list/pet_details_screen.dart';
 import 'package:fur_get_me_not/widgets/cards/pet_card.dart';
 import 'package:fur_get_me_not/widgets/headers/banner_card.dart';
+import 'package:fur_get_me_not/adopter/models/adoption_list/category.dart';
+import 'package:fur_get_me_not/adopter/repositories/adoption_list/category_repository.dart';
+import 'package:fur_get_me_not/widgets/headers/categories.dart';
 
 class AdoptionScreen extends StatefulWidget {
   const AdoptionScreen({super.key});
@@ -18,8 +21,13 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
   @override
   void initState() {
     super.initState();
-    // Trigger event to load pets when the screen initializes
     context.read<AdoptionBrowseBloc>().add(LoadAdoptionBrowseEvent(filter: ''));
+  }
+
+  void updateSelectedCategory(Category category) {
+    setState(() {
+      CategoryData.setIsSelected(category.categoryId);
+    });
   }
 
   @override
@@ -33,37 +41,45 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
             const SizedBox(height: 20),
             const BannerWidget(text: "Adopt a feline companion\n now!"),
             const SizedBox(height: 20),
-            BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
-              builder: (context, state) {
-                if (state is AdoptionBrowseLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is AdoptionBrowseLoaded) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
+            CategoryChip(
+              categories: CategoryData.categories,
+              onSelected: (category) {
+                updateSelectedCategory(category);
+              },
+            ),
+            Expanded(
+              child: BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
+                builder: (context, state) {
+                  if (state is AdoptionBrowseLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is AdoptionBrowseLoaded) {
+                    return ListView(
                       children: List.generate(state.pets.length, (index) {
                         final pet = state.pets[index];
-                        return PetCard(
-                          pet: pet,
-                          size: size,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PetDetailsPage(petId: pet.id,),
-                              ),
-                            );
-                          },
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 20), // Space between cards
+                          child: PetCard(
+                            pet: pet,
+                            size: size,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PetDetailsPage(petId: pet.id),
+                                ),
+                              );
+                            },
+                          ),
                         );
                       }),
-                    ),
-                  );
-                } else if (state is AdoptionBrowseError) {
-                  return Center(child: Text(state.message));
-                } else {
-                  return const Center(child: Text('Error: Unknown state'));
-                }
-              },
+                    );
+                  } else if (state is AdoptionBrowseError) {
+                    return Center(child: Text(state.message));
+                  } else {
+                    return const Center(child: Text('Error: Unknown state'));
+                  }
+                },
+              ),
             ),
           ],
         ),
