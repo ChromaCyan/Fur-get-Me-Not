@@ -3,6 +3,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_form/adoption_form_bloc.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
 
+void main() {
+  runApp(AdoptionFormApp());
+}
+
+class AdoptionFormApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Adoption Form',
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.black),
+      ),
+      home: AdoptionForm(),
+    );
+  }
+}
+
 class AdoptionForm extends StatefulWidget {
   @override
   _AdoptionFormState createState() => _AdoptionFormState();
@@ -16,16 +34,16 @@ class _AdoptionFormState extends State<AdoptionForm> {
   String _address = '';
   String _city = '';
   String _zipCode = '';
-  String _residenceType = 'Apartment'; // Default value
+  String _residenceType = 'Apartment';
   bool _ownRent = false;
   bool _landlordAllowsPets = false;
   bool _ownedPetsBefore = false;
   String _petTypesOwned = '';
-  String _petPreference = 'Dog'; // Default value
+  String _petPreference = 'Dog';
   String _preferredSize = '';
-  String _agePreference = 'Puppy/Kitten'; // Default value
+  String _agePreference = 'Puppy/Kitten';
   String _hoursAlone = '';
-  String _activityLevel = 'Moderately Active'; // Default value
+  String _activityLevel = 'Very Active';
   String _childrenAges = '';
   String _carePlan = '';
   String _whatIfNoLongerKeep = '';
@@ -39,8 +57,8 @@ class _AdoptionFormState extends State<AdoptionForm> {
         appBar: AppBar(
           title: Text('Adoption Form'),
         ),
+
         body: Container(
-          color: Colors.red[100],
           child: Center(
             child: SingleChildScrollView(
               child: Container(
@@ -53,176 +71,165 @@ class _AdoptionFormState extends State<AdoptionForm> {
                     BoxShadow(color: Colors.grey, blurRadius: 10.0, spreadRadius: 2.0),
                   ],
                 ),
-                child: BlocListener<AdoptionBloc, AdoptionState>(
-                  listener: (context, state) {
-                    if (state is AdoptionSubmitted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Your adoption request has been submitted!')),
-                      );
-                    } else if (state is AdoptionError) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-                    }
-                  },
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSectionTitle('Personal Information'),
-                        _buildBox(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildTextFormField('Full Name', (value) => _fullName = value),
-                              _buildTextFormField('Email Address', (value) => _email = value, isEmail: true),
-                              _buildTextFormField('Phone Number', (value) => _phone = value, isNumeric: true),
-                              _buildTextFormField('Address', (value) => _address = value),
-                              _buildTextFormField('City', (value) => _city = value),
-                              _buildTextFormField('Zip Code', (value) => _zipCode = value, isNumeric: true),
-                            ],
-                          ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildSectionTitle('Personal Information'),
+                      _buildBox(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildTextFormField('Full Name', (value) => _fullName = value),
+                            _buildTextFormField('Email Address', (value) => _email = value),
+                            _buildTextFormField('Phone Number', (value) => _phone = value, isNumeric: true),
+                            _buildTextFormField('Address', (value) => _address = value),
+                            _buildTextFormField('City', (value) => _city = value),
+                            _buildTextFormField('Zip Code', (value) => _zipCode = value, isNumeric: true),
+                          ],
                         ),
-                        _buildSectionTitle('Living Situation'),
-                        _buildBox(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildDropdownFormField(
-                                'Type of Residence',
-                                ['Apartment', 'House'],
-                                    (value) => setState(() => _residenceType = value!),
-                                _residenceType,
-                              ),
+                      ),
+                      _buildSectionTitle('Living Situation'),
+                      _buildBox(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildDropdownFormField(
+                              'Type of Residence',
+                              ['Apartment', 'House'],
+                              (value) => setState(() => _residenceType = value!),
+                              _residenceType,
+                            ),
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _ownRent,
+                                  onChanged: (value) => setState(() => _ownRent = value!),
+                                ),
+                                Text('Do you own or rent?'),
+                              ],
+                            ),
+                            if (_ownRent) ...[
+                              Text('Does your landlord allow pets?'),
                               Row(
                                 children: [
-                                  Checkbox(
-                                    value: _ownRent,
-                                    onChanged: (value) => setState(() => _ownRent = value!),
+                                  Radio(
+                                    value: true,
+                                    groupValue: _landlordAllowsPets,
+                                    onChanged: (value) => setState(() => _landlordAllowsPets = true),
                                   ),
-                                  Text('Do you own or rent?'),
+                                  Text('Yes'),
+                                  Radio(
+                                    value: false,
+                                    groupValue: _landlordAllowsPets,
+                                    onChanged: (value) => setState(() => _landlordAllowsPets = false),
+                                  ),
+                                  Text('No'),
                                 ],
                               ),
-                              if (_ownRent) ...[
-                                Text('Does your landlord allow pets?'),
-                                Row(
-                                  children: [
-                                    Radio(
-                                      value: true,
-                                      groupValue: _landlordAllowsPets,
-                                      onChanged: (value) => setState(() => _landlordAllowsPets = true),
-                                    ),
-                                    Text('Yes'),
-                                    Radio(
-                                      value: false,
-                                      groupValue: _landlordAllowsPets,
-                                      onChanged: (value) => setState(() => _landlordAllowsPets = false),
-                                    ),
-                                    Text('No'),
-                                  ],
+                            ],
+                          ],
+                        ),
+                      ),
+                      _buildSectionTitle('Pet Experience'),
+                      _buildBox(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _ownedPetsBefore,
+                                  onChanged: (value) => setState(() => _ownedPetsBefore = value!),
+                                ),
+                                Text('Have you owned pets before?'),
+                              ],
+                            ),
+                            if (_ownedPetsBefore)
+                              _buildTextFormField(
+                                'What types of pets have you owned?',
+                                (value) => _petTypesOwned = value,
+                              ),
+                          ],
+                        ),
+                      ),
+                      _buildSectionTitle('Pet Preferences'),
+                      _buildBox(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildDropdownFormField(
+                              'What type of pet are you interested in adopting?',
+                              ['Dog', 'Cat'],
+                              (value) => setState(() => _petPreference = value!),
+                              _petPreference,
+                            ),
+                            _buildTextFormField('Preferred Size or Breed', (value) => _preferredSize = value),
+                            _buildDropdownFormField(
+                              'Age Preference',
+                              ['Puppy/Kitten', 'Adult', 'Senior'],
+                              (value) => setState(() => _agePreference = value!),
+                              _agePreference,
+                            ),
+                          ],
+                        ),
+                      ),
+                      _buildSectionTitle('Lifestyle and Activity Level'),
+                      _buildBox(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildTextFormField(
+                              'How many hours will the pet be left alone during the day?',
+                              (value) => _hoursAlone = value,
+                              isNumeric: true,
+                            ),
+                            _buildDropdownFormField(
+                              'How active is your household?',
+                              ['Very Active', 'Moderately Active', 'Low Activity'],
+                              (value) => setState(() => _activityLevel = value!),
+                              _activityLevel,
+                            ),
+                            _buildTextFormField(
+                              'Do you have children? If so, what are their ages?',
+                              (value) => _childrenAges = value,
+                            ),
+                          ],
+                        ),
+                      ),
+                      _buildSectionTitle('Care and Commitment'),
+                      _buildBox(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildTextFormField(
+                              'How do you plan to care for the pet?',
+                              (value) => _carePlan = value,
+                            ),
+                            _buildTextFormField(
+                              'What will you do if you can no longer keep the pet?',
+                              (value) => _whatIfNoLongerKeep = value,
+                            ),
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _longTermCommitment,
+                                  onChanged: (value) => setState(() => _longTermCommitment = value!),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Can you commit to a pet long-term?',
+                                    softWrap: true,
+                                  ),
                                 ),
                               ],
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        _buildSectionTitle('Pet Experience'),
-                        _buildBox(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Checkbox(
-                                    value: _ownedPetsBefore,
-                                    onChanged: (value) => setState(() => _ownedPetsBefore = value!),
-                                  ),
-                                  Text('Have you owned pets before?'),
-                                ],
-                              ),
-                              if (_ownedPetsBefore)
-                                _buildTextFormField(
-                                  'What types of pets have you owned?',
-                                      (value) => _petTypesOwned = value,
-                                ),
-                            ],
-                          ),
-                        ),
-                        _buildSectionTitle('Pet Preferences'),
-                        _buildBox(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildDropdownFormField(
-                                'What type of pet are you interested in adopting?',
-                                ['Dog', 'Cat'],
-                                    (value) => setState(() => _petPreference = value!),
-                                _petPreference,
-                              ),
-                              _buildTextFormField('Preferred Size or Breed', (value) => _preferredSize = value),
-                              _buildDropdownFormField(
-                                'Age Preference',
-                                ['Puppy/Kitten', 'Adult', 'Senior'],
-                                    (value) => setState(() => _agePreference = value!),
-                                _agePreference,
-                              ),
-                            ],
-                          ),
-                        ),
-                        _buildSectionTitle('Lifestyle and Activity Level'),
-                        _buildBox(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildTextFormField(
-                                'How many hours will the pet be left alone during the day?',
-                                    (value) => _hoursAlone = value,
-                                isNumeric: true,
-                              ),
-                              _buildDropdownFormField(
-                                'How active is your household?',
-                                ['Very Active', 'Moderately Active', 'Low Activity'],
-                                    (value) => setState(() => _activityLevel = value!),
-                                _activityLevel,
-                              ),
-                              _buildTextFormField(
-                                'Do you have children? If so, what are their ages?',
-                                    (value) => _childrenAges = value,
-                              ),
-                            ],
-                          ),
-                        ),
-                        _buildSectionTitle('Care and Commitment'),
-                        _buildBox(
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildTextFormField(
-                                'How do you plan to care for the pet?',
-                                    (value) => _carePlan = value,
-                              ),
-                              _buildTextFormField(
-                                'What will you do if you can no longer keep the pet?',
-                                    (value) => _whatIfNoLongerKeep = value,
-                              ),
-                              Row(
-                                children: [
-                                  Checkbox(
-                                    value: _longTermCommitment,
-                                    onChanged: (value) => setState(() => _longTermCommitment = value!),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      'Can you commit to a pet long-term?',
-                                      softWrap: true,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        _buildSubmitButton(context),
-                      ],
-                    ),
+                      ),
+                      _buildSubmitButton(context),
+                    ],
                   ),
                 ),
               ),
@@ -233,36 +240,18 @@ class _AdoptionFormState extends State<AdoptionForm> {
     );
   }
 
-  Widget _buildSubmitButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          // Dispatch the submit event with the form data
-          BlocProvider.of<AdoptionBloc>(context).add(SubmitAdoptionForm(
-            fullName: _fullName,
-            email: _email,
-            phone: _phone,
-            address: _address,
-            city: _city,
-            zipCode: _zipCode,
-            // Add other parameters as needed
-          ));
-        }
-      },
-      child: Text('Submit'),
-    );
-  }
-
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      child: Center(
+        child: Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+      ),
     );
   }
 
   Widget _buildBox(Widget child) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: EdgeInsets.only(bottom: 16.0),
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
@@ -276,15 +265,12 @@ class _AdoptionFormState extends State<AdoptionForm> {
     return TextFormField(
       decoration: InputDecoration(labelText: label),
       onChanged: onChanged,
+      keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter $label';
-        }
-        if (isEmail && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-          return 'Please enter a valid email';
-        }
-        if (isNumeric && !RegExp(r'^[0-9]+$').hasMatch(value)) {
-          return 'Please enter a valid number';
+          return 'Please enter your $label';
+        } else if (isNumeric && !RegExp(r'^[0-9]+$').hasMatch(value)) {
+          return 'Please enter numbers only';
         }
         return null;
       },
@@ -293,15 +279,27 @@ class _AdoptionFormState extends State<AdoptionForm> {
 
   Widget _buildDropdownFormField(String label, List<String> items, Function(String?) onChanged, String currentValue) {
     return DropdownButtonFormField<String>(
-      value: currentValue,
       decoration: InputDecoration(labelText: label),
-      onChanged: onChanged,
-      items: items.map((String value) {
+      value: currentValue,
+      items: items.map((item) {
         return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
+          value: item,
+          child: Text(item),
         );
       }).toList(),
+      onChanged: onChanged,
+      validator: (value) => value == null ? 'Please select $label' : null,
+    );
+  }
+
+  Widget _buildSubmitButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        if (_formKey.currentState!.validate()) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Form submitted successfully')));
+        }
+      },
+      child: Text('Submit'),
     );
   }
 }
