@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:fur_get_me_not/authentication/bloc/login/login_bloc.dart';
 import 'package:fur_get_me_not/authentication/bloc/login/login_event.dart';
 import 'package:fur_get_me_not/authentication/bloc/login/login_state.dart';
@@ -11,128 +13,208 @@ import 'package:fur_get_me_not/authentication/screen/register_screen.dart';
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  int? userType; // Variable to store user type
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: BlocProvider(
           create: (context) => LoginBloc(loginRepository: LoginRepository()),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Sign In', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 24),
-                const Text('Email'),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 18),
-                const Text('Password'),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.grey[200],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none,
-                    ),
-                    suffixIcon: const Icon(Icons.visibility_off),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                BlocConsumer<LoginBloc, LoginState>(
-                  listener: (context, state) {
-                    if (state is LoginSuccess) {
-                      // Navigate based on userType
-                      if (state.userType == 1) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => AdopterHomeScreen()),
-                        );
-                      } else {
-                        // Navigate to Adoptee home screen
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => AdopteeHomeScreen()),
-                        );
-                      }
-                    } else if (state is LoginFailure) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is LoginLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    return ElevatedButton(
-                      onPressed: () {
-                        final email = _emailController.text;
-                        final password = _passwordController.text;
-
-                        // Dispatch login event
-                        context.read<LoginBloc>().add(
-                          LoginSubmitted(email: email, password: password),
-                        );
-                      },
-                      child: const Text('Sign In'),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 12),
-                const Spacer(),
-                Center(
-                  child: Column(
-                    children: [
-                      const Text("Don't have an account yet?"),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RegisterScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text('Create Account'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  logo(size.height / 8),
+                  SizedBox(height: size.height * 0.03),
+                  richText(24),
+                  SizedBox(height: size.height * 0.03),
+                  emailTextField(),
+                  SizedBox(height: size.height * 0.02),
+                  passwordTextField(),
+                  SizedBox(height: size.height * 0.03),
+                  signInButton(context),
+                  SizedBox(height: size.height * 0.02),
+                  signInWithText(),
+                  SizedBox(height: size.height * 0.02),
+                  footerText(context),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
+  Widget logo(double height) {
+    return SvgPicture.asset(
+      'images/cat.svg',
+      height: height,
+    );
+  }
+
+  Widget richText(double fontSize) {
+    return Text.rich(
+      TextSpan(
+        style: GoogleFonts.inter(
+          fontSize: fontSize,
+          color: const Color(0xFF21899C),
+          letterSpacing: 3,
+          height: 1.03,
+        ),
+        children: const [
+          TextSpan(text: 'LOGIN ', style: TextStyle(fontWeight: FontWeight.w800)),
+          TextSpan(text: 'PAGE ', style: TextStyle(color: Color(0xFFFE9879), fontWeight: FontWeight.w800)),
+        ],
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget emailTextField() {
+    return Container(
+      alignment: Alignment.center,
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(width: 1.0, color: const Color(0xFFEFEFEF)),
+      ),
+      child: TextField(
+        controller: _emailController,
+        style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+        maxLines: 1,
+        cursorColor: const Color(0xFF15224F),
+        decoration: InputDecoration(
+          labelText: 'Email',
+          labelStyle: GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget passwordTextField() {
+    return Container(
+      alignment: Alignment.center,
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(width: 1.0, color: const Color(0xFFEFEFEF)),
+      ),
+      child: TextField(
+        controller: _passwordController,
+        style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+        maxLines: 1,
+        obscureText: true,
+        cursorColor: const Color(0xFF15224F),
+        decoration: InputDecoration(
+          labelText: 'Password',
+          labelStyle: GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget signInButton(BuildContext context) {
+  return BlocConsumer<LoginBloc, LoginState>(
+    listener: (context, state) {
+      if (state is LoginSuccess) {
+        if (state.userType == 1) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AdopterHomeScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AdopteeHomeScreen()),
+          );
+        }
+      } else if (state is LoginFailure) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(state.error)),
+        );
+      }
+    },
+    builder: (context, state) {
+      if (state is LoginLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      return Container(
+        alignment: Alignment.center,
+        height: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50.0),
+          color: const Color(0xFF21899C),
+          boxShadow: [
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: () {
+            final email = _emailController.text;
+            final password = _passwordController.text;
+            context.read<LoginBloc>().add(LoginSubmitted(email: email, password: password));
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent, 
+            elevation: 0, 
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          ),
+          child: Text(
+            'Sign In',
+            style: GoogleFonts.inter(
+              fontSize: 16.0,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    },
+  );
 }
 
+  Widget signInWithText() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Expanded(child: Divider()),
+        const SizedBox(width: 16),
+        Text(
+          'Or Sign in with',
+          style: GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+        ),
+        const SizedBox(width: 16),
+        const Expanded(child: Divider()),
+      ],
+    );
+  }
 
+  Widget footerText(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          const Text("Don't have an account yet?"),
+          TextButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
+            },
+            child: const Text('Create Account'),
+          ),
+        ],
+      ),
+    );
+  }
+}
