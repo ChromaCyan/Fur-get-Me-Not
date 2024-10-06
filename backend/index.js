@@ -3,7 +3,13 @@ const app = express();
 const connectionDB = require("./db");
 const bodyParser = require("body-parser");
 const path = require("path");
+const mongoose = require ("mongoose");
 require("dotenv").config();
+
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+app.use(bodyParser.json());
 
 //Routes
 const userRoute = require("./routers/userRoute");
