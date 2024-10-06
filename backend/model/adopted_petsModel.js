@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const petSchema = new mongoose.Schema({
+const adopted_petSchema = new mongoose.Schema({
     id: {type: String, required: true},
     name: {type: String, required: true},
     description: {type: String, required: true},
@@ -11,6 +11,5 @@ const petSchema = new mongoose.Schema({
     medicalHistoryImageUrl: {type: String, required: true},
     specialCareInstructions: {type: String, required: true},
 });
-
-const Pet =  mongoose.model("Pet", petSchema);
-module.exports = Pet;
+const AdoptedPet = mongoose.model("adopted_petSchema", adopted_petSchema);
+module.exports = AdoptedPet;

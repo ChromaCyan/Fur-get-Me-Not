@@ -30,7 +30,7 @@ exports.createUser = async (req, res) => {
     console.log(req.body);
     const{firstName, lastName, email, password, role} = req.body;
 
-    console.log("========== Student Profile ==========");
+    console.log("==========  Profile ==========");
     console.log("First Name:", firstName);
     console.log("Last Name:", lastName);
     console.log("Email:", email);
@@ -51,7 +51,7 @@ try {
     res.status(400).json({ message: error.message });
 }
 
-}
+};
 
 //UPDATE
 exports.updateUser = async (req, res) => {
@@ -68,7 +68,7 @@ exports.updateUser = async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
-}
+};
 
 //DELETE
 exports.deleteUser = async (req, res) => {
@@ -76,8 +76,8 @@ exports.deleteUser = async (req, res) => {
     
     try {
         const user = await User.findByIdAndUpdate(id);
-        if (!profile){
-            return res.status(404).json({ message: "Profile not found" });
+        if (!user){
+            return res.status(404).json({ message: "User not found!!!" });
         }
         res.status(204).end(); // No content response
     } catch (error) {
