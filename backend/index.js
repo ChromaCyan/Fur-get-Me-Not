@@ -12,7 +12,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 app.use(bodyParser.json());
 
 //Routes
-const userRoute = require("./routers/userRoute");
+const userRoute = require("./routers/Routes");
 
 app.use("/users", userRoute);
 
