@@ -31,6 +31,10 @@ class AppTheme {
         bodyLarge: TextStyle(color: Color(0xFF333333)),
         bodyMedium: TextStyle(color: Color(0xFF333333)),
       ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: const Color(0xFFFE9879),
+        contentTextStyle: const TextStyle(color: Colors.white),
+      ),
     );
   }
 }

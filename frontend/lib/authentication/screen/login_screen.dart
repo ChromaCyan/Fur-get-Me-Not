@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fur_get_me_not/authentication/bloc/login/login_bloc.dart';
-import 'package:fur_get_me_not/authentication/bloc/login/login_event.dart';
-import 'package:fur_get_me_not/authentication/bloc/login/login_state.dart';
-import 'package:fur_get_me_not/authentication/repositories/login_repository.dart';
+import 'package:fur_get_me_not/authentication/bloc/auth_bloc.dart';
+import 'package:fur_get_me_not/authentication/bloc/auth_event.dart';
+import 'package:fur_get_me_not/authentication/bloc/auth_state.dart';
+import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart';
 import 'package:fur_get_me_not/adopter/screens/home_screen.dart';
 import 'package:fur_get_me_not/adoptee/screens/home_screen.dart';
 import 'package:fur_get_me_not/authentication/screen/register_screen.dart';
@@ -22,7 +22,7 @@ class LoginScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: BlocProvider(
-          create: (context) => LoginBloc(loginRepository: LoginRepository()),
+          create: (context) => AuthBloc(authRepository: AuthRepository()),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -125,66 +125,54 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget signInButton(BuildContext context) {
-  return BlocConsumer<LoginBloc, LoginState>(
-    listener: (context, state) {
-      if (state is LoginSuccess) {
-        if (state.userType == 1) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AdopterHomeScreen()),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => AdopteeHomeScreen()),
-          );
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthLoginSuccess) {
+          // Navigate to the appropriate home screen based on userType
+          if (state.role == "adopter") {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdopterHomeScreen()));
+          } else {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdopteeHomeScreen()));
+          }
+        } else if (state is AuthFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
         }
-      } else if (state is LoginFailure) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(state.error)),
-        );
-      }
-    },
-    builder: (context, state) {
-      if (state is LoginLoading) {
-        return const Center(child: CircularProgressIndicator());
-      }
+      },
+      builder: (context, state) {
+        if (state is AuthLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      return Container(
-        alignment: Alignment.center,
-        height: 60,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50.0),
-          color: const Color(0xFF21899C),
-          boxShadow: [
-          ],
-        ),
-        child: ElevatedButton(
-          onPressed: () {
-            final email = _emailController.text;
-            final password = _passwordController.text;
-            context.read<LoginBloc>().add(LoginSubmitted(email: email, password: password));
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent, 
-            elevation: 0, 
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        return Container(
+          alignment: Alignment.center,
+          height: 60,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50.0),
+            color: const Color(0xFF21899C),
           ),
-          child: Text(
-            'Sign In',
-            style: GoogleFonts.inter(
-              fontSize: 16.0,
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              height: 1.5,
+          child: ElevatedButton(
+            onPressed: () {
+              final email = _emailController.text;
+              final password = _passwordController.text;
+
+              // Call the login event with email and password
+              context.read<AuthBloc>().add(LoginSubmitted(email: email, password: password));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             ),
-            textAlign: TextAlign.center,
+            child: Text(
+              'Sign In',
+              style: GoogleFonts.inter(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.w600, height: 1.5),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   Widget signInWithText() {
     return Row(

@@ -5,7 +5,8 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const mongoose = require ("mongoose");
 require("dotenv").config();
-
+const cors = require('cors');
+app.use(cors());
 
 const JWT_SECRET = process.env.JWT_SECRET;
 

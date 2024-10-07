@@ -31,7 +31,6 @@ exports.getUserById = async (req, res) => {
 };
 
 // CREATE USER
-// CREATE USER
 exports.createUser = async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
 
@@ -46,9 +45,10 @@ exports.createUser = async (req, res) => {
             firstName,
             lastName,
             email,
-            password,
+            password, // No need to hash here
             role,
         });
+
         await newUser.save();
 
         // Generate JWT for the newly created user
@@ -60,12 +60,13 @@ exports.createUser = async (req, res) => {
     }
 };
 
+
 // LOGIN USER
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
-    console.log("Incoming email:", email); // Log the email
-    console.log("Incoming password:", password); // Log the password
+    console.log("Incoming email:", email);
+    console.log("Incoming password:", password);
 
     try {
         const user = await User.findOne({ email });
@@ -98,10 +99,9 @@ exports.updateUser = async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
 
     try {
-        // Hash the new password if provided
+        // Only update the password if it is provided and modified
         if (password) {
-            const salt = await bcrypt.genSalt(10);
-            req.body.password = await bcrypt.hash(password, salt);
+            req.body.password = password; // Keep password as-is, Mongoose middleware will handle hashing
         }
 
         const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
@@ -113,6 +113,7 @@ exports.updateUser = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
 
 // DELETE USER
 exports.deleteUser = async (req, res) => {

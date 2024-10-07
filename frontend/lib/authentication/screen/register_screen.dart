@@ -2,27 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fur_get_me_not/authentication/bloc/register/register_bloc.dart';
-import 'package:fur_get_me_not/authentication/bloc/register/register_event.dart';
-import 'package:fur_get_me_not/authentication/bloc/register/register_state.dart';
-import 'package:fur_get_me_not/authentication/repositories/register_repository.dart';
+import 'package:fur_get_me_not/authentication/bloc/auth_bloc.dart';
+import 'package:fur_get_me_not/authentication/bloc/auth_event.dart';
+import 'package:fur_get_me_not/authentication/bloc/auth_state.dart';
+import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart';
 import 'package:fur_get_me_not/authentication/screen/login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  @override
+  _RegisterScreenState createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  String message = '';
+
+  String _selectedRole = 'adopter'; // Default role
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return BlocProvider(
-      create: (context) => RegisterBloc(registerRepository: RegisterRepository()),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        child: BlocProvider(
+          create: (context) => AuthBloc(authRepository: AuthRepository()),
           child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -41,6 +49,8 @@ class RegisterScreen extends StatelessWidget {
                   passwordTextField(),
                   SizedBox(height: size.height * 0.02),
                   confirmPasswordTextField(),
+                  SizedBox(height: size.height * 0.02),
+                  roleDropdown(), // Add the role dropdown here
                   SizedBox(height: size.height * 0.03),
                   registerButton(context),
                   SizedBox(height: size.height * 0.02),
@@ -116,6 +126,35 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
+  Widget roleDropdown() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(width: 1.0, color: const Color(0xFFEFEFEF)),
+      ),
+      child: DropdownButton<String>(
+        value: _selectedRole,
+        items: <String>['adopter', 'adoptee'].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value[0].toUpperCase() + value.substring(1), // Capitalize the first letter
+              style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedRole = newValue!;
+          });
+        },
+        isExpanded: true,
+        underline: SizedBox(), // Remove the underline
+      ),
+    );
+  }
+
   Widget inputField({
     required TextEditingController controller,
     required String labelText,
@@ -148,21 +187,27 @@ class RegisterScreen extends StatelessWidget {
   }
 
   Widget registerButton(BuildContext context) {
-    return BlocConsumer<RegisterBloc, RegisterState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is RegisterSuccess) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
+        if (state is AuthRegisterSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('User registered!')),
           );
-        } else if (state is RegisterFailure) {
+
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          });
+        } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error)),
           );
         }
       },
       builder: (context, state) {
-        if (state is RegisterLoading) {
+        if (state is AuthLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -175,20 +220,50 @@ class RegisterScreen extends StatelessWidget {
           ),
           child: ElevatedButton(
             onPressed: () {
-              if (state is! RegisterLoading) {
-                context.read<RegisterBloc>().add(
-                  RegisterSubmitted(
-                    fullName: _fullNameController.text,
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                  ),
-                );
+              if (state is! AuthLoading) {
+                final fullName = _fullNameController.text.split(' ');
+
+                String firstName = fullName.isNotEmpty ? fullName[0] : '';
+                String lastName = fullName.length > 1 ? fullName.sublist(1).join(' ') : '';
+
+                if (_fullNameController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill up Full Name')),
+                  );
+                } else if (_emailController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill up Email')),
+                  );
+                } else if (_passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill up Password')),
+                  );
+                } else if (_confirmPasswordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill up Confirm Password')),
+                  );
+                } else if (lastName.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill up Last Name')),
+                  );
+                } else {
+                  context.read<AuthBloc>().add(
+                    RegisterSubmitted(
+                      firstName: firstName,
+                      lastName: lastName,
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                      role: _selectedRole,
+                    ),
+                  );
+                }
               }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50)),
             ),
             child: Text(
               'Register',
@@ -205,6 +280,7 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
+
   Widget footerText(BuildContext context) {
     return Center(
       child: Column(
@@ -214,7 +290,7 @@ class RegisterScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
             },
-            child: const Text('Login'),
+            child: const Text('Sign In'),
           ),
         ],
       ),

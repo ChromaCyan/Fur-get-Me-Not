@@ -10,14 +10,12 @@ import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_browse/adoption_browse_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/nav_bar/nav_cubit.dart';
 import 'package:fur_get_me_not/adopter/bloc/reminder/reminder_bloc.dart';
-import 'package:fur_get_me_not/authentication/bloc/login/login_bloc.dart';
+import 'package:fur_get_me_not/authentication/bloc/auth_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/adoption_request/adoption_request_bloc.dart';
 import 'package:fur_get_me_not/adoptee/repositories/adoption_request/adoption_request_repository.dart';
 import 'package:fur_get_me_not/adoptee/repositories/pet_management/admin_pet_repository.dart';
-import 'package:fur_get_me_not/authentication/repositories/login_repository.dart';
-import 'package:fur_get_me_not/authentication/bloc/register/register_bloc.dart';
+import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_list/pet_repository.dart';
-import 'package:fur_get_me_not/authentication/repositories/register_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/reminder/reminder_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_status/adoption_status_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.dart';
@@ -31,8 +29,7 @@ import 'package:fur_get_me_not/adopter/repositories/pet_list/adopted_pet_reposit
 class AppProviders {
   static List<BlocProvider> getProviders() {
     final PetRepository petRepository = PetRepository();
-    final LoginRepository loginRepository = LoginRepository();
-    final RegisterRepository registerRepository = RegisterRepository();
+    final AuthRepository loginRepository = AuthRepository();
     final ReminderRepository reminderRepository = ReminderRepository();
     final ChatListRepository chatListRepository = ChatListRepository();
     final ChatRepository chatRepository = ChatRepository();
@@ -44,11 +41,8 @@ class AppProviders {
     final AdoptedPetRepository adoptedPetRepository = AdoptedPetRepository();
 
     return [
-      BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(loginRepository: loginRepository),
-      ),
-      BlocProvider<RegisterBloc>(
-        create: (context) => RegisterBloc(registerRepository: registerRepository),
+      BlocProvider<AuthBloc>(
+        create: (context) => AuthBloc(authRepository: AuthRepository()),
       ),
       BlocProvider<BottomNavCubit>(
         create: (context) => BottomNavCubit(),
