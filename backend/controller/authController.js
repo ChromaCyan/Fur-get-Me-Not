@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 // JWT Secret key
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; 
 
-//GET ALL USERS
+// GET ALL USERS
 exports.getUser = async (req, res) => {
     try {
         const users = await User.find();
@@ -15,7 +15,7 @@ exports.getUser = async (req, res) => {
     }
 };
 
-//GET USER BY ID
+// GET USER BY ID
 exports.getUserById = async (req, res) => {
     const { id } = req.params;
 
@@ -30,7 +30,8 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-//CREATE USER
+// CREATE USER
+// CREATE USER
 exports.createUser = async (req, res) => {
     const { firstName, lastName, email, password, role } = req.body;
 
@@ -41,15 +42,11 @@ exports.createUser = async (req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Hash the password before saving the user
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
         const newUser = new User({
             firstName,
             lastName,
             email,
-            password: hashedPassword, // Store hashed password
+            password,
             role,
         });
         await newUser.save();
@@ -57,16 +54,18 @@ exports.createUser = async (req, res) => {
         // Generate JWT for the newly created user
         const token = jwt.sign({ id: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
 
-        res.status(201).json({ message: "User created successfully", userId: newUser._id, token: token });
+        res.status(201).json({ message: "User created successfully", userId: newUser._id, token });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-
-//LOGIN USER
+// LOGIN USER
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
+
+    console.log("Incoming email:", email); // Log the email
+    console.log("Incoming password:", password); // Log the password
 
     try {
         const user = await User.findOne({ email });
@@ -74,21 +73,26 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
+        // Log the stored hashed password
+        console.log("Stored hashed password:", user.password); 
+
         // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log("Password match result:", isMatch); // Log the result
+
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         // Generate JWT
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
-        res.status(200).json({ token, userId: user._id, role: user.role, token: token, });
+        res.status(200).json({ token, userId: user._id, role: user.role });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-//UPDATE USER
+// UPDATE USER
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, email, password, role } = req.body;
@@ -110,7 +114,7 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-//DELETE USER
+// DELETE USER
 exports.deleteUser = async (req, res) => {
     const { id } = req.params;
 
