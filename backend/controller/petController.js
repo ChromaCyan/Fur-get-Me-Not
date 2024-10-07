@@ -1,91 +1,126 @@
-const Pet = require("../model/petModel");
+// controllers/petController.js
+const Pet = require('../model/petModel');
+const User = require('../model/userModel'); 
 
-//GETS PET DATA
-exports.getPet = async (req, res) => {
-    try {
-        const pet = await User.find();
-        res.status(200).json(pet)
-    } catch (error) {
-         res.status(500).json({message: error.message});
-    }
-}
 
-//GETS PET DATA BY ID
-exports.getPet = async (req, res) => {
-    try {
-      const pets = await Pet.find(); // Use Pet instead of User
-      res.status(200).json(pets);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
-
-//CREATE PET DATA
-exports.createPet = async (req, res) => {
-    console.log(req.body);
-    const{name, description, breed, age, height, petImageUrl, medicalHistoryImageUrl, specialCareInstructions} = req.body;
-
-    console.log("========== PET Profile ==========");
-    console.log("First Name:", name);
-    console.log("Description:", description);
-    console.log("Age:", age);
-    console.log("Height:", height);
-    console.log("petImageUrl:", petImageUrl);
-    console.log("medicalHistoryImageUrl:", medicalHistoryImageUrl);
-    console.log("specialCareInstructions:", specialCareInstructions);
-
-    try {
-        const newPet = new Pet({
-            name,
-            description,
-            breed,
-            age,
-            height,
-            petImageUrl,
-            medicalHistoryImageUrl,
-            specialCareInstructions,
-        });
-        await newPet.save();
-        res.status(201).json(newPet)
-    } catch (error) {
-        res.status(400).json({message: error.message})
-    }
+// Get all pets (No restrictions, viewable to both Adoptees and Adopters)
+exports.getPets = async (req, res) => {
+  try {
+    const pets = await Pet.find();
+    res.status(200).json(pets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-//UPDATE PET DATA
-exports.updatePet = async (req, res) => {
-    const {id} = req.params;
-    const{
-        name, description, breed, age, height,
-        petImageUrl, medicalHistoryImageUrl, specialCareInstructions
-    } = req.body;
+// Get a single pet by ID
+exports.getPetById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pet = await Pet.findById(id).populate('medicalHistory vaccineHistory');
+    if (!pet) {
+      return res.status(404).json({ message: 'Pet not found' });
+    }
+    res.status(200).json(pet);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Create a new pet (Adoptee Only)
+exports.createPet = async (req, res) => {
+  try {
+    const { role } = req.user;
+    if (role !== 'adoptee') {
+      return res.status(403).json({ message: 'Access denied. Only Adoptees can create pet listings.' });
+    }
+
+    const newPet = new Pet({
+      ...req.body,
+      userId: req.user._id
+    });
+
+    const savedPet = await newPet.save();
+    res.status(201).json(savedPet);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Add pet medical history
+exports.addMedicalHistory = async (req, res) => {
+    const { petId, conditions, medications, surgeries, allergies } = req.body;
+
+    const medicalHistory = new MedicalHistory({
+        petId,
+        conditions,
+        medications,
+        surgeries,
+        allergies,
+    });
 
     try {
-        const updatedPet = await Pet.findByIdAndUpdate(
-            id,
-            {
-                name, description, breed, age, height,
-                petImageUrl, medicalHistoryImageUrl, specialCareInstructions
-            },
-            {new: true}
-        );
-        res.status(200).json({updatedPet});
+        await medicalHistory.save();
+        res.status(201).json({ message: 'Medical history added successfully', medicalHistory });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-//DELETE PET DATA
-exports.deletePet = async (req, res) => {
-    const { id } = req.params;
+//Add pet vaccine history
+exports.addVaccineHistory = async (req, res) => {
+    const { petId, vaccines, lastVaccinationDate } = req.body;
+
+    const vaccineHistory = new VaccineHistory({
+        petId,
+        vaccines,
+        lastVaccinationDate,
+    });
+
     try {
-      const pet = await Pet.findByIdAndDelete(id);
-      if (!pet) {
-        return res.status(404).json({ message: "Pet not found" });
-      }
-      res.status(204).end(); // Successfully deleted
+        await vaccineHistory.save();
+        res.status(201).json({ message: 'Vaccine history added successfully', vaccineHistory });
     } catch (error) {
-      res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
-  };
-  
+};
+
+
+
+// Update a pet (Adoptee Only)
+exports.updatePet = async (req, res) => {
+  try {
+    const { role } = req.user;
+    if (role !== 'adoptee') {
+      return res.status(403).json({ message: 'Access denied. Only Adoptees can update pet listings.' });
+    }
+
+    const { id } = req.params;
+    const updatedPet = await Pet.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedPet) {
+      return res.status(404).json({ message: 'Pet not found' });
+    }
+    res.status(200).json(updatedPet);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Delete a pet (Adoptee Only)
+exports.deletePet = async (req, res) => {
+  try {
+    const { role } = req.user;
+    if (role !== 'adoptee') {
+      return res.status(403).json({ message: 'Access denied. Only Adoptees can delete pet listings.' });
+    }
+
+    const { id } = req.params;
+    const deletedPet = await Pet.findByIdAndDelete(id);
+    if (!deletedPet) {
+      return res.status(404).json({ message: 'Pet not found' });
+    }
+    res.status(200).json({ message: 'Pet deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
