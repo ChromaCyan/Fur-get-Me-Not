@@ -16,7 +16,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final result = await authRepository.login(email: event.email, password: event.password);
       if (result['success']) {
-        emit(AuthLoginSuccess(result['userId'], result['role']));
+        emit(AuthLoginSuccess(result['userId'],result['token'], result['role']));
       } else {
         emit(AuthFailure(error: 'Invalid email or password'));
       }

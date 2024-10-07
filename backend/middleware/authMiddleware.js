@@ -1,31 +1,52 @@
-// authMiddleware.js
+// middleware/authMiddleware.js
+
 const jwt = require('jsonwebtoken');
-const User = require('../model/userModel'); // Import user model
+const dotenv = require('dotenv');
 
-// Middleware to verify JWT and check roles
-const verifyTokenAndRole = (roles = []) => {
-    return async (req, res, next) => {
-        const token = req.headers['authorization'];
-        if (!token) return res.status(401).json({ message: 'No token provided' });
+// Load environment variables (make sure to have a .env file with your secret key)
+dotenv.config();
 
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key');
-            req.user = decoded;
+const secretKey = process.env.JWT_SECRET || 'yourSecretKeyHere';
 
-            // Fetch the user from the database
-            const user = await User.findById(decoded.id);
-            if (!user) return res.status(404).json({ message: 'User not found' });
+// Middleware to verify JWT Token
+function verifyToken(req, res, next) {
+  const token = req.header('Authorization')?.split(' ')[1]; // Get token from header
 
-            // Check if the user's role matches the allowed roles
-            if (roles.length && !roles.includes(user.role)) {
-                return res.status(403).json({ message: 'Access denied' });
-            }
+  if (!token) {
+    return res.status(401).json({ message: 'Access Denied! No Token Provided.' });
+  }
 
-            next(); // Proceed to the next middleware or route handler
-        } catch (error) {
-            return res.status(401).json({ message: 'Invalid token' });
-        }
-    };
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded; // Attach the decoded user information to the request
+    next(); // Proceed to the next middleware or route handler
+  } catch (error) {
+    res.status(400).json({ message: 'Invalid Token.' });
+  }
+}
+
+// Middleware to check if the user is an Adopter
+function isAdopter(req, res, next) {
+  if (req.user && req.user.role === 'adopter') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Forbidden! You are not an Adopter.' });
+  }
+}
+
+// Middleware to check if the user is an Adoptee
+function isAdoptee(req, res, next) {
+  if (req.user && req.user.role === 'adoptee') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Forbidden! You are not an Adoptee.' });
+  }
+}
+
+// Export the middleware functions
+module.exports = {
+  verifyToken,
+  isAdopter,
+  isAdoptee,
 };
-
-module.exports = verifyTokenAndRole;

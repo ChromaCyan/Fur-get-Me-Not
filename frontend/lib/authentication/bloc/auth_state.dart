@@ -6,9 +6,10 @@ class AuthLoading extends AuthState {}
 
 class AuthLoginSuccess extends AuthState {
   final String userId;
+  final String token;
   final String role; // Capture the role
 
-  AuthLoginSuccess(this.userId, this.role); // Update constructor
+  AuthLoginSuccess(this.userId,this.token, this.role); // Update constructor
 }
 
 class AuthRegisterSuccess extends AuthState {}

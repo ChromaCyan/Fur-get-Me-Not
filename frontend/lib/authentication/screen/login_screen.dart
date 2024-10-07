@@ -9,6 +9,7 @@ import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart'
 import 'package:fur_get_me_not/adopter/screens/home_screen.dart';
 import 'package:fur_get_me_not/adoptee/screens/home_screen.dart';
 import 'package:fur_get_me_not/authentication/screen/register_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -128,6 +129,10 @@ class LoginScreen extends StatelessWidget {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthLoginSuccess) {
+          // Save the token to secure storage
+          final storage = FlutterSecureStorage();
+          storage.write(key: 'jwt', value: state.token); // Store the token
+
           // Navigate to the appropriate home screen based on userType
           if (state.role == "adopter") {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdopterHomeScreen()));
@@ -173,6 +178,7 @@ class LoginScreen extends StatelessWidget {
       },
     );
   }
+
 
   Widget signInWithText() {
     return Row(

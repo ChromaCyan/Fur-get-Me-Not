@@ -13,9 +13,14 @@ const JWT_SECRET = process.env.JWT_SECRET;
 app.use(bodyParser.json());
 
 //Routes
-const userRoute = require("./routers/Routes");
+const userRoute = require("./routers/userRoute");
+const petRoute = require("./routers/petRoute");
 
+//Authentication routes
 app.use("/users", userRoute);
+
+//CRUD Pets routes 
+app.use("/pets", petRoute);
 
 const port = process.env.PORT || 5000;
 

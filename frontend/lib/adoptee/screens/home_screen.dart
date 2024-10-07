@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/nav_bar/nav_cubit.dart';
-import 'pages.dart';
+import 'package:fur_get_me_not/adoptee/screens/pages.dart';
+import 'package:fur_get_me_not/widgets/navigations/adoptee_bottom_nav_bar.dart';
 
 class AdopteeHomeScreen extends StatefulWidget {
   const AdopteeHomeScreen({Key? key}) : super(key: key);
@@ -82,70 +83,10 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: BottomAppBar(
-          color: const Color(0xFFF5E6CA),
-          child: SizedBox(
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _bottomNavBarItem(
-                  context,
-                  icon: Icons.pets,
-                  page: 0,
-                  label: "Pet List",
-                  filledIcon: Icons.pets,
-                ),
-                _bottomNavBarItem(
-                  context,
-                  icon: Icons.fact_check,
-                  page: 1,
-                  label: "Adoption Request",
-                  filledIcon: Icons.fact_check,
-                ),
-                _bottomNavBarItem(
-                  context,
-                  icon: Icons.message_outlined,
-                  page: 2,
-                  label: "Chat",
-                  filledIcon: Icons.message_outlined,
-                ),
-              ],
-            ),
-          ),
+        bottomNavigationBar: CustomBottomNavBar(
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onNavItemTapped,
         ),
-      ),
-    );
-  }
-
-  Widget _bottomNavBarItem(
-      BuildContext context, {
-        required IconData icon,
-        required int page,
-        required String label,
-        required IconData filledIcon,
-      }) {
-    return GestureDetector(
-      onTap: () => _onNavItemTapped(page),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            _selectedIndex == page ? filledIcon : icon,
-            color: _selectedIndex == page ? Colors.black : Colors.red,
-            size: 24,
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              color: _selectedIndex == page ? Colors.black : Colors.red,
-              fontSize: 12,
-              fontWeight: _selectedIndex == page
-                  ? FontWeight.w600
-                  : FontWeight.w400,
-            ),
-          ),
-        ],
       ),
     );
   }
