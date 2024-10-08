@@ -11,9 +11,17 @@ import 'package:fur_get_me_not/adoptee/screens/home_screen.dart';
 import 'package:fur_get_me_not/authentication/screen/register_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Track the visibility of the password field
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +78,13 @@ class LoginScreen extends StatelessWidget {
           height: 1.03,
         ),
         children: const [
-          TextSpan(text: 'LOGIN ', style: TextStyle(fontWeight: FontWeight.w800)),
-          TextSpan(text: 'PAGE ', style: TextStyle(color: Color(0xFFFE9879), fontWeight: FontWeight.w800)),
+          TextSpan(
+              text: 'LOGIN ', style: TextStyle(fontWeight: FontWeight.w800)),
+          TextSpan(
+            text: 'PAGE ',
+            style: TextStyle(
+                color: Color(0xFFFE9879), fontWeight: FontWeight.w800),
+          ),
         ],
       ),
       textAlign: TextAlign.center,
@@ -89,12 +102,14 @@ class LoginScreen extends StatelessWidget {
       ),
       child: TextField(
         controller: _emailController,
-        style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+        style:
+            GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
         maxLines: 1,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
           labelText: 'Email',
-          labelStyle: GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          labelStyle:
+              GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
           border: InputBorder.none,
         ),
       ),
@@ -112,14 +127,27 @@ class LoginScreen extends StatelessWidget {
       ),
       child: TextField(
         controller: _passwordController,
-        style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+        style:
+            GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
         maxLines: 1,
-        obscureText: true,
+        obscureText: !_isPasswordVisible, // Toggle visibility
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
           labelText: 'Password',
-          labelStyle: GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          labelStyle:
+              GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
           border: InputBorder.none,
+          suffixIcon: IconButton(
+            icon: Icon(
+              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              color: const Color(0xFF969AA8),
+            ),
+            onPressed: () {
+              setState(() {
+                _isPasswordVisible = !_isPasswordVisible;
+              });
+            },
+          ),
         ),
       ),
     );
@@ -129,18 +157,19 @@ class LoginScreen extends StatelessWidget {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthLoginSuccess) {
-          // Save the token to secure storage
           final storage = FlutterSecureStorage();
-          storage.write(key: 'jwt', value: state.token); // Store the token
+          storage.write(key: 'jwt', value: state.token); // Save the JWT
 
-          // Navigate to the appropriate home screen based on userType
           if (state.role == "adopter") {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdopterHomeScreen()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => AdopterHomeScreen()));
           } else {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdopteeHomeScreen()));
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => AdopteeHomeScreen()));
           }
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.error)));
         }
       },
       builder: (context, state) {
@@ -160,17 +189,23 @@ class LoginScreen extends StatelessWidget {
               final email = _emailController.text;
               final password = _passwordController.text;
 
-              // Call the login event with email and password
-              context.read<AuthBloc>().add(LoginSubmitted(email: email, password: password));
+              context
+                  .read<AuthBloc>()
+                  .add(LoginSubmitted(email: email, password: password));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50)),
             ),
             child: Text(
               'Sign In',
-              style: GoogleFonts.inter(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.w600, height: 1.5),
+              style: GoogleFonts.inter(
+                  fontSize: 16.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  height: 1.5),
               textAlign: TextAlign.center,
             ),
           ),
@@ -178,7 +213,6 @@ class LoginScreen extends StatelessWidget {
       },
     );
   }
-
 
   Widget signInWithText() {
     return Row(
@@ -188,7 +222,8 @@ class LoginScreen extends StatelessWidget {
         const SizedBox(width: 16),
         Text(
           'Or Sign in with',
-          style: GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          style:
+              GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
         ),
         const SizedBox(width: 16),
         const Expanded(child: Divider()),
@@ -203,7 +238,8 @@ class LoginScreen extends StatelessWidget {
           const Text("Don't have an account yet?"),
           TextButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => RegisterScreen()));
             },
             child: const Text('Create Account'),
           ),

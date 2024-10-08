@@ -80,6 +80,7 @@ exports.loginUser = async (req, res) => {
         // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
         console.log("Password match result:", isMatch); // Log the result
+        
 
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
@@ -87,7 +88,9 @@ exports.loginUser = async (req, res) => {
 
         // Generate JWT
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
+        console.log("Generated JWT Token:", token); // Log the token here
         res.status(200).json({ token, userId: user._id, role: user.role });
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

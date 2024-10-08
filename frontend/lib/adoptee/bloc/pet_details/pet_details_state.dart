@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
+import 'package:fur_get_me_not/adoptee/models/adoption_request/pet.dart';
 
 abstract class PetDetailsState {}
 
@@ -22,12 +21,12 @@ class PetDetailsUpdated extends PetDetailsState {
   PetDetailsUpdated({required this.pet});
 }
 
-class PetUploaded extends PetDetailsState{
+class PetUploaded extends PetDetailsState {
   final String imageUrl;
   PetUploaded({required this.imageUrl});
 }
 
-class MedicalHistoryUploaded extends PetDetailsState{
+class MedicalHistoryUploaded extends PetDetailsState {
   final String imageUrl;
   MedicalHistoryUploaded({required this.imageUrl});
 }
@@ -36,3 +35,5 @@ class VaccineHistoryUploaded extends PetDetailsState {
   final String imageUrl;
   VaccineHistoryUploaded({required this.imageUrl});
 }
+
+class PetDeleted extends PetDetailsState {} // Define the new state here

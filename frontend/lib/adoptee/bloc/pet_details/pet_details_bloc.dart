@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
+import 'package:fur_get_me_not/adoptee/models/adoption_request/pet.dart';
 import 'pet_details_event.dart';
 import 'pet_details_state.dart';
-import 'package:fur_get_me_not/adopter/repositories/adoption_list/pet_repository.dart';
+import 'package:fur_get_me_not/adoptee/repositories/adoption_request/adoption_pet_repository.dart';
 
 class PetDetailsBloc extends Bloc<PetDetailsEvent, PetDetailsState> {
   final PetRepository petRepository;
@@ -23,15 +23,17 @@ class PetDetailsBloc extends Bloc<PetDetailsEvent, PetDetailsState> {
     } else if (event is UploadVaccineHistoryEvent) {
       yield PetDetailsLoading();
       try {
-        final imageUrl = await petRepository.uploadVaccineHistory(event.imageFile);
+        final imageUrl =
+            await petRepository.uploadVaccineHistory(event.imageFile);
         yield VaccineHistoryUploaded(imageUrl: imageUrl);
       } catch (e) {
         yield PetDetailsError(message: e.toString());
       }
-    } else if (event is UploadMedicalHistoryEvent) {  // Corrected this part
+    } else if (event is UploadMedicalHistoryEvent) {
       yield PetDetailsLoading();
       try {
-        final imageUrl = await petRepository.uploadMedicalHistory(event.imageFile);
+        final imageUrl =
+            await petRepository.uploadMedicalHistory(event.imageFile);
         yield MedicalHistoryUploaded(imageUrl: imageUrl);
       } catch (e) {
         yield PetDetailsError(message: e.toString());
@@ -39,8 +41,18 @@ class PetDetailsBloc extends Bloc<PetDetailsEvent, PetDetailsState> {
     } else if (event is UploadPetEvent) {
       yield PetDetailsLoading();
       try {
-        final imageUrl = await petRepository.uploadPet(event.imageFile);
-        yield PetUploaded(imageUrl: imageUrl);
+        final createdPet =
+            await petRepository.createPet(event.pet); // Pass Pet object to repo
+        yield PetUploaded(
+            imageUrl: createdPet.petImageUrl); // Show URL of newly created pet
+      } catch (e) {
+        yield PetDetailsError(message: e.toString());
+      }
+    } else if (event is DeletePetEvent) {
+      yield PetDetailsLoading();
+      try {
+        await petRepository.deletePet(event.petId);
+        yield PetDeleted(); // Emit the new PetDeleted state
       } catch (e) {
         yield PetDetailsError(message: e.toString());
       }
