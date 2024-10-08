@@ -1,12 +1,25 @@
-// controllers/petController.js
 const Pet = require('../model/petModel');
 const User = require('../model/userModel'); 
-
 
 // Get all pets (No restrictions, viewable to both Adoptees and Adopters)
 exports.getPets = async (req, res) => {
   try {
-    const pets = await Pet.find();
+    // Populate the adoptee details (name) for each pet
+    const pets = await Pet.find().populate('adopteeId', 'firstName lastName'); // Adjust field names as necessary
+    res.status(200).json(pets);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get pets created by the logged-in Adoptee user
+exports.getPetsbyadoptee = async (req, res) => {
+  try {
+    const { id } = req.user; // Get the adoptee's ID from the request user
+
+    // Populate the adoptee details (name) for each pet that belongs to the logged-in user
+    const pets = await Pet.find({ adopteeId: id }).populate('adopteeId', 'firstName lastName');
+
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -17,7 +30,11 @@ exports.getPets = async (req, res) => {
 exports.getPetById = async (req, res) => {
   try {
     const { id } = req.params;
-    const pet = await Pet.findById(id).populate('medicalHistory vaccineHistory');
+    // Populate medicalHistory, vaccineHistory, and adoptee details (name)
+    const pet = await Pet.findById(id)
+      //.populate('medicalHistory vaccineHistory')
+      //.populate('adopteeId', 'firstName lastName'); // Adjust field names as necessary
+
     if (!pet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
@@ -31,23 +48,30 @@ exports.getPetById = async (req, res) => {
 exports.createPet = async (req, res) => {
   try {
     const { role } = req.user;
+    console.log('User in createPet:', req.user); // Log user details
+
     if (role !== 'adoptee') {
       return res.status(403).json({ message: 'Access denied. Only Adoptees can create pet listings.' });
     }
 
+    // Create new pet object with adopteeId
     const newPet = new Pet({
       ...req.body,
-      userId: req.user._id
+      adopteeId: req.user.id // Ensure this is set correctly
     });
+
+    console.log('New Pet Object:', newPet); // Log new pet object before saving
 
     const savedPet = await newPet.save();
     res.status(201).json(savedPet);
   } catch (error) {
+    console.error('Error in createPet:', error.message); // Log the error message
     res.status(500).json({ message: error.message });
   }
 };
 
-//Add pet medical history
+
+// Add pet medical history
 exports.addMedicalHistory = async (req, res) => {
     const { petId, conditions, medications, surgeries, allergies } = req.body;
 
@@ -67,7 +91,7 @@ exports.addMedicalHistory = async (req, res) => {
     }
 };
 
-//Add pet vaccine history
+// Add pet vaccine history
 exports.addVaccineHistory = async (req, res) => {
     const { petId, vaccines, lastVaccinationDate } = req.body;
 
@@ -84,8 +108,6 @@ exports.addVaccineHistory = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
-
 
 // Update a pet (Adoptee Only)
 exports.updatePet = async (req, res) => {

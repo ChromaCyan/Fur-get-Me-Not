@@ -1,12 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const adoption_statusSchema = new mongoose.Schema({
-   petName: {type: String, required: true}, 
-   ownerName: {type: String, required: true}, 
-   status: {type: String, required: true},
-   requestDate: {type: String, required: true}, 
-
+const adoptionStatusSchema = new Schema({
+  adoptionRequestId: { type: Schema.Types.ObjectId, ref: 'AdoptionRequest', required: true }, 
+  adopterId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  adopteeId: { type: Schema.Types.ObjectId, ref: 'User', required: true }, 
+  petId: { type: Schema.Types.ObjectId, ref: 'Pet', required: true }, 
+  requestDate: { type: Date, default: Date.now }, 
+  status: { type: String, default: 'pending' }, 
 });
 
-const AdoptionStatus = mongoose.model("AdoptionStatus", adoption_statusSchema);
-module.exports = AdoptionStatus;
+module.exports = mongoose.model('AdoptionStatus', adoptionStatusSchema);
