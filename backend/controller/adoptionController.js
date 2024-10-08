@@ -138,13 +138,30 @@ exports.getAdoptionFormsForAdoptee = async (req, res) => {
 exports.updateAdoptionStatus = async (req, res) => {
   const { requestId, status } = req.body; // Expect requestId and new status in the request body
   try {
+    // Update the adoption request status
     const adoptionRequest = await AdoptionRequest.findByIdAndUpdate(requestId, { status }, { new: true });
 
     if (!adoptionRequest) {
       return res.status(404).json({ message: 'Adoption request not found' });
     }
 
-    res.status(200).json({ message: 'Adoption request status updated successfully', adoptionRequest });
+    // Update the adoption status record associated with this request
+    const adoptionStatus = await AdoptionStatus.findOneAndUpdate(
+      { adoptionRequestId: requestId }, // Find the associated adoption status by request ID
+      { status }, // Update the status
+      { new: true } // Return the updated record
+    );
+
+    // Check if the adoption status was found and updated
+    if (!adoptionStatus) {
+      return res.status(404).json({ message: 'Adoption status not found' });
+    }
+
+    res.status(200).json({
+      message: 'Adoption request and status updated successfully',
+      adoptionRequest,
+      adoptionStatus
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error updating adoption request status', error });
