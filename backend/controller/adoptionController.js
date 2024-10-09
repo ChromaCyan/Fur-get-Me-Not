@@ -56,13 +56,16 @@ exports.submitAdoptionForm = async (req, res) => {
       return res.status(400).json({ message: 'Adoptee ID is missing for this pet' });
     }
 
+    // Log the adopteeId
+    console.log('Adoptee ID:', pet.adopteeId);
+
     // Create AdoptionRequest record
     const adoptionRequest = new AdoptionRequest({
       adopterId: req.user.id,
-      petId: petId,
+      petId,
       adoptionFormId: adoptionForm._id,
       adopteeId: pet.adopteeId,
-      status: 'pending',
+      status: 'Pending',
       requestDate: Date.now(),
     });
 
@@ -72,10 +75,13 @@ exports.submitAdoptionForm = async (req, res) => {
     const adoptionStatus = new AdoptionStatus({
       adoptionRequestId: adoptionRequest._id,
       adopterId: req.user.id,
-      petId: petId,
+      petId,
+      adopteeId: pet.adopteeId, 
       requestDate: Date.now(),
-      status: 'pending',
+      status: 'Pending',
     });
+
+await adoptionStatus.save(); // Save the adoption status
 
     await adoptionStatus.save(); // Save the adoption status
 
@@ -86,15 +92,13 @@ exports.submitAdoptionForm = async (req, res) => {
   }
 };
 
-
-
 // Function to get adoption statuses for an adopter
 exports.getAdoptionStatusesForAdopter = async (req, res) => {
   try {
     const adoptionStatuses = await AdoptionStatus.find({ adopterId: req.user.id })
       .populate('adoptionRequestId') // Link adoption request
       .populate('petId')
-      .populate('adopteeId');
+      .populate('adopteeId'); // If adopteeId is to be populated
 
     res.status(200).json(adoptionStatuses);
   } catch (error) {
@@ -123,7 +127,7 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
 // Function to get all adoption forms submitted to the adoptee
 exports.getAdoptionFormsForAdoptee = async (req, res) => {
   try {
-    const adoptionForms = await AdoptionForm.find({ /* Filter by adoptee ID */ })
+    const adoptionForms = await AdoptionForm.find({ petId: req.user.id }) // Filter by adoptee ID
       .populate('adopterId') // Assuming you want adopter details
       .populate('petId');
 
@@ -162,4 +166,3 @@ exports.updateAdoptionStatus = async (req, res) => {
     res.status(500).json({ message: 'Error updating adoption request status', error: error.message });
   }
 };
-
