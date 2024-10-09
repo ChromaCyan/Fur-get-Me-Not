@@ -12,7 +12,7 @@ class AdoptionStatusCard extends StatelessWidget {
         return Colors.orange;
       case 'Approved':
         return Colors.blue;
-      case 'Adoption Successful':
+      case 'Adoption Completed':
         return Colors.green;
       case 'Rejected':
         return Colors.red;
@@ -23,6 +23,7 @@ class AdoptionStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Current status: ${adoption.status}');
     return Card(
       margin: EdgeInsets.all(10),
       shape: RoundedRectangleBorder(

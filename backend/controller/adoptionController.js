@@ -56,9 +56,6 @@ exports.submitAdoptionForm = async (req, res) => {
       return res.status(400).json({ message: 'Adoptee ID is missing for this pet' });
     }
 
-    // Log the adopteeId
-    console.log('Adoptee ID:', pet.adopteeId);
-
     // Create AdoptionRequest record
     const adoptionRequest = new AdoptionRequest({
       adopterId: req.user.id,
@@ -80,8 +77,6 @@ exports.submitAdoptionForm = async (req, res) => {
       requestDate: Date.now(),
       status: 'Pending',
     });
-
-await adoptionStatus.save(); // Save the adoption status
 
     await adoptionStatus.save(); // Save the adoption status
 
@@ -127,7 +122,7 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
 // Function to get all adoption forms submitted to the adoptee
 exports.getAdoptionFormsForAdoptee = async (req, res) => {
   try {
-    const adoptionForms = await AdoptionForm.find({ petId: req.user.id }) // Filter by adoptee ID
+    const adoptionForms = await AdoptionForm.find({ adopterId: req.user.id }) // Change filter to adopterId
       .populate('adopterId') // Assuming you want adopter details
       .populate('petId');
 

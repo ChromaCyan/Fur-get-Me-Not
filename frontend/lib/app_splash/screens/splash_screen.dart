@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/config/const.dart';
 import 'package:fur_get_me_not/app_splash/models/onboarding_model.dart';
 import 'package:fur_get_me_not/authentication/screen/login_screen.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class PetsOnBoardingScreen extends StatefulWidget {
   const PetsOnBoardingScreen({super.key});
@@ -37,14 +37,17 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
             ),
           ),
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               if (currentPage == onBoardData.length - 1) {
+                final storage = FlutterSecureStorage();
+                await storage.write(key: 'onboarding_completed', value: 'true'); // Add await
                 Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => LoginScreen(),
-                    ),
-                        (route) => false);
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => LoginScreen(),
+                  ),
+                      (route) => false,
+                );
               } else {
                 _pageController.nextPage(
                   duration: const Duration(milliseconds: 300),

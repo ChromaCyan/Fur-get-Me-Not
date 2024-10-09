@@ -19,6 +19,9 @@ class AdoptionRequestListScreen extends StatelessWidget {
             if (state is AdoptionRequestLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is AdoptionRequestLoaded) {
+              if (state.requests.isEmpty) {
+                return Center(child: Text('No adoption requests found.'));
+              }
               return ListView.builder(
                 itemCount: state.requests.length,
                 itemBuilder: (context, index) {

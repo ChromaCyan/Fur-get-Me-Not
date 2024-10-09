@@ -10,8 +10,9 @@ class AdoptionStatusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AdoptionStatusBloc(adoptionStatusRepository: AdoptionStatusRepository())
-        ..add(LoadAdoptionStatus()),
+      create: (context) => AdoptionStatusBloc(
+        adoptionStatusRepository: AdoptionStatusRepository(),
+      )..add(LoadAdoptionStatus()),
       child: Scaffold(
         body: BlocBuilder<AdoptionStatusBloc, AdoptionStatusState>(
           builder: (context, state) {
@@ -19,6 +20,9 @@ class AdoptionStatusScreen extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
             } else if (state is AdoptionStatusLoaded) {
               final adoptionStatusList = state.adoptionStatusList;
+              if (adoptionStatusList.isEmpty) {
+                return Center(child: Text('No adoption statuses found.'));
+              }
               return ListView.builder(
                 itemCount: adoptionStatusList.length,
                 itemBuilder: (context, index) {
@@ -29,7 +33,7 @@ class AdoptionStatusScreen extends StatelessWidget {
             } else if (state is AdoptionStatusError) {
               return Center(child: Text(state.message));
             } else {
-              return Center(child: Text('No adoptions found.'));
+              return Center(child: Text('No adoption status found.'));
             }
           },
         ),
