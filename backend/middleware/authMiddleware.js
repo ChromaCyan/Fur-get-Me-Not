@@ -10,8 +10,7 @@ const secretKey = process.env.JWT_SECRET || 'yourSecretKeyHere';
 
 // Middleware to verify JWT Token
 function verifyToken(req, res, next) {
-  const token = req.header('Authorization')?.split(' ')[1]; // Get token from header
-  console.log('Extracted token:', token); // Log the token for debugging
+  const token = req.header('Authorization')?.split(' ')[1]; 
 
   if (!token) {
     return res.status(401).json({ message: 'Access Denied! No Token Provided.' });
@@ -21,7 +20,6 @@ function verifyToken(req, res, next) {
     // Verify the token
     const decoded = jwt.verify(token, secretKey);
     req.user = decoded; // Attach the decoded user information to the request
-    console.log('Decoded user:', req.user); // Log the decoded user info for debugging
     next(); // Proceed to the next middleware or route handler
   } catch (error) {
     console.error('Token verification error:', error.message); // Log the error for debugging
