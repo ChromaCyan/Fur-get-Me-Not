@@ -1,7 +1,5 @@
-// lib/models/pet.dart
-
 class Pet {
-  final String id;
+  final String id; // MongoDB uses `_id`
   final String name;
   final String breed;
   final String gender;
@@ -9,9 +7,9 @@ class Pet {
   final double height;
   final double weight;
   final String petImageUrl;
-  final String medicalHistoryImageUrl;
-  final String vaccineHistoryImageUrl;
+  final String description;
   final String specialCareInstructions;
+  final Adoptee adopteeId; // Change this to Adoptee
 
   Pet({
     required this.id,
@@ -22,30 +20,30 @@ class Pet {
     required this.height,
     required this.weight,
     required this.petImageUrl,
-    required this.medicalHistoryImageUrl,
-    required this.vaccineHistoryImageUrl,
+    required this.description,
     required this.specialCareInstructions,
+    required this.adopteeId, // Now it's Adoptee type
   });
 
   factory Pet.fromJson(Map<String, dynamic> json) {
     return Pet(
-      id: json['id'],
+      id: json['_id'], // MongoDB uses `_id`
       name: json['name'],
       breed: json['breed'],
       gender: json['gender'],
       age: json['age'],
-      height: json['height'],
-      weight: json['weight'],
+      height: (json['height'] as num).toDouble(),
+      weight: (json['weight'] as num).toDouble(),
       petImageUrl: json['petImageUrl'],
-      medicalHistoryImageUrl: json['medicalHistoryImageUrl'],
-      vaccineHistoryImageUrl: json['vaccineHistoryImageUrl'],
-      specialCareInstructions: json['specialCareInstructions'],
+      description: json['description'],
+      specialCareInstructions: json['specialCareInstructions'] ?? '', // Provide default
+      adopteeId: Adoptee.fromJson(json['adopteeId']), // Parse Adoptee
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id,
       'name': name,
       'breed': breed,
       'gender': gender,
@@ -53,9 +51,38 @@ class Pet {
       'height': height,
       'weight': weight,
       'petImageUrl': petImageUrl,
-      'medicalHistoryImageUrl': medicalHistoryImageUrl,
-      'vaccineHistoryImageUrl': vaccineHistoryImageUrl,
+      'description': description,
       'specialCareInstructions': specialCareInstructions,
+      'adopteeId': adopteeId.toJson(), // Convert Adoptee to JSON
+    };
+  }
+}
+
+// Adoptee class to represent the adopter's details
+class Adoptee {
+  final String id;
+  final String firstName;
+  final String lastName;
+
+  Adoptee({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+  });
+
+  factory Adoptee.fromJson(Map<String, dynamic> json) {
+    return Adoptee(
+      id: json['_id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'firstName': firstName,
+      'lastName': lastName,
     };
   }
 }

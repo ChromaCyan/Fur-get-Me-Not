@@ -1,8 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthRepository {
-  final String baseUrl = 'http://192.168.100.134:5000/users';
+  final String baseUrl = 'http://localhost:5000/users';
+  final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<Map<String, dynamic>> login({
     required String email,
@@ -20,6 +22,7 @@ class AuthRepository {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        await storage.write(key: 'jwt', value: data['token']); // Save the token
         return {
           'success': true,
           'userId': data['userId'],
@@ -27,12 +30,10 @@ class AuthRepository {
           'role': data['role'],
         };
       } else {
-        // Log the response status and body for debugging
         print('Login failed: ${response.statusCode}, ${response.body}');
         return {'success': false, 'message': response.body};
       }
     } catch (e) {
-      // Log the error for debugging
       print('Login error: ${e.toString()}');
       return {'success': false, 'message': e.toString()};
     }

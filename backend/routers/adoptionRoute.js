@@ -28,6 +28,6 @@ router.get('/adoption-request', verifyToken, isAdoptee, getAdoptionRequestsForAd
 router.get('/adoption-forms', verifyToken, isAdoptee, getAdoptionFormsForAdoptee);
 
 // Route for updating the status of an adoption request
-router.put('/adoption-statuses', verifyToken, isAdoptee, updateAdoptionStatus);
+router.put('/update-status', verifyToken, isAdoptee, updateAdoptionStatus);
 
 module.exports = router;

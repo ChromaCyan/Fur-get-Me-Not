@@ -30,6 +30,7 @@ class AdoptionRequestListScreen extends StatelessWidget {
                         UpdateAdoptionRequestStatus(
                           index: index,
                           newStatus: newStatus,
+                          requestId: adoptionRequest.requestId,
                         ),
                       );
                     },

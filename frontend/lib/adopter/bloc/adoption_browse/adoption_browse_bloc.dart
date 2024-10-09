@@ -13,11 +13,13 @@ class AdoptionBrowseBloc extends Bloc<AdoptionBrowseEvent, AdoptionBrowseState> 
 
   void _onLoadAdoptionBrowseEvent(LoadAdoptionBrowseEvent event, Emitter<AdoptionBrowseState> emit) async {
     emit(AdoptionBrowseLoading());
-    try{
-      final pets = await petRepository.getAvailablePets(event.filter);
+    try {
+      final pets = await petRepository.getAvailablePets();
       emit(AdoptionBrowseLoaded(pets: pets));
-    } catch (e) {;
-      emit(AdoptionBrowseError(message: "Failed to load pets."));
+    } catch (e) {
+      print("Error loading pets: $e");
+      emit(AdoptionBrowseError(message: "Failed to load pets: $e"));
     }
   }
+
 }

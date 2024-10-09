@@ -24,12 +24,6 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
     context.read<AdoptionBrowseBloc>().add(LoadAdoptionBrowseEvent(filter: ''));
   }
 
-  void updateSelectedCategory(Category category) {
-    setState(() {
-      CategoryData.setIsSelected(category.categoryId);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -41,12 +35,6 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
             const SizedBox(height: 20),
             const BannerWidget(text: "Adopt a feline companion\n now!"),
             const SizedBox(height: 20),
-            CategoryChip(
-              categories: CategoryData.categories,
-              onSelected: (category) {
-                updateSelectedCategory(category);
-              },
-            ),
             Expanded(
               child: BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
                 builder: (context, state) {
@@ -62,8 +50,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                             pet: pet,
                             size: size,
                             onTap: () {
-                              Navigator.push(
-                                context,
+                              Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => PetDetailsPage(petId: pet.id),
                                 ),

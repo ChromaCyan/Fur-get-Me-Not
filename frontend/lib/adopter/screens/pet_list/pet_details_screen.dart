@@ -166,9 +166,9 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.network(widget.pet.vaccineHistoryImageUrl),
-        const SizedBox(height: 10),
-        Image.network(widget.pet.medicalHistoryImageUrl),
+        // Image.network(widget.pet.vaccineHistoryImageUrl),
+        // const SizedBox(height: 10),
+        // Image.network(widget.pet.medicalHistoryImageUrl),
       ],
     );
   }

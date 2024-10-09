@@ -1,78 +1,62 @@
-import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class PetRepository {
-  // Dummy data
-  final Map<String, Pet> _pets = {
-    '1': Pet(
-      id: '1',
-      name: 'Arthur',
-      breed: 'Calico',
-      gender: 'Male',
-      age: 5,
-      height: 60.0,
-      weight: 30.0,
-      petImageUrl: 'images/pet-cat2.png',
-      medicalHistoryImageUrl: 'images/pet_medical_image.png',
-      vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
-      specialCareInstructions: '*Needs daily walks, \n *30 mins bath, \n *Daily brush',
-    ),
-    '2': Pet(
-      id: '2',
-      name: 'Dave',
-      breed: 'Siamese',
-      gender: 'Unknown',
-      age: 9999999,
-      height: 55.0,
-      weight: 28.0,
-      petImageUrl: 'images/pet-cat1.png',
-      medicalHistoryImageUrl: 'images/pet_medical_image.png',
-      vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
-      specialCareInstructions: 'None',
-    ),
-    // Add more pets here as needed
-  };
+  final String baseUrl = 'http://localhost:5000/pets';
+  final FlutterSecureStorage storage = FlutterSecureStorage();
 
-  // Fetch pet details by ID
-  Future<Pet> getPetDetails(String petId) async {
-    await Future.delayed(Duration(seconds: 1)); // Simulate network delay
-    return _pets[petId]!;
+  Future<String?> getToken() async {
+    return await storage.read(key: 'jwt');
   }
 
-  // Update pet details
-  Future<void> updatePetDetails(Pet pet) async {
-    await Future.delayed(Duration(seconds: 1));
-    _pets[pet.id] = pet;
-  }
+  // Fetch available pets
+  Future<List<Pet>> getAvailablePets() async {
+    try {
+      final token = await getToken();
+      print('Token: $token');
 
-  // Upload pet image
-  Future<String> uploadPet(File imageFile) async {
-    await Future.delayed(Duration(seconds: 1));
-    return 'images/pet-cat1.png';
-  }
+      final response = await http.get(
+        Uri.parse('$baseUrl/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
 
-  // Upload medical history
-  Future<String> uploadMedicalHistory(File imageFile) async {
-    await Future.delayed(Duration(seconds: 1));
-    return 'images/pet-cat2.png';
-  }
+      print('Response status: ${response.statusCode}');
 
-  // Upload vaccine history
-  Future<String> uploadVaccineHistory(File imageFile) async {
-    await Future.delayed(Duration(seconds: 1));
-    return 'images/pet-cat2.png';
-  }
-
-  // Fetch available pets (e.g., for the adoption list)
-  Future<List<Pet>> getAvailablePets(String filter) async {
-    await Future.delayed(Duration(seconds: 2));
-    List<Pet> availablePets = _pets.values.toList();
-
-    // Apply filter logic (optional, based on breed for this example)
-    if (filter.isNotEmpty) {
-      availablePets = availablePets.where((pet) => pet.breed.toLowerCase().contains(filter.toLowerCase())).toList();
+      if (response.statusCode == 200) {
+        List jsonData = jsonDecode(response.body) as List;
+        return jsonData.map((pet) => Pet.fromJson(pet)).toList();
+      } else {
+        throw Exception('Failed to load pets: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch pets: $e');
     }
+  }
 
-    return availablePets;
+  // Fetch pet details by ID (including image URL)
+  Future<Pet> getPetDetails(String id) async {
+    try {
+      final token = await getToken(); // Retrieve the token
+      final response = await http.get(
+        Uri.parse('$baseUrl/$id'),
+        headers: {
+          'Authorization': 'Bearer $token', // Include the token in the request headers
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Decode and return a single Pet object
+        final jsonData = jsonDecode(response.body);
+        return Pet.fromJson(jsonData);
+      } else {
+        throw Exception('Failed to load pet details');
+      }
+    } catch (e) {
+      throw Exception('Failed to fetch pet details: $e');
+    }
   }
 }

@@ -4,19 +4,6 @@ import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
 class AdoptedPetRepository {
   // Dummy data
   final Map<String, Pet> _pets = {
-    '1': Pet(
-      id: '1',
-      name: 'Arthur',
-      breed: 'Calico',
-      gender: 'Male',
-      age: 5,
-      height: 60.0,
-      weight: 30.0,
-      petImageUrl: 'images/pet-cat2.png',
-      medicalHistoryImageUrl: 'images/pet_medical_image.png',
-      vaccineHistoryImageUrl: 'images/pet_vaccine_image.jpg',
-      specialCareInstructions: '*Needs daily walks, \n *30 mins bath, \n *Daily brush',
-    ),
   };
 
   // Fetch pet details by ID

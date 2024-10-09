@@ -22,7 +22,13 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
   @override
   void initState() {
     super.initState();
+    // Ensure the status matches one of the dropdown options
     _selectedStatus = widget.adoptionRequest.requestStatus;
+
+    // Ensure default status values are consistent
+    if (!['Pending', 'Accepted', 'Rejected', 'Adoption Completed'].contains(_selectedStatus)) {
+      _selectedStatus = 'Pending'; // Fallback to a default value if needed
+    }
   }
 
   Color _getStatusColor(String status) {
@@ -30,9 +36,9 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
       case 'Pending':
         return Colors.orange;
       case 'Accepted':
+        return Colors.blue;
+      case 'Adoption Completed':
         return Colors.green;
-      case 'Completed':
-        return Colors.yellow;
       case 'Rejected':
         return Colors.red;
       default:
@@ -74,6 +80,8 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
                       ),
                     ),
                     Text('Adopter: ${widget.adoptionRequest.adopterName}'),
+                    // Display the requestId
+                    Text('Request ID: ${widget.adoptionRequest.requestId}', style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
@@ -112,7 +120,7 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
                       }
                     });
                   },
-                  items: ['Pending', 'Accepted', 'Rejected', 'Completed']
+                  items: ['Pending', 'Accepted', 'Rejected', 'Adoption Completed']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -123,7 +131,6 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
               ],
             ),
             SizedBox(height: 10),
-            // Add clickable text here
             TextButton(
               onPressed: () {
                 Navigator.push(

@@ -1,9 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.dart';
 
 abstract class AdoptionRequestEvent extends Equatable {
-  const AdoptionRequestEvent();
-
   @override
   List<Object> get props => [];
 }
@@ -11,14 +8,16 @@ abstract class AdoptionRequestEvent extends Equatable {
 class LoadAdoptionRequests extends AdoptionRequestEvent {}
 
 class UpdateAdoptionRequestStatus extends AdoptionRequestEvent {
-  final int index;
-  final String newStatus;
+  final String requestId; // The requestId of the adoption request
+  final String newStatus;  // The new status for the request
+  final int index;         // The index of the request in the list
 
-  const UpdateAdoptionRequestStatus({
-    required this.index,
+  UpdateAdoptionRequestStatus({
+    required this.requestId,
     required this.newStatus,
+    required this.index,  // Include the index in the constructor
   });
 
   @override
-  List<Object> get props => [index, newStatus];
+  List<Object> get props => [requestId, newStatus, index];
 }

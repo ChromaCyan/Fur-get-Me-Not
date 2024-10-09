@@ -18,17 +18,17 @@ class UploadPetEvent extends PetDetailsEvent {
   UploadPetEvent({required this.imageFile});
 }
 
-class UploadMedicalHistoryEvent extends PetDetailsEvent {
-  final File imageFile;
-  UploadMedicalHistoryEvent({required this.imageFile});
-}
+// Commented out unused events
+// class UploadMedicalHistoryEvent extends PetDetailsEvent {
+//   final File imageFile;
+//   UploadMedicalHistoryEvent({required this.imageFile});
+// }
 
-class UploadVaccineHistoryEvent extends PetDetailsEvent {
-  final File imageFile;
-  UploadVaccineHistoryEvent({required this.imageFile});
-}
+// class UploadVaccineHistoryEvent extends PetDetailsEvent {
+//   final File imageFile;
+//   UploadVaccineHistoryEvent({required this.imageFile});
+// }
 
-// New Event to toggle between Pet Info and Medical History views
 class TogglePetInfoViewEvent extends PetDetailsEvent {
   final bool showPetInfo;
   TogglePetInfoViewEvent({required this.showPetInfo});

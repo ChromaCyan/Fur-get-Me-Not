@@ -28,12 +28,12 @@ class PetUploaded extends PetDetailsState {
   PetUploaded({required this.imageUrl});
 }
 
-class MedicalHistoryUploaded extends PetDetailsState {
-  final String imageUrl;
-  MedicalHistoryUploaded({required this.imageUrl});
-}
-
-class VaccineHistoryUploaded extends PetDetailsState {
-  final String imageUrl;
-  VaccineHistoryUploaded({required this.imageUrl});
-}
+// class MedicalHistoryUploaded extends PetDetailsState {
+//   final String imageUrl;
+//   MedicalHistoryUploaded({required this.imageUrl});
+// }
+//
+// class VaccineHistoryUploaded extends PetDetailsState {
+//   final String imageUrl;
+//   VaccineHistoryUploaded({required this.imageUrl});
+// }

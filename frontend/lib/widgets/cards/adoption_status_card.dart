@@ -10,7 +10,9 @@ class AdoptionStatusCard extends StatelessWidget {
     switch (adoption.status) {
       case 'Pending':
         return Colors.orange;
-      case 'Accepted':
+      case 'Approved':
+        return Colors.blue;
+      case 'Adoption Successful':
         return Colors.green;
       case 'Rejected':
         return Colors.red;
@@ -52,7 +54,6 @@ class AdoptionStatusCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text('Owner: ${adoption.ownerName}'),
                   ],
                 ),
               ],

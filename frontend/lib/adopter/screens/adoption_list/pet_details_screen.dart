@@ -83,7 +83,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       const SizedBox(height: 20),
                       buildToggleButtons(),
                       const SizedBox(height: 20),
-                      showPetInfo ? petInfo() : vaccineMedicalHistory(),
+                      // showPetInfo ? petInfo() : vaccineMedicalHistory(),
                       const SizedBox(height: 20),
                       adoptMeButton(context),
                       const SizedBox(height: 20),
@@ -212,6 +212,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Name: ${widget.pet.name}"),
+        Text("Description: ${widget.pet.description}"),
         Text("Age: ${widget.pet.age} years old"),
         Text("Breed: ${widget.pet.breed}"),
         Text("Height: ${widget.pet.height} cm"),
@@ -221,16 +222,16 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     );
   }
 
-  Widget vaccineMedicalHistory() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Image.network(widget.pet.vaccineHistoryImageUrl),
-        const SizedBox(height: 10),
-        Image.network(widget.pet.medicalHistoryImageUrl),
-      ],
-    );
-  }
+  // Widget vaccineMedicalHistory() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Image.network(widget.pet.vaccineHistoryImageUrl),
+  //       const SizedBox(height: 10),
+  //       Image.network(widget.pet.medicalHistoryImageUrl),
+  //     ],
+  //   );
+  // }
 
   Widget adoptMeButton(BuildContext context) {
     return GestureDetector(
@@ -299,9 +300,9 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             left: 0,
             right: 0,
             child: Hero(
-              tag: widget.pet.petImageUrl,
+              tag: widget.pet.petImageUrl, // Ensure this is correct
               child: Image.network(
-                widget.pet.petImageUrl,
+                widget.pet.petImageUrl, // Displaying the pet image URL
                 height: size.height * 0.45,
               ),
             ),

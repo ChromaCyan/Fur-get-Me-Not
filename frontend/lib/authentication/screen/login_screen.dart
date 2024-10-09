@@ -158,7 +158,8 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is AuthLoginSuccess) {
           final storage = FlutterSecureStorage();
-          storage.write(key: 'jwt', value: state.token); // Save the JWT
+          storage.write(key: 'jwt', value: state.token);
+          print('Stored JWT: ${state.token}');
 
           if (state.role == "adopter") {
             Navigator.pushReplacement(context,

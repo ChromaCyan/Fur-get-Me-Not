@@ -22,7 +22,6 @@ import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.da
 import 'package:fur_get_me_not/adopter/repositories/chat/chat_repository.dart';
 import 'package:fur_get_me_not/adoptee/repositories/chat/admin_chat_list_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
-import 'package:fur_get_me_not/adopter/repositories/adoption_list/pet_repository.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_list/pet_list_bloc.dart';
 import 'package:fur_get_me_not/adopter/repositories/pet_list/adopted_pet_repository.dart';
 
