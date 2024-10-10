@@ -5,7 +5,7 @@ const User = require('../model/userModel');
 exports.getPets = async (req, res) => {
   try {
     // Populate the adoptee details (name) for each pet
-    const pets = await Pet.find().populate('adopteeId', 'firstName lastName'); // Adjust field names as necessary
+    const pets = await Pet.find().populate('adopteeId', 'firstName lastName');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -15,7 +15,7 @@ exports.getPets = async (req, res) => {
 // Get pets created by the logged-in Adoptee user
 exports.getPetsbyadoptee = async (req, res) => {
   try {
-    const { id } = req.user; // Get the adoptee's ID from the request user
+    const { id } = req.user;
 
     // Populate the adoptee details (name) for each pet that belongs to the logged-in user
     const pets = await Pet.find({ adopteeId: id }).populate('adopteeId', 'firstName lastName');
@@ -29,18 +29,16 @@ exports.getPetsbyadoptee = async (req, res) => {
 // Get a single pet by ID
 exports.getPetById = async (req, res) => {
   try {
-    const { id } = req.params;
-    // Populate medicalHistory, vaccineHistory, and adoptee details (name)
-    const pet = await Pet.findById(id)
-      //.populate('medicalHistory vaccineHistory')
-      //.populate('adopteeId', 'firstName lastName'); // Adjust field names as necessary
+    const pet = await Pet.findById(req.params.id).populate('adopteeId'); 
 
     if (!pet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
+
     res.status(200).json(pet);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving pet', error });
   }
 };
 
@@ -48,7 +46,7 @@ exports.getPetById = async (req, res) => {
 exports.createPet = async (req, res) => {
   try {
     const { role } = req.user;
-    console.log('User in createPet:', req.user); // Log user details
+    console.log('User in createPet:', req.user); 
 
     if (role !== 'adoptee') {
       return res.status(403).json({ message: 'Access denied. Only Adoptees can create pet listings.' });
@@ -57,15 +55,15 @@ exports.createPet = async (req, res) => {
     // Create new pet object with adopteeId
     const newPet = new Pet({
       ...req.body,
-      adopteeId: req.user.id // Ensure this is set correctly
+      adopteeId: req.user.id
     });
 
-    console.log('New Pet Object:', newPet); // Log new pet object before saving
+    console.log('New Pet Object:', newPet);
 
     const savedPet = await newPet.save();
     res.status(201).json(savedPet);
   } catch (error) {
-    console.error('Error in createPet:', error.message); // Log the error message
+    console.error('Error in createPet:', error.message); 
     res.status(500).json({ message: error.message });
   }
 };

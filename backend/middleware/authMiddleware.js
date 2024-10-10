@@ -19,10 +19,10 @@ function verifyToken(req, res, next) {
   try {
     // Verify the token
     const decoded = jwt.verify(token, secretKey);
-    req.user = decoded; // Attach the decoded user information to the request
-    next(); // Proceed to the next middleware or route handler
+    req.user = decoded; 
+    next(); 
   } catch (error) {
-    console.error('Token verification error:', error.message); // Log the error for debugging
+    console.error('Token verification error:', error.message);
     res.status(400).json({ message: 'Invalid Token.' });
   }
 }

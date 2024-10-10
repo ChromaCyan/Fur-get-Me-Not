@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 const userRoute = require("./routers/userRoute");
 const petRoute = require("./routers/petRoute");
 const adoptionRoute = require("./routers/adoptionRoute");
+const adoptionpetRoute = require("./routers/adoptedpetRoute");
 
 //Authentication routes
 app.use("/users", userRoute);
@@ -25,6 +26,9 @@ app.use("/pets", petRoute);
 
 //Adoption form route
 app.use("/adoption", adoptionRoute);
+
+//CRUD Adopted Pet route
+app.use("/adopted-pets", adoptionpetRoute);
 
 const port = process.env.PORT || 5000;
 

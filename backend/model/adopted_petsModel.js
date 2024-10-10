@@ -1,15 +1,21 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const adopted_petSchema = new mongoose.Schema({
-    id: {type: String, required: true},
-    name: {type: String, required: true},
-    description: {type: String, required: true},
-    breed: {type: String, required: true},
-    age: {type: Number, required: true},
-    height: {type: Number, required: true},
-    petImageUrl: {type: String, required: true},
-    medicalHistoryImageUrl: {type: String, required: true},
-    specialCareInstructions: {type: String, required: true},
+const adoptedPetSchema = new mongoose.Schema({
+  name: String,
+  breed: String,
+  gender: String,
+  age: Number,
+  height: String,
+  weight: String,
+  petImageUrl: String,
+  description: String,
+  specialCareInstructions: String,
+  adopterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  adoptionDate: Date,
+  status: { type: String, default: 'active' } // Add status field (active, inactive, archived)
 });
-const AdoptedPet = mongoose.model("adopted_petSchema", adopted_petSchema);
+
+const AdoptedPet = mongoose.model('AdoptedPet', adoptedPetSchema);
+
 module.exports = AdoptedPet;
