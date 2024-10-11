@@ -71,14 +71,32 @@ exports.createPet = async (req, res) => {
   }
 };
 
-// Upload an image for a pet
+// Upload an image for a pet and update the pet's image URL
 exports.uploadImage = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
+
+    // Construct the image URL
     const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-    res.status(200).json({ imageUrl: filePath });
+    
+    // Get the pet ID from the request body
+    const { petId } = req.body; 
+
+    // Update the pet's image URL in the database
+    const updatedPet = await Pet.findByIdAndUpdate(
+      petId,
+      { petImageUrl: filePath }, // Update only the image URL
+      { new: true } // Return the updated pet object
+    );
+
+    if (!updatedPet) {
+      return res.status(404).json({ message: 'Pet not found' });
+    }
+
+    // Respond with the updated pet object
+    res.status(200).json({ imageUrl: filePath, pet: updatedPet });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error uploading image', error });
@@ -94,10 +112,27 @@ exports.updatePet = async (req, res) => {
     }
 
     const { id } = req.params;
-    const updatedPet = await Pet.findByIdAndUpdate(id, req.body, { new: true });
+
+    // Find the existing pet first
+    const existingPet = await Pet.findById(id);
+    if (!existingPet) {
+      return res.status(404).json({ message: 'Pet not found' });
+    }
+
+    // Update the pet's details with the incoming data
+    const updatedData = {
+      ...existingPet.toObject(), // Convert existing pet document to an object
+      ...req.body, // Merge with incoming data
+    };
+
+    // Update the pet in the database
+    const updatedPet = await Pet.findByIdAndUpdate(id, updatedData, { new: true });
+    
     if (!updatedPet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
+    
+    // Respond with the updated pet object
     res.status(200).json(updatedPet);
   } catch (error) {
     res.status(500).json({ message: error.message });

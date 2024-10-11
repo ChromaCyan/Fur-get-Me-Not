@@ -36,7 +36,7 @@ const petSchema = new mongoose.Schema({
     },
     status: { 
         type: String, 
-        enum: ['available', 'adopted'],
+        enum: ['available', 'adopted', 'removed'],
         default: 'available'
     }
 }, { timestamps: true });
