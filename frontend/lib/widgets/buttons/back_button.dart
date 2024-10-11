@@ -1,35 +1,27 @@
 import 'package:flutter/material.dart';
 
+// Model area
 class BackButtonWidget extends StatelessWidget {
-  final Function()? onPressed;
+  final VoidCallback? onPressed;
+  final Color? color;
+  final double? iconSize;
 
-  const BackButtonWidget({Key? key, this.onPressed}) : super(key: key);
+  BackButtonWidget({
+    this.onPressed,
+    this.color,
+    this.iconSize,
+  });
 
+// UI area
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      height: MediaQuery.of(context).size.height * 0.14,
-      right: 20,
-      left: 20,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
-            ),
-            child: GestureDetector(
-              onTap: onPressed ?? () => Navigator.pop(context),
-              child: const Icon(
-                Icons.arrow_back_ios_rounded,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ],
+    return IconButton(
+      icon: Icon(
+        Icons.arrow_back_ios_new_outlined,
+        color: color ?? Color(0xFFFE9879),
+        size: iconSize ?? 24.0,
       ),
+      onPressed: onPressed ?? () => Navigator.of(context).pop(),
     );
   }
 }
