@@ -6,15 +6,15 @@ class OnBoards {
 
 List<OnBoards> onBoardData = [
   OnBoards(
-    text: 'This app helps potential adopters find a \n feline to adopt and give it a  \n new home!',
+    text: "Welcome to Fur-get-Me-Not!\nYour solid partner in pet adoption.",
     image: "images/image1.png",
   ),
   OnBoards(
-    text: "You can also keep track of your adopted pets \n and view their special care instructions.",
+    text: "Become an Adopter and look for your first or next\nfurry companion, listed for adoption by an adoptee.\n\nOr become an Adoptee and list your\nfurbaby for adoption to be adopted by adopters",
     image: "images/image2.png",
   ),
   OnBoards(
-    text: "You can also add reminders for your \n pet vaccination or daily walks!",
+    text: "Adopters and Adoptees may chat\nand communicate with each other for\na further connection and for a smoother transaction.",
     image: "images/image3.png",
   ),
 ];

@@ -1,3 +1,5 @@
+// BANNER CARD BACKUP CODE
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fur_get_me_not/adopter/models/widget/carousel.dart';
@@ -45,8 +47,8 @@ class ReusableCarousel extends StatelessWidget {
                         child: Text(
                           item.text,
                           style: TextStyle(
-                            fontSize: 23,
-                            wordSpacing: 2.5,
+                            fontSize: 18,
+                            wordSpacing: 2,
                             height: 1.4,
                             letterSpacing: -0.7,
                             color: Colors.grey.shade900,
