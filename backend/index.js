@@ -32,6 +32,8 @@ const userRoute = require("./routers/userRoute");
 const petRoute = require("./routers/petRoute");
 const adoptionRoute = require("./routers/adoptionRoute");
 const adoptionpetRoute = require("./routers/adoptedpetRoute");
+const chatListRoute = require('./routers/chatlistRoute');
+const chatRoute = require('./routers/chatRoute');
 
 // Authentication routes
 app.use("/users", userRoute);
@@ -44,6 +46,10 @@ app.use("/adoption", adoptionRoute);
 
 // CRUD Adopted Pet route
 app.use("/adopted-pets", adoptionpetRoute);
+
+// Add chat and message routes
+app.use("/chats", chatListRoute);
+app.use("/messages", chatRoute); 
 
 const port = process.env.PORT || 5000;
 
