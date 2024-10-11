@@ -5,12 +5,16 @@ class PetCard extends StatelessWidget {
   final AdminPet pet;
   final Size size;
   final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const PetCard({
     Key? key,
     required this.pet,
     required this.size,
     required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -53,23 +57,38 @@ class PetCard extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20),
-                  child: Row(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              pet.name,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                      Text(
+                        pet.name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ElevatedButton(
+                            onPressed: onEdit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange, // Updated
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                            child: Text('Edit'),
+                          ),
+                          ElevatedButton(
+                            onPressed: onDelete,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red, // Updated
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                            child: Text('Delete'),
+                          ),
+                        ],
                       ),
                     ],
                   ),

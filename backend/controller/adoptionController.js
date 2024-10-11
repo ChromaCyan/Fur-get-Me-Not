@@ -90,18 +90,23 @@ exports.submitAdoptionForm = async (req, res) => {
 // Function to get adoption statuses for an adopter
 exports.getAdoptionStatusesForAdopter = async (req, res) => {
   try {
-    const adoptionStatuses = await AdoptionStatus.find({ adopterId: req.user.id, status: { $ne: 'Adoption Completed' } }) 
+    const adoptionStatuses = await AdoptionStatus.find({ adopterId: req.user.id, status: { $ne: 'Adoption Completed' } })
       .populate('adoptionRequestId')
-      .populate('petId')
-      .populate('adopteeId'); 
+      .populate({
+        path: 'petId',
+        match: { status: { $ne: 'removed' } }, // Exclude removed pets
+      })
+      .populate('adopteeId');
 
-    res.status(200).json(adoptionStatuses);
+    // Filter out any adoption statuses where petId is null (meaning it was removed)
+    const filteredStatuses = adoptionStatuses.filter(status => status.petId !== null);
+
+    res.status(200).json(filteredStatuses);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving adoption statuses', error });
   }
 };
-
 
 // ------------------------- Adoptee Functions ------------------------- //
 
@@ -110,25 +115,35 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
   try {
     const adoptionRequests = await AdoptionRequest.find({ adopteeId: req.user.id, status: { $ne: 'Adoption Completed' } })
       .populate('adoptionFormId')
-      .populate('petId')
-      .populate('adopterId'); 
+      .populate({
+        path: 'petId',
+        match: { status: { $ne: 'removed' } }, 
+      })
+      .populate('adopterId');
 
-    res.status(200).json(adoptionRequests);
+    const filteredRequests = adoptionRequests.filter(request => request.petId !== null);
+
+    res.status(200).json(filteredRequests);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving adoption requests', error });
   }
 };
 
-
 // Function to get all adoption forms submitted to the adoptee
 exports.getAdoptionFormsForAdoptee = async (req, res) => {
   try {
     const adoptionForms = await AdoptionForm.find({ adopterId: req.user.id })
       .populate('adopterId') // Assuming you want adopter details
-      .populate('petId');
+      .populate({
+        path: 'petId',
+        match: { status: { $ne: 'removed' } }, // Exclude removed pets
+      });
 
-    res.status(200).json(adoptionForms);
+    // Filter out any forms where petId is null (meaning it was removed)
+    const filteredForms = adoptionForms.filter(form => form.petId !== null);
+
+    res.status(200).json(filteredForms);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving adoption forms', error });

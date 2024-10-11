@@ -4,7 +4,8 @@ const User = require('../model/userModel');
 // Get all available pets (No restrictions, viewable to both Adoptees and Adopters)
 exports.getPets = async (req, res) => {
   try {
-    const pets = await Pet.find({ status: 'available' }).populate('adopteeId', 'firstName lastName');
+    const pets = await Pet.find({ status: 'available' })
+      .populate('adopteeId', 'firstName lastName');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -15,13 +16,13 @@ exports.getPets = async (req, res) => {
 exports.getPetsbyadoptee = async (req, res) => {
   try {
     const { id } = req.user;
-    const pets = await Pet.find({ adopteeId: id, status: 'available' }).populate('adopteeId', 'firstName lastName');
+    const pets = await Pet.find({ adopteeId: id, status: 'available' })
+      .populate('adopteeId', 'firstName lastName');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 // Get a single pet by ID
 exports.getPetById = async (req, res) => {
   try {
@@ -33,7 +34,7 @@ exports.getPetById = async (req, res) => {
     // Fetch the pet using the id
     const pet = await Pet.findById(id).populate('adopteeId', 'firstName lastName');
     
-    if (!pet || pet.status === 'adopted') { // Check if pet is not found or is adopted
+    if (!pet || pet.status === 'adopted') { 
       return res.status(404).json({ message: 'Pet not found or has been adopted' });
     }
 
@@ -58,7 +59,7 @@ exports.createPet = async (req, res) => {
     const newPet = new Pet({
       ...req.body,
       adopteeId: req.user.id,
-      status: 'available' // Automatically set status to 'available'
+      status: 'available'
     });
 
     console.log('New Pet Object:', newPet);
@@ -119,11 +120,17 @@ exports.updatePet = async (req, res) => {
       return res.status(404).json({ message: 'Pet not found' });
     }
 
-    // Update the pet's details with the incoming data
+    // Prepare updated data
     const updatedData = {
       ...existingPet.toObject(), // Convert existing pet document to an object
       ...req.body, // Merge with incoming data
     };
+
+    // Check if a new image has been uploaded
+    if (req.file) {
+      const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+      updatedData.petImageUrl = filePath; 
+    }
 
     // Update the pet in the database
     const updatedPet = await Pet.findByIdAndUpdate(id, updatedData, { new: true });
@@ -139,20 +146,29 @@ exports.updatePet = async (req, res) => {
   }
 };
 
-// Delete a pet (Adoptee Only)
+
+// Update a pet's status to 'removed' (Adoptee Only)
 exports.deletePet = async (req, res) => {
   try {
     const { role } = req.user;
     if (role !== 'adoptee') {
-      return res.status(403).json({ message: 'Access denied. Only Adoptees can delete pet listings.' });
+      return res.status(403).json({ message: 'Access denied. Only Adoptees can change pet listings.' });
     }
 
     const { id } = req.params;
-    const deletedPet = await Pet.findByIdAndDelete(id);
-    if (!deletedPet) {
+    
+    // Update the pet's status to 'removed'
+    const updatedPet = await Pet.findByIdAndUpdate(
+      id,
+      { status: 'removed' }, // Change the status to 'removed'
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedPet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
-    res.status(200).json({ message: 'Pet deleted successfully' });
+
+    res.status(200).json({ message: 'Pet status updated to removed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

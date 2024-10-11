@@ -29,19 +29,19 @@ class AddPetEvent extends PetManagementEvent {
 
 class UpdatePetEvent extends PetManagementEvent {
   final AdminPet pet;
+  final File? image;
 
-  UpdatePetEvent({required this.pet});
+  UpdatePetEvent({required this.pet, this.image});
 
   @override
-  List<Object?> get props => [pet];
+  List<Object?> get props => [pet, image]; // Include image in props
 }
-
 class FetchUserPetsEvent extends PetManagementEvent {}
 
-class DeletePetEvent extends PetManagementEvent {
+class RemovePetEvent extends PetManagementEvent {
   final String petId;
 
-  DeletePetEvent({required this.petId});
+  RemovePetEvent({required this.petId});
 
   @override
   List<Object?> get props => [petId];

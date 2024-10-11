@@ -36,7 +36,7 @@ class AdminPetRepository {
       if (response.statusCode == 200) {
         final responseData = await response.stream.toBytes();
         final result = String.fromCharCodes(responseData);
-        final imageUrl = json.decode(result)['imageUrl']; // Adjust based on your response
+        final imageUrl = json.decode(result)['imageUrl'];
         return imageUrl;
       } else {
         throw Exception('Image upload failed: ${response.reasonPhrase}');
@@ -99,9 +99,15 @@ class AdminPetRepository {
 
 
   // Update an existing pet
-  Future<void> updatePet(AdminPet pet) async {
+  Future<void> updatePet(AdminPet pet, {File? image}) async {
     try {
       final token = await getToken();
+
+      if (image != null) {
+        String imageUrl = await uploadImage(image);
+        pet.petImageUrl = imageUrl;
+      }
+
       final response = await http.put(
         Uri.parse('$baseUrl/${pet.id}'),
         headers: {
@@ -141,22 +147,24 @@ class AdminPetRepository {
     }
   }
 
-  // Delete a pet by ID
-  Future<void> deletePet(String petId) async {
+  // Update pet status to 'removed' by ID (Soft Delete)
+  Future<void> removePet(String petId) async {
     try {
       final token = await getToken();
-      final response = await http.delete(
+      final response = await http.put(
         Uri.parse('$baseUrl/$petId'),
         headers: {
           'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
         },
+        body: jsonEncode({'status': 'removed'}),
       );
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to delete pet: ${response.reasonPhrase}');
+        throw Exception('Failed to remove pet: ${response.reasonPhrase}');
       }
     } catch (e) {
-      throw Exception('Failed to delete pet: $e');
+      throw Exception('Failed to remove pet: $e');
     }
   }
 

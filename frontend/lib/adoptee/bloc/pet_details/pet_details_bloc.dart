@@ -40,7 +40,7 @@ class AdopteePetDetailsBloc extends Bloc<PetDetailsEvent, PetDetailsState> {
     on<DeletePetEvent>((event, emit) async {
       emit(PetDetailsLoading());
       try {
-        await petRepository.deletePet(event.petId);
+        await petRepository.removePet(event.petId);
         emit(PetDeleted());
       } catch (e) {
         emit(PetDetailsError(message: e.toString()));

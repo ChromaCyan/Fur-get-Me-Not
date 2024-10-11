@@ -3,9 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_event.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_state.dart';
+import 'package:fur_get_me_not/adoptee/screens/pet_management/edit_pet_form.dart';
 import 'package:fur_get_me_not/adoptee/screens/pet_management/pet_details_screen.dart';
 import 'package:fur_get_me_not/widgets/cards/admin_pet_card.dart';
+import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 import 'add_pet_form.dart';
+import 'package:fur_get_me_not/widgets/forms/warning_dialogue.dart';
 
 class PetManagementScreen extends StatefulWidget {
   const PetManagementScreen({super.key});
@@ -19,6 +22,40 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
   void initState() {
     super.initState();
     context.read<PetManagementBloc>().add(LoadPetManagementEvent());
+  }
+
+  void _editPet(AdminPet pet) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPetForm(pet: pet),
+      ),
+    );
+  }
+
+  void _deletePet(String petId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ConfirmationDialog(
+          title: 'Confirm Deletion',
+          content: 'Are you sure you want to delete this pet?',
+          onConfirm: () {
+            // Add the removal event
+            context.read<PetManagementBloc>().add(RemovePetEvent(petId: petId));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Pet deleted successfully')),
+            );
+            // Close the dialog only after confirming the deletion
+            Navigator.of(context).pop(); // Close the confirmation dialog
+          },
+          onCancel: () {
+            // Simply close the dialog
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -47,10 +84,12 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PetDetailsPage(petId: pet.id ?? ''), // Provide a default if null
+                                builder: (context) => PetDetailsPage(petId: pet.id ?? ''),
                               ),
                             );
                           },
+                          onDelete: () => _deletePet(pet.id ?? ''),
+                          onEdit: () => _editPet(pet),
                         );
                       }),
                     ),

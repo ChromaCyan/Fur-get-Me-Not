@@ -12,7 +12,7 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
     on<AddPetEvent>(_onAddPetEvent);
     on<UpdatePetEvent>(_onUpdatePetEvent);
     on<FetchUserPetsEvent>(_onFetchUserPetsEvent);
-    on<DeletePetEvent>(_onDeletePetEvent);
+    on<RemovePetEvent>(_onRemovePetEvent);
   }
 
   void _onLoadPetManagementEvent(LoadPetManagementEvent event, Emitter<PetManagementState> emit) async {
@@ -39,7 +39,7 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
   void _onUpdatePetEvent(UpdatePetEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
-      await petRepository.updatePet(event.pet);
+      await petRepository.updatePet(event.pet, image: event.image);
       emit(PetManagementLoaded(pets: await petRepository.getAvailablePets()));
     } catch (e) {
       emit(PetManagementError(message: "Failed to update pet."));
@@ -56,13 +56,14 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
     }
   }
 
-  void _onDeletePetEvent(DeletePetEvent event, Emitter<PetManagementState> emit) async {
+  void _onRemovePetEvent(RemovePetEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
-      await petRepository.deletePet(event.petId);
-      emit(PetManagementLoaded(pets: await petRepository.getAvailablePets()));
+      await petRepository.removePet(event.petId);
+      final pets = await petRepository.getAvailablePets();
+      emit(PetManagementLoaded(pets: pets));
     } catch (e) {
-      emit(PetManagementError(message: "Failed to delete pet."));
+      emit(PetManagementError(message: "Failed to remove pet: ${e.toString()}"));
     }
   }
 }
