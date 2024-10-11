@@ -40,11 +40,11 @@ class PetRepository {
   // Fetch pet details by ID (including image URL)
   Future<Pet> getPetDetails(String id) async {
     try {
-      final token = await getToken(); // Retrieve the token
+      final token = await getToken();
       final response = await http.get(
         Uri.parse('$baseUrl/$id'),
         headers: {
-          'Authorization': 'Bearer $token', // Include the token in the request headers
+          'Authorization': 'Bearer $token',
         },
       );
 

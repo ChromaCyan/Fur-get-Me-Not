@@ -16,23 +16,24 @@ class PetDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PetDetailsBloc(petRepository: RepositoryProvider.of<PetRepository>(context))
-        ..add(LoadPetDetailsEvent(petId: petId)),
-      child: Scaffold(
-        body: BlocBuilder<PetDetailsBloc, PetDetailsState>(
-          builder: (context, state) {
-            if (state is PetDetailsLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is PetDetailsLoaded) {
-              final pet = state.pet;
-              return _PetDetailsView(pet: pet);
-            } else if (state is PetDetailsError) {
-              return Center(child: Text('Error: ${state.message}'));
-            }
-            return Container();
-          },
-        ),
+    // Use the bloc
+    final petDetailsBloc = BlocProvider.of<PetDetailsBloc>(context);
+    // Dispatch an event to load pet details
+    petDetailsBloc.add(LoadPetDetailsEvent(petId: petId));
+
+    return Scaffold(
+      body: BlocBuilder<PetDetailsBloc, PetDetailsState>(
+        builder: (context, state) {
+          if (state is PetDetailsLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is PetDetailsLoaded) {
+            final pet = state.pet;
+            return _PetDetailsView(pet: pet); // Your custom view widget
+          } else if (state is PetDetailsError) {
+            return Center(child: Text('Error: ${state.message}'));
+          }
+          return Container();
+        },
       ),
     );
   }
@@ -83,7 +84,8 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       const SizedBox(height: 20),
                       buildToggleButtons(),
                       const SizedBox(height: 20),
-                      // showPetInfo ? petInfo() : vaccineMedicalHistory(),
+                      showPetInfo ? petInfo() :
+                      //vaccineMedicalHistory(),
                       const SizedBox(height: 20),
                       adoptMeButton(context),
                       const SizedBox(height: 20),
@@ -159,16 +161,16 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
         CircleAvatar(
           radius: 30,
           backgroundColor: widget.pet.gender == 'Male' ? Colors.blue : Colors.pink,
-          backgroundImage: const AssetImage('images/image2.png'),
+          backgroundImage: const AssetImage('images/image2.png'), // You can replace this with a real image URL
         ),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
-                'Sophia Black',
-                style: TextStyle(
+                '${widget.pet.adopteeId.firstName} ${widget.pet.adopteeId.lastName}', // Display full name dynamically
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -182,7 +184,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               context,
               MaterialPageRoute(
                 builder: (context) => ChatScreen(
-                  userName: 'Sophia Black',
+                  userName: '${widget.pet.adopteeId.firstName} ${widget.pet.adopteeId.lastName}',
                   profileImageUrl: 'images/image2.png',
                 ),
               ),
@@ -300,9 +302,9 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             left: 0,
             right: 0,
             child: Hero(
-              tag: widget.pet.petImageUrl, // Ensure this is correct
+              tag: widget.pet.petImageUrl,
               child: Image.network(
-                widget.pet.petImageUrl, // Displaying the pet image URL
+                widget.pet.petImageUrl,
                 height: size.height * 0.45,
               ),
             ),

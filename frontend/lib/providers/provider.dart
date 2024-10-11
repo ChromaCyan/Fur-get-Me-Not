@@ -41,7 +41,7 @@ class AppProviders {
 
     return [
       BlocProvider<AuthBloc>(
-        create: (context) => AuthBloc(authRepository: AuthRepository()),
+        create: (context) => AuthBloc(authRepository: loginRepository), // Corrected repository
       ),
       BlocProvider<BottomNavCubit>(
         create: (context) => BottomNavCubit(),
@@ -76,7 +76,7 @@ class AppProviders {
       BlocProvider<AdoptionRequestBloc>(
         create: (context) => AdoptionRequestBloc(repository: adoptionRequestRepository),
       ),
-      BlocProvider<PetListBloc>( // Add PetListBloc here
+      BlocProvider<PetListBloc>(
         create: (context) => PetListBloc(petRepository: adoptedPetRepository),
       ),
     ];

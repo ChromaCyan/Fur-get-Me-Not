@@ -9,7 +9,7 @@ class Pet {
   final String petImageUrl;
   final String description;
   final String specialCareInstructions;
-  final Adoptee adopteeId; // Change this to Adoptee
+  final Adoptee adopteeId;
 
   Pet({
     required this.id,
@@ -22,7 +22,7 @@ class Pet {
     required this.petImageUrl,
     required this.description,
     required this.specialCareInstructions,
-    required this.adopteeId, // Now it's Adoptee type
+    required this.adopteeId,
   });
 
   factory Pet.fromJson(Map<String, dynamic> json) {

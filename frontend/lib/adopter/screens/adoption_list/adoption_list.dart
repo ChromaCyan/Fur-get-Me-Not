@@ -48,6 +48,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                             pet: pet,
                             size: size,
                             onTap: () {
+                              print('Pet ID: ${pet.id}');
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => PetDetailsPage(petId: pet.id),
