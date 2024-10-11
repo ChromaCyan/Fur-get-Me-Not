@@ -238,10 +238,12 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
   Widget adoptMeButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the AdoptionForm
+        // Navigate to the AdoptionForm with the petId
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AdoptionForm()),
+          MaterialPageRoute(
+            builder: (context) => AdoptionForm(petId: widget.pet.id),
+          ),
         );
       },
       child: Container(
@@ -263,6 +265,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       ),
     );
   }
+
 
   Container itemsImageAndBackground(Size size) {
     return Container(

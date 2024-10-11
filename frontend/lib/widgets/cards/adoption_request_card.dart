@@ -133,10 +133,10 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
             SizedBox(height: 10),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AdoptionForm()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => AdoptionForm(petId: widget.petid)),
+                // );
               },
               child: Text(
                 'View the Adoption Form they filled up:',

@@ -1,40 +1,18 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adopter/models/adoption_list/adoption_form.dart';
+import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
 
 // Events
-abstract class AdoptionEvent extends Equatable {
-  @override
-  List<Object> get props => [];
-}
+abstract class AdoptionEvent {}
 
 class SubmitAdoptionForm extends AdoptionEvent {
-  final String fullName;
-  final String email;
-  final String phone;
-  final String address;
-  final String city;
-  final String zipCode;
+  final AdoptionFormModel adoptionForm;
 
-  SubmitAdoptionForm({
-    required this.fullName,
-    required this.email,
-    required this.phone,
-    required this.address,
-    required this.city,
-    required this.zipCode,
-  });
-
-  @override
-  List<Object> get props => [fullName, email, phone, address, city, zipCode];
+  SubmitAdoptionForm(this.adoptionForm);
 }
 
 // States
-abstract class AdoptionState extends Equatable {
-  @override
-  List<Object> get props => [];
-}
+abstract class AdoptionState {}
 
 class AdoptionInitial extends AdoptionState {}
 
@@ -46,34 +24,25 @@ class AdoptionError extends AdoptionState {
   final String message;
 
   AdoptionError(this.message);
-
-  @override
-  List<Object> get props => [message];
 }
 
-// BLoC
+// Bloc
 class AdoptionBloc extends Bloc<AdoptionEvent, AdoptionState> {
-  final AdoptionFormRepository adoptionRepository;
+  final AdoptionFormRepository repository;
 
-  AdoptionBloc(this.adoptionRepository) : super(AdoptionInitial());
-
-  @override
-  Stream<AdoptionState> mapEventToState(AdoptionEvent event) async* {
-    if (event is SubmitAdoptionForm) {
-      yield AdoptionSubmitting();
+  AdoptionBloc(this.repository) : super(AdoptionInitial()) {
+    on<SubmitAdoptionForm>((event, emit) async {
+      emit(AdoptionSubmitting());
       try {
-        await adoptionRepository.submitAdoptionForm(AdoptionForm(
-          fullName: event.fullName,
-          email: event.email,
-          phone: event.phone,
-          address: event.address,
-          city: event.city,
-          zipCode: event.zipCode,
-        ));
-        yield AdoptionSubmitted();
+        final success = await repository.submitAdoptionForm(event.adoptionForm);
+        if (success) {
+          emit(AdoptionSubmitted());
+        } else {
+          emit(AdoptionError('Submission failed. Please try again.'));
+        }
       } catch (e) {
-        yield AdoptionError('Failed to submit the form');
+        emit(AdoptionError('Error: $e'));
       }
-    }
+    });
   }
 }

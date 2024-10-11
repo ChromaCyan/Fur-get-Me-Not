@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_form/adoption_form_bloc.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
-
-void main() {
-  runApp(AdoptionFormApp());
-}
+import 'package:fur_get_me_not/adopter/models/adoption_list/adoption_form.dart';
 
 class AdoptionFormApp extends StatelessWidget {
+  final String petId;
+
+  AdoptionFormApp({required this.petId});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Adoption Form',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.black),
-      ),
-      home: AdoptionForm(),
+    return BlocProvider(
+      create: (context) => AdoptionBloc(AdoptionFormRepository()),
+      child: AdoptionForm(petId: petId),
     );
   }
 }
 
 class AdoptionForm extends StatefulWidget {
+  final String petId;
+
+  AdoptionForm({required this.petId});
+
   @override
   _AdoptionFormState createState() => _AdoptionFormState();
 }
@@ -35,29 +36,32 @@ class _AdoptionFormState extends State<AdoptionForm> {
   String _city = '';
   String _zipCode = '';
   String _residenceType = 'Apartment';
-  bool _ownRent = false;
+  String _ownRent = 'Own'; // Change to String
   bool _landlordAllowsPets = false;
   bool _ownedPetsBefore = false;
-  String _petTypesOwned = '';
+  List<String> _petTypesOwned = []; // Change to List<String>
   String _petPreference = 'Dog';
   String _preferredSize = '';
   String _agePreference = 'Puppy/Kitten';
-  String _hoursAlone = '';
+  int _hoursAlone = 0; // Change to int
   String _activityLevel = 'Very Active';
-  String _childrenAges = '';
+  List<int> _childrenAges = []; // Change to List<int>
   String _carePlan = '';
   String _whatIfNoLongerKeep = '';
   bool _longTermCommitment = false;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AdoptionBloc(AdoptionFormRepository()),
-      child: Scaffold(
+    return MaterialApp(
+      title: 'Adoption Form',
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.black),
+      ),
+      home: Scaffold(
         appBar: AppBar(
           title: Text('Adoption Form'),
         ),
-
         body: Container(
           child: Center(
             child: SingleChildScrollView(
@@ -98,19 +102,16 @@ class _AdoptionFormState extends State<AdoptionForm> {
                             _buildDropdownFormField(
                               'Type of Residence',
                               ['Apartment', 'House'],
-                              (value) => setState(() => _residenceType = value!),
+                                  (value) => setState(() => _residenceType = value!),
                               _residenceType,
                             ),
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: _ownRent,
-                                  onChanged: (value) => setState(() => _ownRent = value!),
-                                ),
-                                Text('Do you own or rent?'),
-                              ],
+                            _buildDropdownFormField(
+                              'Own or Rent?',
+                              ['Own', 'Rent'], // Change to Dropdown
+                                  (value) => setState(() => _ownRent = value!),
+                              _ownRent,
                             ),
-                            if (_ownRent) ...[
+                            if (_ownRent == 'Rent') ...[
                               Text('Does your landlord allow pets?'),
                               Row(
                                 children: [
@@ -148,8 +149,12 @@ class _AdoptionFormState extends State<AdoptionForm> {
                             ),
                             if (_ownedPetsBefore)
                               _buildTextFormField(
-                                'What types of pets have you owned?',
-                                (value) => _petTypesOwned = value,
+                                'What types of pets have you owned? (comma-separated)',
+                                    (value) {
+                                  setState(() {
+                                    _petTypesOwned = value.split(',').map((e) => e.trim()).toList();
+                                  });
+                                },
                               ),
                           ],
                         ),
@@ -162,14 +167,14 @@ class _AdoptionFormState extends State<AdoptionForm> {
                             _buildDropdownFormField(
                               'What type of pet are you interested in adopting?',
                               ['Dog', 'Cat'],
-                              (value) => setState(() => _petPreference = value!),
+                                  (value) => setState(() => _petPreference = value!),
                               _petPreference,
                             ),
                             _buildTextFormField('Preferred Size or Breed', (value) => _preferredSize = value),
                             _buildDropdownFormField(
                               'Age Preference',
                               ['Puppy/Kitten', 'Adult', 'Senior'],
-                              (value) => setState(() => _agePreference = value!),
+                                  (value) => setState(() => _agePreference = value!),
                               _agePreference,
                             ),
                           ],
@@ -182,18 +187,26 @@ class _AdoptionFormState extends State<AdoptionForm> {
                           children: [
                             _buildTextFormField(
                               'How many hours will the pet be left alone during the day?',
-                              (value) => _hoursAlone = value,
+                                  (value) {
+                                setState(() {
+                                  _hoursAlone = int.tryParse(value) ?? 0; // Ensure it's an int
+                                });
+                              },
                               isNumeric: true,
                             ),
                             _buildDropdownFormField(
                               'How active is your household?',
                               ['Very Active', 'Moderately Active', 'Low Activity'],
-                              (value) => setState(() => _activityLevel = value!),
+                                  (value) => setState(() => _activityLevel = value!),
                               _activityLevel,
                             ),
                             _buildTextFormField(
-                              'Do you have children? If so, what are their ages?',
-                              (value) => _childrenAges = value,
+                              'If you have children, what are their ages? (comma-separated)',
+                                  (value) {
+                                setState(() {
+                                  _childrenAges = value.split(',').map((e) => int.tryParse(e.trim()) ?? 0).toList();
+                                });
+                              },
                             ),
                           ],
                         ),
@@ -205,11 +218,11 @@ class _AdoptionFormState extends State<AdoptionForm> {
                           children: [
                             _buildTextFormField(
                               'How do you plan to care for the pet?',
-                              (value) => _carePlan = value,
+                                  (value) => _carePlan = value,
                             ),
                             _buildTextFormField(
                               'What will you do if you can no longer keep the pet?',
-                              (value) => _whatIfNoLongerKeep = value,
+                                  (value) => _whatIfNoLongerKeep = value,
                             ),
                             Row(
                               children: [
@@ -251,7 +264,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
 
   Widget _buildBox(Widget child) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16.0),
+      margin: EdgeInsets.symmetric(vertical: 8.0),
       padding: EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
@@ -261,45 +274,82 @@ class _AdoptionFormState extends State<AdoptionForm> {
     );
   }
 
-  Widget _buildTextFormField(String label, Function(String) onChanged, {bool isEmail = false, bool isNumeric = false}) {
+  Widget _buildTextFormField(String label, Function(String) onSaved, {bool isNumeric = false}) {
     return TextFormField(
       decoration: InputDecoration(labelText: label),
-      onChanged: onChanged,
       keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your $label';
-        } else if (isNumeric && !RegExp(r'^[0-9]+$').hasMatch(value)) {
-          return 'Please enter numbers only';
+          return '$label is required';
         }
         return null;
       },
+      onSaved: (value) => onSaved(value!),
     );
   }
 
-  Widget _buildDropdownFormField(String label, List<String> items, Function(String?) onChanged, String currentValue) {
+  Widget _buildDropdownFormField(String label, List<String> options, Function(String?) onChanged, String currentValue) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(labelText: label),
       value: currentValue,
-      items: items.map((item) {
+      onChanged: onChanged,
+      items: options.map((String option) {
         return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
+          value: option,
+          child: Text(option),
         );
       }).toList(),
-      onChanged: onChanged,
-      validator: (value) => value == null ? 'Please select $label' : null,
     );
   }
 
   Widget _buildSubmitButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Form submitted successfully')));
+    return BlocConsumer<AdoptionBloc, AdoptionState>(
+      listener: (context, state) {
+        if (state is AdoptionSubmitted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Form submitted successfully!')));
+          _formKey.currentState!.reset(); // Reset the form after submission
+        } else if (state is AdoptionError) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
-      child: Text('Submit'),
+      builder: (context, state) {
+        return ElevatedButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              // Create the adoption form model from input values
+              _formKey.currentState!.save();
+
+              final adoptionForm = AdoptionFormModel(
+                petId: widget.petId,
+                fullName: _fullName,
+                email: _email,
+                phone: _phone,
+                address: _address,
+                city: _city,
+                zipCode: _zipCode,
+                residenceType: _residenceType,
+                ownRent: _ownRent,
+                landlordAllowsPets: _landlordAllowsPets,
+                ownedPetsBefore: _ownedPetsBefore,
+                petTypesOwned: _petTypesOwned,
+                petPreference: _petPreference,
+                preferredSize: _preferredSize,
+                agePreference: _agePreference,
+                hoursAlone: _hoursAlone,
+                activityLevel: _activityLevel,
+                childrenAges: _childrenAges,
+                carePlan: _carePlan,
+                whatIfNoLongerKeep: _whatIfNoLongerKeep,
+                longTermCommitment: _longTermCommitment,
+              );
+
+              // Dispatch the SubmitAdoptionForm event
+              context.read<AdoptionBloc>().add(SubmitAdoptionForm(adoptionForm));
+            }
+          },
+          child: state is AdoptionSubmitting ? CircularProgressIndicator() : Text('Submit'),
+        );
+      },
     );
   }
 }

@@ -56,19 +56,23 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: Text(
-            _getDynamicTitle(context),
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black54,
+          title: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              _getDynamicTitle(context),
+              key: ValueKey<int>(_selectedIndex), // Unique key for animation
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.logout, color: Colors.black), // Use logout icon
+              icon: Icon(Icons.logout, color: Colors.black),
               onPressed: () async {
-                await _logout(context); // Call logout function
+                await _logout(context);
               },
             ),
           ],

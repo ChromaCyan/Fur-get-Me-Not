@@ -1,109 +1,73 @@
-class AdoptionForm {
+class AdoptionFormModel {
+  final String petId; // Add this field
   final String fullName;
   final String email;
   final String phone;
   final String address;
   final String city;
   final String zipCode;
+  final String residenceType;
+  final String ownRent; // Change to String
+  final bool landlordAllowsPets;
+  final bool ownedPetsBefore;
+  final List<String> petTypesOwned; // Change to List<String>
+  final String petPreference;
+  final String preferredSize;
+  final String agePreference;
+  final int hoursAlone; // Change to int
+  final String activityLevel;
+  final List<int> childrenAges; // Change to List<int>
+  final String carePlan;
+  final String whatIfNoLongerKeep;
+  final bool longTermCommitment;
 
-  AdoptionForm({
+  AdoptionFormModel({
+    required this.petId,
     required this.fullName,
     required this.email,
     required this.phone,
     required this.address,
     required this.city,
     required this.zipCode,
+    required this.residenceType,
+    required this.ownRent,
+    required this.landlordAllowsPets,
+    required this.ownedPetsBefore,
+    required this.petTypesOwned,
+    required this.petPreference,
+    required this.preferredSize,
+    required this.agePreference,
+    required this.hoursAlone,
+    required this.activityLevel,
+    required this.childrenAges,
+    required this.carePlan,
+    required this.whatIfNoLongerKeep,
+    required this.longTermCommitment,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'petId': petId,
+      'fullName': fullName,
+      'email': email,
+      'phone': phone,
+      'address': address,
+      'city': city,
+      'zipCode': zipCode,
+      'residenceType': residenceType,
+      'ownRent': ownRent,
+      'landlordAllowsPets': landlordAllowsPets,
+      'ownedPetsBefore': ownedPetsBefore,
+      'petTypesOwned': petTypesOwned,
+      'petPreference': petPreference,
+      'preferredSize': preferredSize,
+      'agePreference': agePreference,
+      'hoursAlone': hoursAlone,
+      'activityLevel': activityLevel,
+      'childrenAges': childrenAges,
+      'carePlan': carePlan,
+      'whatIfNoLongerKeep': whatIfNoLongerKeep,
+      'longTermCommitment': longTermCommitment,
+    };
+  }
 }
-//
-// class AdoptionFormModel {
-//   final String fullName;
-//   final String email;
-//   final String phone;
-//   final String address;
-//   final String city;
-//   final String zipCode;
-//   final String residenceType;
-//   final bool ownRent;
-//   final bool landlordAllowsPets;
-//   final bool ownedPetsBefore;
-//   final String petTypesOwned;
-//   final String petPreference;
-//   final String preferredSize;
-//   final String agePreference;
-//   final String hoursAlone;
-//   final String activityLevel;
-//   final String childrenAges;
-//   final String carePlan;
-//   final String whatIfNoLongerKeep;
-//   final bool longTermCommitment;
-//
-//   AdoptionFormModel({
-//     required this.fullName,
-//     required this.email,
-//     required this.phone,
-//     required this.address,
-//     required this.city,
-//     required this.zipCode,
-//     required this.residenceType,
-//     required this.ownRent,
-//     required this.landlordAllowsPets,
-//     required this.ownedPetsBefore,
-//     required this.petTypesOwned,
-//     required this.petPreference,
-//     required this.preferredSize,
-//     required this.agePreference,
-//     required this.hoursAlone,
-//     required this.activityLevel,
-//     required this.childrenAges,
-//     required this.carePlan,
-//     required this.whatIfNoLongerKeep,
-//     required this.longTermCommitment,
-//   });
-//
-//   AdoptionFormModel copyWith({
-//     String? fullName,
-//     String? email,
-//     String? phone,
-//     String? address,
-//     String? city,
-//     String? zipCode,
-//     String? residenceType,
-//     bool? ownRent,
-//     bool? landlordAllowsPets,
-//     bool? ownedPetsBefore,
-//     String? petTypesOwned,
-//     String? petPreference,
-//     String? preferredSize,
-//     String? agePreference,
-//     String? hoursAlone,
-//     String? activityLevel,
-//     String? childrenAges,
-//     String? carePlan,
-//     String? whatIfNoLongerKeep,
-//     bool? longTermCommitment,
-//   }) {
-//     return AdoptionFormModel(
-//       fullName: fullName ?? this.fullName,
-//       email: email ?? this.email,
-//       phone: phone ?? this.phone,
-//       address: address ?? this.address,
-//       city: city ?? this.city,
-//       zipCode: zipCode ?? this.zipCode,
-//       residenceType: residenceType ?? this.residenceType,
-//       ownRent: ownRent ?? this.ownRent,
-//       landlordAllowsPets: landlordAllowsPets ?? this.landlordAllowsPets,
-//       ownedPetsBefore: ownedPetsBefore ?? this.ownedPetsBefore,
-//       petTypesOwned: petTypesOwned ?? this.petTypesOwned,
-//       petPreference: petPreference ?? this.petPreference,
-//       preferredSize: preferredSize ?? this.preferredSize,
-//       agePreference: agePreference ?? this.agePreference,
-//       hoursAlone: hoursAlone ?? this.hoursAlone,
-//       activityLevel: activityLevel ?? this.activityLevel,
-//       childrenAges: childrenAges ?? this.childrenAges,
-//       carePlan: carePlan ?? this.carePlan,
-//       whatIfNoLongerKeep: whatIfNoLongerKeep ?? this.whatIfNoLongerKeep,
-//       longTermCommitment: longTermCommitment ?? this.longTermCommitment,
-//     );
-//   }
-// }

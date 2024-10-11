@@ -41,7 +41,6 @@ class AdoptionStatusRepository {
         throw Exception('Failed to load adoption statuses: ${response.reasonPhrase}');
       }
     } catch (error) {
-      // Handle any other errors (like network issues)
       print('Error fetching adoption statuses: $error');
       throw Exception('Error fetching adoption statuses');
     }
