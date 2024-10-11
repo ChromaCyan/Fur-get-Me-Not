@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/adoptee/models/pet_management/admin_pet.dart';
+import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 
 abstract class PetManagementState extends Equatable {
   @override
@@ -16,7 +16,6 @@ class PetManagementLoaded extends PetManagementState {
   @override
   List<Object?> get props => [pets];
 }
-
 
 class PetManagementError extends PetManagementState {
   final String message;

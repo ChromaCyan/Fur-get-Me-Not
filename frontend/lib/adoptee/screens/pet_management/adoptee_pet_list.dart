@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_bloc.dart';
+import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_event.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_state.dart';
-import 'package:fur_get_me_not/adopter/screens/adoption_list/pet_details_screen.dart';
+import 'package:fur_get_me_not/adoptee/screens/pet_management/pet_details_screen.dart';
 import 'package:fur_get_me_not/widgets/cards/admin_pet_card.dart';
 import 'add_pet_form.dart';
 
@@ -17,6 +18,7 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<PetManagementBloc>().add(LoadPetManagementEvent());
   }
 
   @override

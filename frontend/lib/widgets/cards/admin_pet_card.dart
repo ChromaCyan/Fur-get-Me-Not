@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/adoptee/models/pet_management/admin_pet.dart';
+import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 
 class PetCard extends StatelessWidget {
   final AdminPet pet;
@@ -24,7 +24,7 @@ class PetCard extends StatelessWidget {
           child: Container(
             height: size.height * 0.3,
             width: size.width * 0.55,
-            color: const Color.fromRGBO(248, 198, 59, 0.5),
+            color: const Color(0xFF21899C),
             child: Stack(
               children: [
                 Positioned(
@@ -45,7 +45,7 @@ class PetCard extends StatelessWidget {
                   right: 10,
                   child: Hero(
                     tag: pet.id,
-                    child: Image.asset(
+                    child: Image.network(
                       pet.petImageUrl,
                       height: size.height * 0.30,
                     ),

@@ -1,4 +1,4 @@
-import 'package:fur_get_me_not/adoptee/models/adoption_request/pet.dart';
+import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 
 abstract class PetDetailsState {}
 
@@ -7,7 +7,7 @@ class PetDetailsInitial extends PetDetailsState {}
 class PetDetailsLoading extends PetDetailsState {}
 
 class PetDetailsLoaded extends PetDetailsState {
-  final Pet pet;
+  final AdminPet pet;
   PetDetailsLoaded({required this.pet});
 }
 
@@ -16,24 +16,3 @@ class PetDetailsError extends PetDetailsState {
   PetDetailsError({required this.message});
 }
 
-class PetDetailsUpdated extends PetDetailsState {
-  final Pet pet;
-  PetDetailsUpdated({required this.pet});
-}
-
-class PetUploaded extends PetDetailsState {
-  final String imageUrl;
-  PetUploaded({required this.imageUrl});
-}
-
-class MedicalHistoryUploaded extends PetDetailsState {
-  final String imageUrl;
-  MedicalHistoryUploaded({required this.imageUrl});
-}
-
-class VaccineHistoryUploaded extends PetDetailsState {
-  final String imageUrl;
-  VaccineHistoryUploaded({required this.imageUrl});
-}
-
-class PetDeleted extends PetDetailsState {} // Define the new state here
