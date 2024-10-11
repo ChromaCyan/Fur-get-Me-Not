@@ -16,13 +16,13 @@ exports.getPets = async (req, res) => {
 exports.getPetsbyadoptee = async (req, res) => {
   try {
     const { id } = req.user;
-    const pets = await Pet.find({ adopteeId: id, status: 'available' })
-      .populate('adopteeId', 'firstName lastName');
+    const pets = await Pet.find({ adopteeId: id, status: 'available' }).populate('adopteeId', 'firstName lastName');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 // Get a single pet by ID
 exports.getPetById = async (req, res) => {
   try {
@@ -56,12 +56,19 @@ exports.createPet = async (req, res) => {
     }
 
     // Create new pet object with adopteeId and combined medical & vaccine history
-    const newPet = new Pet({
+    const newPetData = {
       ...req.body,
       adopteeId: req.user.id,
-      status: 'available'
-    });
+      status: 'available',
+    };
 
+    // If an image file was uploaded, construct the image URL
+    if (req.file) {
+      const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+      newPetData.petImageUrl = filePath; // Add image URL to new pet data
+    }
+
+    const newPet = new Pet(newPetData);
     console.log('New Pet Object:', newPet);
 
     const savedPet = await newPet.save();
@@ -72,7 +79,7 @@ exports.createPet = async (req, res) => {
   }
 };
 
-// Upload an image for a pet and update the pet's image URL
+// Upload an image for a pet
 exports.uploadImage = async (req, res) => {
   try {
     if (!req.file) {
@@ -81,28 +88,15 @@ exports.uploadImage = async (req, res) => {
 
     // Construct the image URL
     const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-    
-    // Get the pet ID from the request body
-    const { petId } = req.body; 
 
-    // Update the pet's image URL in the database
-    const updatedPet = await Pet.findByIdAndUpdate(
-      petId,
-      { petImageUrl: filePath }, // Update only the image URL
-      { new: true } // Return the updated pet object
-    );
-
-    if (!updatedPet) {
-      return res.status(404).json({ message: 'Pet not found' });
-    }
-
-    // Respond with the updated pet object
-    res.status(200).json({ imageUrl: filePath, pet: updatedPet });
+    // Respond with the image URL
+    res.status(200).json({ imageUrl: filePath });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error uploading image', error });
   }
 };
+
 
 // Update a pet (Adoptee Only)
 exports.updatePet = async (req, res) => {

@@ -114,7 +114,7 @@ class AdminPetRepository {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(pet.toJson()), // Convert Pet object to JSON
+        body: jsonEncode(pet.toJson()),
       );
 
       if (response.statusCode != 200) {
