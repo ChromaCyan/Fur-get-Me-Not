@@ -4,9 +4,12 @@ import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_state.dart';
-import 'package:fur_get_me_not/adopter/repositories/adoption_list/pet_repository.dart';
-import 'package:fur_get_me_not/adopter/screens/chat/chat_screen.dart';
 import 'package:fur_get_me_not/widgets/buttons/back_button.dart';
+import 'package:fur_get_me_not/widgets/pet_details/medical_card.dart';
+import 'package:fur_get_me_not/widgets/pet_details/vaccine_card.dart';
+import 'package:fur_get_me_not/widgets/pet_details/pet_info.dart';
+import 'package:fur_get_me_not/widgets/pet_details/owner_info.dart';
+import 'package:fur_get_me_not/widgets/pet_details/toggle_button.dart';
 import 'adoption_form.dart';
 
 class PetDetailsPage extends StatelessWidget {
@@ -51,6 +54,7 @@ class _PetDetailsView extends StatefulWidget {
 
 class _PetDetailsViewState extends State<_PetDetailsView> {
   bool showPetInfo = true;
+  bool showVaccineHistory = false;
 
   @override
   Widget build(BuildContext context) {
@@ -80,12 +84,20 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       const SizedBox(height: 20),
                       nameAddressAndFavoriteButton(),
                       const SizedBox(height: 20),
-                      ownerInfo(),
+                      OwnerInfo(
+                        firstName: widget.pet.adoptee.firstName,
+                        lastName: widget.pet.adoptee.lastName,
+                        gender: widget.pet.gender,
+                        profileImageUrl: 'images/image2.png',
+                      ),
                       const SizedBox(height: 20),
                       buildToggleButtons(),
                       const SizedBox(height: 20),
-                      showPetInfo ? petInfo() :
-                      //vaccineMedicalHistory(),
+                      showPetInfo
+                          ? PetInfoWidget(pet: widget.pet)
+                          : showVaccineHistory
+                          ? VaccineHistoryWidget(vaccineHistory: widget.pet.vaccineHistory)
+                          : MedicalHistoryWidget(medicalHistory: widget.pet.medicalHistory),
                       const SizedBox(height: 20),
                       adoptMeButton(context),
                       const SizedBox(height: 20),
@@ -125,115 +137,39 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        ElevatedButton(
+        ToggleButton(
+          label: 'Pet Info',
+          isSelected: showPetInfo,
           onPressed: () {
             setState(() {
               showPetInfo = true;
+              showVaccineHistory = false;
             });
           },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(
-              showPetInfo ? Colors.blue : Colors.grey,
-            ),
-          ),
-          child: const Text('Pet Info'),
         ),
-        ElevatedButton(
+        ToggleButton(
+          label: 'Vaccine History',
+          isSelected: showVaccineHistory,
           onPressed: () {
             setState(() {
               showPetInfo = false;
+              showVaccineHistory = true;
             });
           },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(
-              showPetInfo ? Colors.grey : Colors.blue,
-            ),
-          ),
-          child: const Text('Vaccine/Medical History'),
         ),
-      ],
-    );
-  }
-
-  Widget ownerInfo() {
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: widget.pet.gender == 'Male' ? Colors.blue : Colors.pink,
-          backgroundImage: const AssetImage('images/image2.png'), // You can replace this with a real image URL
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${widget.pet.adopteeId.firstName} ${widget.pet.adopteeId.lastName}', // Display full name dynamically
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatScreen(
-                  userName: '${widget.pet.adopteeId.firstName} ${widget.pet.adopteeId.lastName}',
-                  profileImageUrl: 'images/image2.png',
-                ),
-              ),
-            );
+        ToggleButton(
+          label: 'Medical History',
+          isSelected: !showPetInfo && !showVaccineHistory,
+          onPressed: () {
+            setState(() {
+              showPetInfo = false;
+              showVaccineHistory = false;
+            });
           },
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.chat_outlined,
-              color: Colors.lightBlue,
-              size: 16,
-            ),
-          ),
         ),
-        const SizedBox(width: 10),
       ],
     );
   }
-
-
-  Widget petInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Name: ${widget.pet.name}"),
-        Text("Description: ${widget.pet.description}"),
-        Text("Age: ${widget.pet.age} years old"),
-        Text("Breed: ${widget.pet.breed}"),
-        Text("Height: ${widget.pet.height} cm"),
-        Text("Weight: ${widget.pet.weight} kg"),
-        Text("Special Care: ${widget.pet.specialCareInstructions}"),
-      ],
-    );
-  }
-
-  // Widget vaccineMedicalHistory() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Image.network(widget.pet.vaccineHistoryImageUrl),
-  //       const SizedBox(height: 10),
-  //       Image.network(widget.pet.medicalHistoryImageUrl),
-  //     ],
-  //   );
-  // }
 
   Widget adoptMeButton(BuildContext context) {
     return GestureDetector(
@@ -265,7 +201,6 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       ),
     );
   }
-
 
   Container itemsImageAndBackground(Size size) {
     return Container(

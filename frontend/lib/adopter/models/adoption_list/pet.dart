@@ -1,15 +1,17 @@
 class Pet {
-  final String id; // MongoDB uses `_id`
-  final String name;
-  final String breed;
-  final String gender;
-  final int age;
-  final double height;
-  final double weight;
-  final String petImageUrl;
-  final String description;
-  final String specialCareInstructions;
-  final Adoptee adopteeId;
+  String id; // _id field from JSON
+  String name;
+  String breed;
+  String gender;
+  int age;
+  double height;
+  double weight;
+  String petImageUrl;
+  String description;
+  String specialCareInstructions;
+  Adoptee adoptee; // Updated to Adoptee class
+  MedicalHistory medicalHistory;
+  VaccineHistory vaccineHistory;
 
   Pet({
     required this.id,
@@ -22,22 +24,38 @@ class Pet {
     required this.petImageUrl,
     required this.description,
     required this.specialCareInstructions,
-    required this.adopteeId,
+    required this.adoptee, // Update to Adoptee class
+    required this.medicalHistory,
+    required this.vaccineHistory,
   });
 
   factory Pet.fromJson(Map<String, dynamic> json) {
     return Pet(
-      id: json['_id'], // MongoDB uses `_id`
-      name: json['name'],
-      breed: json['breed'],
-      gender: json['gender'],
-      age: json['age'],
-      height: (json['height'] as num).toDouble(),
-      weight: (json['weight'] as num).toDouble(),
-      petImageUrl: json['petImageUrl'],
-      description: json['description'],
-      specialCareInstructions: json['specialCareInstructions'] ?? '', // Provide default
-      adopteeId: Adoptee.fromJson(json['adopteeId']), // Parse Adoptee
+      id: json['_id'] ?? '', // Default to empty string if null
+      name: json['name'] ?? 'Unknown', // Default value for name
+      breed: json['breed'] ?? 'Unknown',
+      gender: json['gender'] ?? 'Unknown',
+      age: json['age'] ?? 0, // Default to 0 if null
+      height: (json['height'] != null) ? json['height'].toDouble() : 0.0,
+      weight: (json['weight'] != null) ? json['weight'].toDouble() : 0.0,
+      petImageUrl: json['petImageUrl'] ?? '',
+      description: json['description'] ?? 'No description available.',
+      specialCareInstructions: json['specialCareInstructions'] ?? '',
+      adoptee: Adoptee.fromJson(json['adopteeId'] ?? {}), // Update to parse Adoptee
+      medicalHistory: json['medicalHistory'] != null
+          ? MedicalHistory.fromJson(json['medicalHistory'])
+          : MedicalHistory(
+        condition: 'No condition',
+        diagnosisDate: DateTime.now(),
+        treatment: 'N/A',
+        recoveryStatus: 'Unknown',
+      ),
+      vaccineHistory: json['vaccineHistory'] != null
+          ? VaccineHistory.fromJson(json['vaccineHistory'])
+          : VaccineHistory(
+        vaccineName: 'N/A',
+        vaccinationDate: DateTime.now(),
+      ),
     );
   }
 
@@ -53,16 +71,17 @@ class Pet {
       'petImageUrl': petImageUrl,
       'description': description,
       'specialCareInstructions': specialCareInstructions,
-      'adopteeId': adopteeId.toJson(), // Convert Adoptee to JSON
+      'adopteeId': adoptee.toJson(), // Update to serialize Adoptee
+      'medicalHistory': medicalHistory.toJson(),
+      'vaccineHistory': vaccineHistory.toJson(),
     };
   }
 }
 
-// Adoptee class to represent the adopter's details
 class Adoptee {
-  final String id;
-  final String firstName;
-  final String lastName;
+  String id; // Assuming you want to keep the adoptee's ID
+  String firstName;
+  String lastName;
 
   Adoptee({
     required this.id,
@@ -72,9 +91,9 @@ class Adoptee {
 
   factory Adoptee.fromJson(Map<String, dynamic> json) {
     return Adoptee(
-      id: json['_id'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
+      id: json['_id'] ?? '',
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
     );
   }
 
@@ -83,6 +102,98 @@ class Adoptee {
       '_id': id,
       'firstName': firstName,
       'lastName': lastName,
+    };
+  }
+}
+
+class MedicalHistory {
+  String condition;
+  DateTime diagnosisDate;
+  String treatment;
+  String? veterinarianName;
+  String? clinicName;
+  DateTime? treatmentDate;
+  String recoveryStatus;
+  String? notes;
+
+  MedicalHistory({
+    required this.condition,
+    required this.diagnosisDate,
+    required this.treatment,
+    this.veterinarianName,
+    this.clinicName,
+    this.treatmentDate,
+    required this.recoveryStatus,
+    this.notes,
+  });
+
+  factory MedicalHistory.fromJson(Map<String, dynamic> json) {
+    return MedicalHistory(
+      condition: json['condition'],
+      diagnosisDate: DateTime.parse(json['diagnosisDate']),
+      treatment: json['treatment'],
+      veterinarianName: json['veterinarianName'],
+      clinicName: json['clinicName'],
+      treatmentDate: json['treatmentDate'] != null
+          ? DateTime.parse(json['treatmentDate'])
+          : null,
+      recoveryStatus: json['recoveryStatus'],
+      notes: json['notes'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'condition': condition,
+      'diagnosisDate': diagnosisDate.toIso8601String(),
+      'treatment': treatment,
+      'veterinarianName': veterinarianName,
+      'clinicName': clinicName,
+      'treatmentDate': treatmentDate?.toIso8601String(),
+      'recoveryStatus': recoveryStatus,
+      'notes': notes,
+    };
+  }
+}
+
+class VaccineHistory {
+  String vaccineName;
+  DateTime vaccinationDate;
+  DateTime? nextDueDate;
+  String? veterinarianName;
+  String? clinicName;
+  String? notes;
+
+  VaccineHistory({
+    required this.vaccineName,
+    required this.vaccinationDate,
+    this.nextDueDate,
+    this.veterinarianName,
+    this.clinicName,
+    this.notes,
+  });
+
+  factory VaccineHistory.fromJson(Map<String, dynamic> json) {
+    return VaccineHistory(
+      vaccineName: json['vaccineName'],
+      vaccinationDate: DateTime.parse(json['vaccinationDate']),
+      nextDueDate: json['nextDueDate'] != null
+          ? DateTime.parse(json['nextDueDate'])
+          : null,
+      veterinarianName: json['veterinarianName'],
+      clinicName: json['clinicName'],
+      notes: json['notes'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'vaccineName': vaccineName,
+      'vaccinationDate': vaccinationDate.toIso8601String(),
+      'nextDueDate': nextDueDate?.toIso8601String(),
+      'veterinarianName': veterinarianName,
+      'clinicName': clinicName,
+      'notes': notes,
     };
   }
 }
