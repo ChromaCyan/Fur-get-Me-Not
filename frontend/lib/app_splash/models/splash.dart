@@ -13,8 +13,4 @@ List<OnBoards> onBoardData = [
     text: "You can also keep track of your adopted pets \n and view their special care instructions.",
     image: "images/image2.png",
   ),
-  OnBoards(
-    text: "You can also add reminders for your \n pet vaccination or daily walks!",
-    image: "images/image3.png",
-  ),
 ];

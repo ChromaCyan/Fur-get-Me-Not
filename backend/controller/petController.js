@@ -25,16 +25,26 @@ exports.getPetsbyadoptee = async (req, res) => {
 // Get a single pet by ID
 exports.getPetById = async (req, res) => {
   try {
-     const pets = await Pet.find({ adopteeId: id }).populate('adopteeId', 'firstName lastName');
+    const { id } = req.params; // Extract id from request parameters
+
+    console.log('Request Body:', req.body);
+    console.log('User ID:', req.user.id);
+
+
+    // Fetch the pet using the id
+    const pet = await Pet.findById(id).populate('adopteeId', 'firstName lastName');
+    
     if (!pet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
+
     res.status(200).json(pet);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving pet', error });
   }
 };
+
 
 // Create a new pet (Adoptee Only)
 exports.createPet = async (req, res) => {
@@ -59,6 +69,20 @@ exports.createPet = async (req, res) => {
   } catch (error) {
     console.error('Error in createPet:', error.message); 
     res.status(500).json({ message: error.message });
+  }
+};
+
+// Upload an image for a pet
+exports.uploadImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+    const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.status(200).json({ imageUrl: filePath });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error uploading image', error });
   }
 };
 

@@ -11,8 +11,13 @@ class PetDetailsLoaded extends PetDetailsState {
   PetDetailsLoaded({required this.pet});
 }
 
+class PetCreated extends PetDetailsState {}
+
 class PetDetailsError extends PetDetailsState {
   final String message;
   PetDetailsError({required this.message});
 }
+
+class PetDeleted extends PetDetailsState {}
+
 

@@ -2,12 +2,16 @@ const express = require("express");
 const router = express.Router();
 const petController = require('../controller/petController');
 const { verifyToken, isAdoptee } = require('../middleware/authMiddleware');
+const { uploadPetImage } = require('../middleware/uploadMiddleware'); // Import your upload middleware
 
 // Use middleware to verify JWT for all pet routes
 router.use(verifyToken);
 
 // Route for Adoptees to create a pet listing (Create)
 router.post("/add-pet", isAdoptee, petController.createPet);
+
+// Route for uploading a pet image
+router.post('/upload-image', uploadPetImage, petController.uploadImage); // Use the upload middleware here
 
 // Route for Adoptees to update their pet listing (Update)
 router.put("/:id", isAdoptee, petController.updatePet);

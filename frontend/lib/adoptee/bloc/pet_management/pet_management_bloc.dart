@@ -28,10 +28,11 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
   void _onAddPetEvent(AddPetEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
-      await petRepository.addPet(event.pet);
-      emit(PetManagementLoaded(pets: await petRepository.getAvailablePets())); // Reload pets after adding
+      await petRepository.addPet(event.pet, event.image);
+      emit(PetManagementLoaded(pets: await petRepository.getAvailablePets()));
     } catch (e) {
-      emit(PetManagementError(message: "Failed to add pet."));
+      print("Error while adding pet: $e"); // Log error
+      emit(PetManagementError(message: "Failed to add pet: ${e.toString()}"));
     }
   }
 

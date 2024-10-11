@@ -47,7 +47,7 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PetDetailsPage(petId: pet.id),
+                                builder: (context) => PetDetailsPage(petId: pet.id ?? ''), // Provide a default if null
                               ),
                             );
                           },

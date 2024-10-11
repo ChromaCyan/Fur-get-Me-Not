@@ -44,7 +44,7 @@ class PetCard extends StatelessWidget {
                   bottom: -10,
                   right: 10,
                   child: Hero(
-                    tag: pet.id,
+                    tag: pet.id ?? '',
                     child: Image.network(
                       pet.petImageUrl,
                       height: size.height * 0.30,

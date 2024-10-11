@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:fur_get_me_not/widgets/forms/form_field.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_bloc.dart';
+import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_event.dart';
+import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
+import 'package:fur_get_me_not/adoptee/repositories/pet_management/admin_pet_repository.dart';
 
 class AddPetForm extends StatefulWidget {
   @override
-  _AdoptFormScreenState createState() => _AdoptFormScreenState();
+  _AddPetFormState createState() => _AddPetFormState();
 }
 
-class _AdoptFormScreenState extends State<AddPetForm> {
-  // Form key
+class _AddPetFormState extends State<AddPetForm> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers for the form fields
@@ -17,36 +22,124 @@ class _AdoptFormScreenState extends State<AddPetForm> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController specialCareController = TextEditingController();
 
-  // Dropdown value for Gender
+  // Controllers for medical history
+  final TextEditingController conditionController = TextEditingController();
+  final TextEditingController diagnosisDateController = TextEditingController();
+  final TextEditingController treatmentController = TextEditingController();
+  final TextEditingController veterinarianNameController = TextEditingController();
+  final TextEditingController clinicNameController = TextEditingController();
+  final TextEditingController treatmentDateController = TextEditingController();
+  final TextEditingController recoveryStatusController = TextEditingController();
+  final TextEditingController notesController = TextEditingController();
+
+  // Controllers for vaccine history
+  final TextEditingController vaccineNameController = TextEditingController();
+  final TextEditingController vaccinationDateController = TextEditingController();
+  final TextEditingController nextDueDateController = TextEditingController();
+
   String? selectedGender;
-
-  // Loading state
   bool _isLoading = false;
 
-  // Image picker
   final ImagePicker _picker = ImagePicker();
   File? _selectedPetImage;
-  File? _selectedMedicalHistoryImage;
-  File? _selectedVaccineHistoryImage;
 
-  // Function to handle image selection and uploading
-  Future<void> _selectAndUploadImage(String type) async {
+  Future<void> _selectAndUploadImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        if (type == 'pet') {
-          _selectedPetImage = File(image.path);
-        } else if (type == 'medical_history') {
-          _selectedMedicalHistoryImage = File(image.path);
-        } else if (type == 'vaccine_history') {
-          _selectedVaccineHistoryImage = File(image.path);
-        }
+        _selectedPetImage = File(image.path);
       });
     } else {
       print('No image selected');
     }
   }
+
+  // Show date picker and set the selected date in the controller
+  Future<void> _selectDate(TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      controller.text = '${picked.toLocal()}'.split(' ')[0]; // Format date to YYYY-MM-DD
+    }
+  }
+
+  void _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        // Upload the image and get the URL
+        String imageUrl = await AdminPetRepository().uploadImage(_selectedPetImage!);
+        print('Image URL obtained: $imageUrl'); // Debugging line
+
+        // Create a new MedicalHistory instance
+        final medicalHistory = MedicalHistory(
+          condition: conditionController.text,
+          diagnosisDate: DateTime.parse(diagnosisDateController.text),
+          treatment: treatmentController.text,
+          veterinarianName: veterinarianNameController.text,
+          clinicName: clinicNameController.text,
+          treatmentDate: treatmentDateController.text.isNotEmpty
+              ? DateTime.parse(treatmentDateController.text)
+              : null,
+          recoveryStatus: recoveryStatusController.text,
+          notes: notesController.text,
+        );
+
+        // Create a new VaccineHistory instance
+        final vaccineHistory = VaccineHistory(
+          vaccineName: vaccineNameController.text,
+          vaccinationDate: DateTime.parse(vaccinationDateController.text),
+          nextDueDate: nextDueDateController.text.isNotEmpty
+              ? DateTime.parse(nextDueDateController.text)
+              : null,
+          veterinarianName: veterinarianNameController.text,
+          clinicName: clinicNameController.text,
+          notes: notesController.text,
+        );
+
+        // Create a new pet object
+        final newPet = AdminPet(
+          name: petNameController.text,
+          breed: breedController.text,
+          gender: selectedGender!,
+          age: int.parse(ageController.text),
+          height: double.tryParse(heightController.text) ?? 0.0,
+          weight: double.tryParse(weightController.text) ?? 0.0,
+          petImageUrl: imageUrl,
+          description: descriptionController.text,
+          specialCareInstructions: specialCareController.text,
+          adoptee: Adoptee(id: '', firstName: '', lastName: ''), // Fill in with actual Adoptee data if available
+          medicalHistory: medicalHistory,
+          vaccineHistory: vaccineHistory,
+        );
+
+        // Dispatch the AddPetEvent to the BLoC
+        context.read<PetManagementBloc>().add(AddPetEvent(pet: newPet, image: _selectedPetImage!));
+
+        // Return to the previous screen
+        Navigator.pop(context);
+      } catch (e) {
+        // Handle the error and display a message
+        print('Error while adding pet: $e'); // Debugging line
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +156,28 @@ class _AdoptFormScreenState extends State<AddPetForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Pet Name field
-                TextFormField(
-                  controller: petNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Pet Name',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
+                // Pet details
+                CustomImagePickerButton(
+                  label: 'Add Pet Image',
+                  onPressed: _selectAndUploadImage,
+                  selectedImageText: _selectedPetImage != null
+                      ? 'Image Uploaded' // Change the text to show that the image has been uploaded
+                      : 'No pet image selected',
+                ),
+                if (_selectedPetImage != null) // Show the image if it has been uploaded
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Image.file(
+                      _selectedPetImage!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
                   ),
+                SizedBox(height: 16),
+                CustomTextFormField(
+                  controller: petNameController,
+                  labelText: 'Pet Name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the pet name';
@@ -84,18 +187,9 @@ class _AdoptFormScreenState extends State<AddPetForm> {
                 ),
                 SizedBox(height: 16),
 
-                // Breed field
-                TextFormField(
+                CustomTextFormField(
                   controller: breedController,
-                  decoration: InputDecoration(
-                    labelText: 'Breed',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
+                  labelText: 'Breed',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the breed';
@@ -105,24 +199,10 @@ class _AdoptFormScreenState extends State<AddPetForm> {
                 ),
                 SizedBox(height: 16),
 
-                // Gender Dropdown field
-                DropdownButtonFormField<String>(
+                CustomDropdownFormField(
+                  labelText: 'Gender',
                   value: selectedGender,
-                  items: ['Male', 'Female'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  decoration: InputDecoration(
-                    labelText: 'Gender',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
+                  items: ['Male', 'Female'],
                   onChanged: (newValue) {
                     setState(() {
                       selectedGender = newValue;
@@ -137,19 +217,10 @@ class _AdoptFormScreenState extends State<AddPetForm> {
                 ),
                 SizedBox(height: 16),
 
-                // Age field (Number)
-                TextFormField(
+                CustomTextFormField(
                   controller: ageController,
+                  labelText: 'Age',
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Age',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the age';
@@ -162,162 +233,172 @@ class _AdoptFormScreenState extends State<AddPetForm> {
                 ),
                 SizedBox(height: 16),
 
-                // Height field ( Number)
-                TextFormField(
+                CustomTextFormField(
                   controller: heightController,
+                  labelText: 'Height',
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Height (cm)',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the height';
                     }
                     if (num.tryParse(value) == null) {
-                      return 'Age must be a number';
+                      return 'Height must be a number';
                     }
                     return null;
                   },
                 ),
                 SizedBox(height: 16),
 
-                // Weight field (Number)
-                TextFormField(
+                CustomTextFormField(
                   controller: weightController,
+                  labelText: 'Weight',
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Weight (kg)',
-                    filled: true,
-                    fillColor: Colors.grey[300],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter the weight';
                     }
                     if (num.tryParse(value) == null) {
-                      return 'Age must be a number';
+                      return 'Weight must be a number';
                     }
                     return null;
                   },
                 ),
+
+                CustomTextFormField(
+                  controller: descriptionController,
+                  labelText: 'Description',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a description';
+                    }
+                    return null;
+                  },
+                ),
+
                 SizedBox(height: 16),
 
-                // Image picker buttons
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () async {
-                        await _selectAndUploadImage('pet');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                        backgroundColor: Colors.yellowAccent,
-                      ),
-                      child: Text('Add Pet Image'),
-                    ),
-                    Text(_selectedPetImage != null ? '' : 'No pet image selected'),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await _selectAndUploadImage('medical_history');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                        backgroundColor: Colors.yellowAccent,
-                      ),
-                      child: Text('Add Medical History Image'),
-                    ),
-                    Text(_selectedMedicalHistoryImage != null ? '' : 'No medical history image selected'),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await _selectAndUploadImage('vaccine_history');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                        backgroundColor: Colors.yellowAccent,
-                      ),
-                      child: Text('Add Vaccine History Image'),
-                    ),
-                    Text(_selectedVaccineHistoryImage != null ? '' : 'No vaccine history image selected'),
-                    SizedBox(height: 16),
-                  ],
+                // Medical History
+                Text('Medical History', style: TextStyle(fontWeight: FontWeight.bold)),
+                CustomTextFormField(
+                  controller: conditionController,
+                  labelText: 'Condition',
                 ),
-                SizedBox(height: 32),
+                SizedBox(height: 8),
 
-                // Action Buttons (Cancel and Submit)
+                // Use a TextFormField that opens a date picker
+                GestureDetector(
+                  onTap: () => _selectDate(diagnosisDateController),
+                  child: AbsorbPointer(
+                    child: CustomTextFormField(
+                      controller: diagnosisDateController,
+                      labelText: 'Diagnosis Date',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select a diagnosis date';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+
+                CustomTextFormField(
+                  controller: treatmentController,
+                  labelText: 'Treatment',
+                ),
+                SizedBox(height: 8),
+
+                CustomTextFormField(
+                  controller: veterinarianNameController,
+                  labelText: 'Veterinarian Name',
+                ),
+                SizedBox(height: 8),
+
+                CustomTextFormField(
+                  controller: clinicNameController,
+                  labelText: 'Clinic Name',
+                ),
+                SizedBox(height: 8),
+
+                // Use a TextFormField that opens a date picker
+                GestureDetector(
+                  onTap: () => _selectDate(treatmentDateController),
+                  child: AbsorbPointer(
+                    child: CustomTextFormField(
+                      controller: treatmentDateController,
+                      labelText: 'Treatment Date',
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+
+                CustomTextFormField(
+                  controller: recoveryStatusController,
+                  labelText: 'Recovery Status',
+                ),
+                SizedBox(height: 8),
+
+                CustomTextFormField(
+                  controller: notesController,
+                  labelText: 'Notes',
+                ),
+                SizedBox(height: 16),
+
+                // Vaccine History
+                Text('Vaccine History', style: TextStyle(fontWeight: FontWeight.bold)),
+                CustomTextFormField(
+                  controller: vaccineNameController,
+                  labelText: 'Vaccine Name',
+                ),
+                SizedBox(height: 8),
+
+                // Use a TextFormField that opens a date picker
+                GestureDetector(
+                  onTap: () => _selectDate(vaccinationDateController),
+                  child: AbsorbPointer(
+                    child: CustomTextFormField(
+                      controller: vaccinationDateController,
+                      labelText: 'Vaccination Date',
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+
+                // Use a TextFormField that opens a date picker
+                GestureDetector(
+                  onTap: () => _selectDate(nextDueDateController),
+                  child: AbsorbPointer(
+                    child: CustomTextFormField(
+                      controller: nextDueDateController,
+                      labelText: 'Next Due Date',
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Cancel button
                     TextButton(
                       onPressed: () {
-                        // Handle cancel
                         Navigator.pop(context);
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                         backgroundColor: Colors.grey[400],
                       ),
                       child: Text('Cancel'),
                     ),
 
-                    // Submit button
                     ElevatedButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () async {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        if (_formKey.currentState!.validate()) {
-                          // Process form submission
-                          try {
-                            // Simulate a delay for form submission
-                            await Future.delayed(Duration(seconds: 2));
-                            // Display a success message
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Form submitted successfully!'),
-                              ),
-                            );
-                          } catch (e) {
-                            // Display an error message
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error submitting form: $e'),
-                              ),
-                            );
-                          } finally {
-                            setState(() {
-                              _isLoading = false;
-                            });
-                          }
-                        } else {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      },
+                      onPressed: _isLoading ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                         backgroundColor: Colors.yellowAccent,
                       ),
                       child: _isLoading
-                          ? CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                          ? CircularProgressIndicator(color: Colors.white)
                           : Text('Submit'),
                     ),
                   ],
@@ -328,15 +409,5 @@ class _AdoptFormScreenState extends State<AddPetForm> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    petNameController.dispose();
-    breedController.dispose();
-    ageController.dispose();
-    heightController.dispose();
-    weightController.dispose();
-    super.dispose();
   }
 }

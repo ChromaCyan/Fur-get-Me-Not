@@ -1,14 +1,49 @@
 import 'dart:convert';
+import 'dart:io'; // Add this import for File handling
 import 'package:http/http.dart' as http;
 import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path/path.dart';
+
 
 class AdminPetRepository {
-  final String baseUrl = 'http://localhost:5000/pets';
+  final String baseUrl = 'http://192.168.18.239:5000/pets';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
     return await storage.read(key: 'jwt');
+  }
+
+  // Upload pet image
+  Future<String> uploadImage(File image) async {
+    print('Uploading image to: $baseUrl/upload-image');
+    try {
+      final token = await getToken();
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/upload-image'),
+      );
+
+      // Add the image file to the request
+      request.files.add(await http.MultipartFile.fromPath(
+        'petImage',
+        image.path,
+        filename: basename(image.path),
+      ));
+      request.headers['Authorization'] = 'Bearer $token';
+
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.toBytes();
+        final result = String.fromCharCodes(responseData);
+        final imageUrl = json.decode(result)['imageUrl']; // Adjust based on your response
+        return imageUrl;
+      } else {
+        throw Exception('Image upload failed: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Failed to upload image: $e');
+    }
   }
 
   // Fetch pets of adoptee only
@@ -34,8 +69,16 @@ class AdminPetRepository {
   }
 
   // Add a new pet
-  Future<void> addPet(AdminPet pet) async {
+  Future<void> addPet(AdminPet pet, File image) async {
     try {
+      // Upload the image and get the image URL
+      print('Uploading image...');
+      String imageUrl = await uploadImage(image);
+      print('Image URL obtained: $imageUrl');
+
+      pet.petImageUrl = imageUrl;
+
+
       final token = await getToken();
       final response = await http.post(
         Uri.parse('$baseUrl/add-pet'),
@@ -43,7 +86,7 @@ class AdminPetRepository {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode(pet.toJson()), // Convert Pet object to JSON
+        body: jsonEncode(pet.toJson()),
       );
 
       if (response.statusCode != 201) {
@@ -53,6 +96,7 @@ class AdminPetRepository {
       throw Exception('Failed to add pet: $e');
     }
   }
+
 
   // Update an existing pet
   Future<void> updatePet(AdminPet pet) async {

@@ -1,5 +1,5 @@
 class AdminPet {
-  String id; // _id field from JSON
+  String? id;
   String name;
   String breed;
   String gender;
@@ -14,7 +14,7 @@ class AdminPet {
   VaccineHistory vaccineHistory;
 
   AdminPet({
-    required this.id,
+    this.id,
     required this.name,
     required this.breed,
     required this.gender,

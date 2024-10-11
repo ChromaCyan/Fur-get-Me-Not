@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
+import 'dart:io';
 
 
 abstract class PetManagementEvent extends Equatable {
@@ -18,8 +19,9 @@ class LoadPetManagementEvent extends PetManagementEvent {
 
 class AddPetEvent extends PetManagementEvent {
   final AdminPet pet;
+  final File image;
 
-  AddPetEvent({required this.pet});
+  AddPetEvent({required this.pet, required this.image});
 
   @override
   List<Object?> get props => [pet];

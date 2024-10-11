@@ -1,43 +1,61 @@
 const express = require('express');
 const app = express();
-const connectionDB = require("./db");
 const bodyParser = require("body-parser");
 const path = require("path");
-const mongoose = require ("mongoose");
-require("dotenv").config();
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const cors = require('cors');
+const multer = require('multer');
+
+dotenv.config();
 app.use(cors());
-
-const JWT_SECRET = process.env.JWT_SECRET;
-
 app.use(bodyParser.json());
 
-//Routes
+// Configure multer storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+// Create multer instance
+const upload = multer({ storage });
+
+// Serve uploaded files statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Routes
 const userRoute = require("./routers/userRoute");
 const petRoute = require("./routers/petRoute");
 const adoptionRoute = require("./routers/adoptionRoute");
 const adoptionpetRoute = require("./routers/adoptedpetRoute");
 
-//Authentication routes
+// Authentication routes
 app.use("/users", userRoute);
 
-//CRUD Pets routes 
+// CRUD Pets routes
 app.use("/pets", petRoute);
 
-//Adoption form route
+// Adoption form route
 app.use("/adoption", adoptionRoute);
 
-//CRUD Adopted Pet route
+// CRUD Adopted Pet route
 app.use("/adopted-pets", adoptionpetRoute);
 
 const port = process.env.PORT || 5000;
 
+// MongoDB connection
 mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB connected"))
-    .catch((error) => console.log("MongoDB connection error: ", error));
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((error) => console.log("MongoDB connection error: ", error));
 
-
-app.listen(port, ()=>{
-    console.log(`Server is running on port http://localhost:${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on port http://localhost:${port}`);
 });
+
+// Export upload for use in other modules
+module.exports = { upload, app };

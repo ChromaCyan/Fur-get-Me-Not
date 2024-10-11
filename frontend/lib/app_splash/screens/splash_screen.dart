@@ -185,7 +185,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
             children: [
               TextSpan(text: "Pet Adoption/"),
               TextSpan(
-                text: "Reminder\n",
+                text: "",
                 style: TextStyle(
                   color: Colors.lightBlue,
                   fontWeight: FontWeight.w900,

@@ -43,9 +43,9 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
       case 0:
         return 'My pets listed';
       case 1:
-        return 'Adoption Requests';
-      case 2:
         return 'Chat';
+      case 2:
+        return 'Adoption Requests';
       default:
         return 'Home';
     }
