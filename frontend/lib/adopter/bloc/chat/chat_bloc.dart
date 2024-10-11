@@ -1,32 +1,35 @@
 import 'package:bloc/bloc.dart';
 import 'package:fur_get_me_not/adopter/models/chat/chat.dart';
-import 'package:fur_get_me_not/adopter/repositories/chat/chat_repository.dart';
+import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
-class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final ChatRepository chatRepository;
+class ChatBloc extends Bloc<ChatMessageEvent, ChatMessageState> {
+  final AdopterChatRepository chatRepository;
 
-  ChatBloc(this.chatRepository) : super(ChatInitial()) {
-    on<FetchChatMessages>((event, emit) async {
-      emit(ChatLoading());
+  ChatBloc(this.chatRepository) : super(ChatMessageInitial()) {
+    // Fetch messages event
+    on<FetchMessages>((event, emit) async {
+      emit(ChatMessageLoading());
       try {
-        final messages = await chatRepository.fetchMessages(event.userName);
-        emit(ChatMessagesLoaded(messages));
+        final messages = await chatRepository.fetchMessagesForUser(event.otherUserId);
+        emit(ChatMessageLoaded(messages));
       } catch (e) {
-        emit(ChatError('Failed to load messages'));
+        emit(ChatMessageError('Failed to load messages: $e'));
       }
     });
 
-    on<SendMessage>((event, emit) {
+    // Send message event
+    on<SendMessage>((event, emit) async {
+      emit(ChatMessageLoading());
       try {
-        chatRepository.sendMessage(event.userName, event.message);
-        // Refresh messages after sending
-        add(FetchChatMessages(event.userName));
+        await chatRepository.sendMessage(event.content, event.otherUserId);
+        // Optionally, fetch messages again after sending a message
+        final messages = await chatRepository.fetchMessagesForUser(event.otherUserId);
+        emit(ChatMessageLoaded(messages));
       } catch (e) {
-        emit(ChatError('Failed to send message'));
+        emit(ChatMessageError('Failed to send message: $e'));
       }
     });
   }
 }
-

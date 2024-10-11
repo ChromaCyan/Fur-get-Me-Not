@@ -8,17 +8,19 @@ import 'package:fur_get_me_not/widgets/cards/admin_chat_list_card.dart';
 class ChatListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Dispatch the FetchChats event when the screen is built
     context.read<AdminChatListBloc>().add(FetchChats());
 
     return Scaffold(
-      body: BlocBuilder<AdminChatListBloc, ChatState>(
+      appBar: AppBar(
+        title: const Text('Chat List'),
+      ),
+      body: BlocBuilder<AdminChatListBloc, ChatListState>(
         builder: (context, state) {
-          if (state is ChatLoading) {
+          if (state is ChatListLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is ChatError) {
+          } else if (state is ChatListError) {
             return Center(child: Text('Error: ${state.message}'));
-          } else if (state is ChatLoaded) {
+          } else if (state is ChatListLoaded) {
             final chats = state.chats;
             return ListView.builder(
               itemCount: chats.length,

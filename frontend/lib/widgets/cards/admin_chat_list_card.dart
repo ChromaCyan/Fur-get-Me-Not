@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/adoptee/models/chat/admin_chat_list.dart';
+import 'package:fur_get_me_not/adoptee/models/chat/admin_chat.dart';
 import 'package:fur_get_me_not/adoptee/screens/chat/admin_chat_sceen.dart';
 
 class AdminChatCard extends StatelessWidget {
-  final Chat chat;
+  final AdminChatList chat;
 
   const AdminChatCard({Key? key, required this.chat}) : super(key: key);
 
@@ -14,12 +15,12 @@ class AdminChatCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: NetworkImage(chat.profilePicture),
+          backgroundImage: AssetImage('assets/images/placeholder.png'),
         ),
-        title: Text(chat.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(chat.otherUserName, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(chat.lastMessage),
         trailing: Text(
-          _formatTimestamp(chat.timestamp),
+          _formatTimestamp(chat.updatedAt),
           style: const TextStyle(color: Colors.grey),
         ),
         onTap: () {
@@ -27,8 +28,9 @@ class AdminChatCard extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => ChatScreen(
-                userName: chat.name,
-                profileImageUrl: chat.profilePicture,
+                userName: chat.otherUserName,
+                profileImageUrl: 'images/image1.png',
+                chatId: chat.chatId,
               ),
             ),
           );
@@ -38,7 +40,6 @@ class AdminChatCard extends StatelessWidget {
   }
 
   String _formatTimestamp(DateTime timestamp) {
-    // Format the timestamp as needed
-    return "${timestamp.hour}:${timestamp.minute}";
+    return "${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}";
   }
 }

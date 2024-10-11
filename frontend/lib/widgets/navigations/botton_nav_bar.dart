@@ -16,7 +16,6 @@ class CustomBottomNavBar extends StatelessWidget {
     return CurvedNavigationBar(
       items: <Widget>[
         Icon(Icons.home_outlined, size: 30, color: Colors.white),
-        Icon(Icons.notifications_outlined, size: 30, color: Colors.white),
         Icon(Icons.pets, size: 30, color: Colors.white),
         Icon(Icons.message_outlined, size: 30, color: Colors.white),
         Icon(Icons.fact_check, size: 30, color: Colors.white),
