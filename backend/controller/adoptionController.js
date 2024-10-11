@@ -94,7 +94,7 @@ exports.getAdoptionStatusesForAdopter = async (req, res) => {
       .populate('adoptionRequestId')
       .populate({
         path: 'petId',
-        match: { status: { $ne: 'removed' } }, // Exclude removed pets
+        match: { status: { $ne: 'removed' } }, 
       })
       .populate('adopteeId');
 
@@ -200,8 +200,8 @@ exports.updateAdoptionStatus = async (req, res) => {
         petImageUrl: pet.petImageUrl,
         description: pet.description,
         specialCareInstructions: pet.specialCareInstructions,
-        adopterId: adoptionRequest.adopterId, // New owner
-        adoptionDate: Date.now(), // Current date as adoption date
+        adopterId: adoptionRequest.adopterId, 
+        adoptionDate: Date.now(), 
         status: 'Active',
       });
 

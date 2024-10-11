@@ -3,7 +3,7 @@ const AdoptedPet = require('../model/adopted_petsModel');
 // Function to retrieve all adopted pets
 exports.getAllAdoptedPets = async (req, res) => {
   try {
-    const adoptedPets = await AdoptedPet.find({ status: 'active' }); 
+    const adoptedPets = await AdoptedPet.find({ status: 'active' });
     res.status(200).json(adoptedPets);
   } catch (error) {
     console.error(error);

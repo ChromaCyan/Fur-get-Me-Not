@@ -45,7 +45,7 @@ exports.createUser = async (req, res) => {
             firstName,
             lastName,
             email,
-            password, // No need to hash here
+            password,
             role,
         });
 
@@ -88,7 +88,7 @@ exports.loginUser = async (req, res) => {
 
         // Generate JWT
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
-        console.log("Generated JWT Token:", token); // Log the token here
+        console.log("Generated JWT Token:", token);
         res.status(200).json({ token, userId: user._id, role: user.role });
 
     } catch (error) {
@@ -104,7 +104,7 @@ exports.updateUser = async (req, res) => {
     try {
         // Only update the password if it is provided and modified
         if (password) {
-            req.body.password = password; // Keep password as-is, Mongoose middleware will handle hashing
+            req.body.password = password;
         }
 
         const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
@@ -127,7 +127,7 @@ exports.deleteUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found!" });
         }
-        res.status(204).end(); // No content response
+        res.status(204).end(); 
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

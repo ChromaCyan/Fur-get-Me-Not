@@ -116,8 +116,8 @@ exports.updatePet = async (req, res) => {
 
     // Prepare updated data
     const updatedData = {
-      ...existingPet.toObject(), // Convert existing pet document to an object
-      ...req.body, // Merge with incoming data
+      ...existingPet.toObject(),
+      ...req.body, 
     };
 
     // Check if a new image has been uploaded
@@ -154,8 +154,8 @@ exports.deletePet = async (req, res) => {
     // Update the pet's status to 'removed'
     const updatedPet = await Pet.findByIdAndUpdate(
       id,
-      { status: 'removed' }, // Change the status to 'removed'
-      { new: true } // Return the updated document
+      { status: 'removed' },
+      { new: true } 
     );
 
     if (!updatedPet) {
