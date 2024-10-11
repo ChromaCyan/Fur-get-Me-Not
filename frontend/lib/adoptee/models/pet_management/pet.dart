@@ -12,6 +12,7 @@ class AdminPet {
   Adoptee adoptee;
   MedicalHistory medicalHistory;
   VaccineHistory vaccineHistory;
+  String status; // Add the status field
 
   AdminPet({
     this.id,
@@ -27,6 +28,7 @@ class AdminPet {
     required this.adoptee,
     required this.medicalHistory,
     required this.vaccineHistory,
+    required this.status, // Status is now required
   });
 
   factory AdminPet.fromJson(Map<String, dynamic> json) {
@@ -41,7 +43,7 @@ class AdminPet {
       petImageUrl: json['petImageUrl'] ?? '',
       description: json['description'] ?? 'No description available.',
       specialCareInstructions: json['specialCareInstructions'] ?? '',
-      adoptee: Adoptee.fromJson(json['adopteeId'] ?? {}), // Update to parse Adoptee
+      adoptee: Adoptee.fromJson(json['adopteeId'] ?? {}),
       medicalHistory: json['medicalHistory'] != null
           ? MedicalHistory.fromJson(json['medicalHistory'])
           : MedicalHistory(
@@ -56,6 +58,7 @@ class AdminPet {
         vaccineName: 'N/A',
         vaccinationDate: DateTime.now(),
       ),
+      status: json['status'] ?? 'available', // Add status parsing
     );
   }
 
@@ -71,9 +74,10 @@ class AdminPet {
       'petImageUrl': petImageUrl,
       'description': description,
       'specialCareInstructions': specialCareInstructions,
-      'adopteeId': adoptee.toJson(), // Update to serialize Adoptee
+      'adopteeId': adoptee.toJson(),
       'medicalHistory': medicalHistory.toJson(),
       'vaccineHistory': vaccineHistory.toJson(),
+      'status': status, // Add status serialization
     };
   }
 }

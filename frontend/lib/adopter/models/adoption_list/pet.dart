@@ -1,5 +1,5 @@
 class Pet {
-  String id; // _id field from JSON
+  String id;
   String name;
   String breed;
   String gender;
@@ -9,9 +9,10 @@ class Pet {
   String petImageUrl;
   String description;
   String specialCareInstructions;
-  Adoptee adoptee; // Updated to Adoptee class
+  Adoptee adoptee;
   MedicalHistory medicalHistory;
   VaccineHistory vaccineHistory;
+  String status;
 
   Pet({
     required this.id,
@@ -27,6 +28,7 @@ class Pet {
     required this.adoptee, // Update to Adoptee class
     required this.medicalHistory,
     required this.vaccineHistory,
+    required this.status,
   });
 
   factory Pet.fromJson(Map<String, dynamic> json) {
@@ -56,6 +58,7 @@ class Pet {
         vaccineName: 'N/A',
         vaccinationDate: DateTime.now(),
       ),
+      status: json['status'] ?? 'available',
     );
   }
 
@@ -74,6 +77,7 @@ class Pet {
       'adopteeId': adoptee.toJson(), // Update to serialize Adoptee
       'medicalHistory': medicalHistory.toJson(),
       'vaccineHistory': vaccineHistory.toJson(),
+      'status': status,
     };
   }
 }

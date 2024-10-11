@@ -34,6 +34,11 @@ const petSchema = new mongoose.Schema({
         clinicName: { type: String },
         notes: { type: String },
     },
+    status: { 
+        type: String, 
+        enum: ['available', 'adopted'],
+        default: 'available'
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Pet', petSchema);

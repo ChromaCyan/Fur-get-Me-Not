@@ -1,10 +1,10 @@
 const Pet = require('../model/petModel');
 const User = require('../model/userModel'); 
 
-// Get all pets (No restrictions, viewable to both Adoptees and Adopters)
+// Get all available pets (No restrictions, viewable to both Adoptees and Adopters)
 exports.getPets = async (req, res) => {
   try {
-    const pets = await Pet.find().populate('adopteeId', 'firstName lastName');
+    const pets = await Pet.find({ status: 'available' }).populate('adopteeId', 'firstName lastName');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -15,7 +15,7 @@ exports.getPets = async (req, res) => {
 exports.getPetsbyadoptee = async (req, res) => {
   try {
     const { id } = req.user;
-    const pets = await Pet.find({ adopteeId: id }).populate('adopteeId', 'firstName lastName');
+    const pets = await Pet.find({ adopteeId: id, status: 'available' }).populate('adopteeId', 'firstName lastName');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -30,12 +30,11 @@ exports.getPetById = async (req, res) => {
     console.log('Request Body:', req.body);
     console.log('User ID:', req.user.id);
 
-
     // Fetch the pet using the id
     const pet = await Pet.findById(id).populate('adopteeId', 'firstName lastName');
     
-    if (!pet) {
-      return res.status(404).json({ message: 'Pet not found' });
+    if (!pet || pet.status === 'adopted') { // Check if pet is not found or is adopted
+      return res.status(404).json({ message: 'Pet not found or has been adopted' });
     }
 
     res.status(200).json(pet);
@@ -44,7 +43,6 @@ exports.getPetById = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving pet', error });
   }
 };
-
 
 // Create a new pet (Adoptee Only)
 exports.createPet = async (req, res) => {
@@ -59,7 +57,8 @@ exports.createPet = async (req, res) => {
     // Create new pet object with adopteeId and combined medical & vaccine history
     const newPet = new Pet({
       ...req.body,
-      adopteeId: req.user.id
+      adopteeId: req.user.id,
+      status: 'available' // Automatically set status to 'available'
     });
 
     console.log('New Pet Object:', newPet);

@@ -43,6 +43,8 @@ class _AddPetFormState extends State<AddPetForm> {
   String? selectedGender;
   bool _isLoading = false;
 
+  String? selectedRecoveryStatus;
+
   final ImagePicker _picker = ImagePicker();
   File? _selectedPetImage;
 
@@ -91,7 +93,7 @@ class _AddPetFormState extends State<AddPetForm> {
           treatmentDate: treatmentDateController.text.isNotEmpty
               ? DateTime.parse(treatmentDateController.text)
               : null,
-          recoveryStatus: recoveryStatusController.text,
+          recoveryStatus: selectedRecoveryStatus ?? 'Unknown',
           notes: notesController.text,
         );
 
@@ -118,9 +120,10 @@ class _AddPetFormState extends State<AddPetForm> {
           petImageUrl: imageUrl,
           description: descriptionController.text,
           specialCareInstructions: specialCareController.text,
-          adoptee: Adoptee(id: '', firstName: '', lastName: ''), // Fill in with actual Adoptee data if available
+          adoptee: Adoptee(id: '', firstName: '', lastName: ''),
           medicalHistory: medicalHistory,
           vaccineHistory: vaccineHistory,
+          status: 'available',
         );
 
         // Dispatch the AddPetEvent to the BLoC
@@ -263,7 +266,7 @@ class _AddPetFormState extends State<AddPetForm> {
                     return null;
                   },
                 ),
-
+                SizedBox(height: 16),
                 CustomTextFormField(
                   controller: descriptionController,
                   labelText: 'Description',
@@ -333,10 +336,23 @@ class _AddPetFormState extends State<AddPetForm> {
                 ),
                 SizedBox(height: 8),
 
-                CustomTextFormField(
-                  controller: recoveryStatusController,
+                CustomDropdownFormField(
                   labelText: 'Recovery Status',
+                  value: selectedRecoveryStatus,
+                  items: ['Recovered', 'Ongoing Treatment', 'Chronic'],
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedRecoveryStatus = newValue;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please select a recovery status';
+                    }
+                    return null;
+                  },
                 ),
+
                 SizedBox(height: 8),
 
                 CustomTextFormField(

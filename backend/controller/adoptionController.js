@@ -90,8 +90,8 @@ exports.submitAdoptionForm = async (req, res) => {
 // Function to get adoption statuses for an adopter
 exports.getAdoptionStatusesForAdopter = async (req, res) => {
   try {
-    const adoptionStatuses = await AdoptionStatus.find({ adopterId: req.user.id })
-      .populate('adoptionRequestId') 
+    const adoptionStatuses = await AdoptionStatus.find({ adopterId: req.user.id, status: { $ne: 'Adoption Completed' } }) 
+      .populate('adoptionRequestId')
       .populate('petId')
       .populate('adopteeId'); 
 
@@ -102,14 +102,15 @@ exports.getAdoptionStatusesForAdopter = async (req, res) => {
   }
 };
 
+
 // ------------------------- Adoptee Functions ------------------------- //
 
 // Function to get all adoption requests for an adoptee
 exports.getAdoptionRequestsForAdoptee = async (req, res) => {
   try {
-    const adoptionRequests = await AdoptionRequest.find({ adopteeId: req.user.id }) 
+    const adoptionRequests = await AdoptionRequest.find({ adopteeId: req.user.id, status: { $ne: 'Adoption Completed' } })
       .populate('adoptionFormId')
-      .populate('petId') 
+      .populate('petId')
       .populate('adopterId'); 
 
     res.status(200).json(adoptionRequests);
@@ -118,6 +119,7 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving adoption requests', error });
   }
 };
+
 
 // Function to get all adoption forms submitted to the adoptee
 exports.getAdoptionFormsForAdoptee = async (req, res) => {
@@ -151,7 +153,7 @@ exports.updateAdoptionStatus = async (req, res) => {
       { new: true }
     );
 
-    // If the status is "Adoption Completed," transfer the pet
+    // If the status is "Adoption Completed," update the pet's status
     if (status === 'Adoption Completed') {
       // Find the adoption request by ID and populate the relevant data
       const adoptionRequest = await AdoptionRequest.findById(requestId)
@@ -162,8 +164,17 @@ exports.updateAdoptionStatus = async (req, res) => {
         return res.status(404).json({ message: 'Adoption request not found' });
       }
 
-      // Transfer pet details to AdoptedPet model
+      // Find the pet to update its status
       const pet = await Pet.findById(adoptionRequest.petId);
+      if (!pet) {
+        return res.status(404).json({ message: 'Pet not found' });
+      }
+
+      // Update the pet's status to "adopted"
+      pet.status = 'adopted';
+      await pet.save(); // Save the updated pet
+
+      // Optionally, you can create an entry in the AdoptedPet model if needed
       const adoptedPet = new AdoptedPet({
         name: pet.name,
         breed: pet.breed,
@@ -180,9 +191,6 @@ exports.updateAdoptionStatus = async (req, res) => {
       });
 
       await adoptedPet.save();
-
-      // Remove the pet from the original adoption listing
-      await Pet.findByIdAndDelete(pet._id); // Or mark as adopted using a flag
     }
 
     // Respond with success
