@@ -16,7 +16,8 @@ exports.getPets = async (req, res) => {
 exports.getPetsbyadoptee = async (req, res) => {
   try {
     const { id } = req.user;
-    const pets = await Pet.find({ adopteeId: id, status: 'available' }).populate('adopteeId', 'firstName lastName');
+    const pets = await Pet.find({ adopteeId: id, status: 'available' })
+      .populate('adopteeId', 'firstName lastName');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -97,7 +98,6 @@ exports.uploadImage = async (req, res) => {
   }
 };
 
-
 // Update a pet (Adoptee Only)
 exports.updatePet = async (req, res) => {
   try {
@@ -139,7 +139,6 @@ exports.updatePet = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Update a pet's status to 'removed' (Adoptee Only)
 exports.deletePet = async (req, res) => {

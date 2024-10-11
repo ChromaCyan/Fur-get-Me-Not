@@ -4,7 +4,7 @@ import 'package:fur_get_me_not/adopter/models/adoption_status/adoption_status.da
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AdoptionStatusRepository {
-  final String baseUrl = 'http://192.168.18.239:5000/adoption';
+  final String baseUrl = 'http://192.168.100.130:5000/adoption';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -38,7 +38,8 @@ class AdoptionStatusRepository {
         // Log the response body for debugging
         print('Response status: ${response.statusCode}');
         print('Response body: ${response.body}');
-        throw Exception('Failed to load adoption statuses: ${response.reasonPhrase}');
+        throw Exception(
+            'Failed to load adoption statuses: ${response.reasonPhrase}');
       }
     } catch (error) {
       print('Error fetching adoption statuses: $error');

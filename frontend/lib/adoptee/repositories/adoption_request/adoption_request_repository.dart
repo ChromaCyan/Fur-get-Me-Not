@@ -4,7 +4,7 @@ import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AdoptionRequestRepository {
-  final String baseUrl = 'http://192.168.18.239:5000/adoption';
+  final String baseUrl = 'http://192.168.100.130:5000/adoption';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -33,7 +33,8 @@ class AdoptionRequestRepository {
             .map((data) => AdoptionRequest.fromJson(data))
             .toList();
       } else {
-        throw Exception('Failed to load adoption requests: ${response.reasonPhrase}');
+        throw Exception(
+            'Failed to load adoption requests: ${response.reasonPhrase}');
       }
     } catch (error) {
       print('Error fetching adoption requests: $error');
@@ -41,7 +42,8 @@ class AdoptionRequestRepository {
     }
   }
 
-  Future<void> updateAdoptionRequestStatus(String requestId, AdoptionRequest request, String newStatus) async {
+  Future<void> updateAdoptionRequestStatus(
+      String requestId, AdoptionRequest request, String newStatus) async {
     try {
       final token = await getToken();
       if (token == null) {
@@ -55,7 +57,7 @@ class AdoptionRequestRepository {
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'requestId': requestId,  // Use the requestId here
+          'requestId': requestId, // Use the requestId here
           'status': newStatus,
         }),
       );
@@ -63,7 +65,8 @@ class AdoptionRequestRepository {
       if (response.statusCode != 200) {
         print('Response status: ${response.statusCode}');
         print('Response body: ${response.body}');
-        throw Exception('Failed to update adoption request status: ${response.reasonPhrase}');
+        throw Exception(
+            'Failed to update adoption request status: ${response.reasonPhrase}');
       }
     } catch (error) {
       print('Error updating adoption request status: $error');
