@@ -1,52 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:fur_get_me_not/adopter/models/widget/carousel.dart';
 
-class BannerWidget extends StatelessWidget {
-  final String text;
-  final Color backgroundColor;
-  final double height;
+class ReusableCarousel extends StatelessWidget {
+  final List<CarouselItem> items;
 
-  const BannerWidget({
-    Key? key,
-    required this.text,
-    this.backgroundColor = const Color(0xFFFE9879),
-    this.height = 180,
-  }) : super(key: key);
+  ReusableCarousel({required this.items});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          height: height,
-          width: double.infinity,
-          color: backgroundColor,
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      text,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        height: 1.1,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+    return CarouselSlider(
+      options: CarouselOptions(
+        enlargeCenterPage: true,
+        autoPlay: true,
+        viewportFraction: 0.8,
+        autoPlayInterval: const Duration(seconds: 5),
+        autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+        autoPlayCurve: Curves.fastOutSlowIn,
       ),
+      items: items.map((item) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 20),
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade900,
+                  blurRadius: 14,
+                  offset: const Offset(2, 3),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(40),
+              color: Color(0xFFFE9879),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                        child: Text(
+                          item.text,
+                          style: TextStyle(
+                            fontSize: 23,
+                            wordSpacing: 2.5,
+                            height: 1.4,
+                            letterSpacing: -0.7,
+                            color: Colors.grey.shade900,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Image.asset(item.image),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

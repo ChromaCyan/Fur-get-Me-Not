@@ -9,7 +9,7 @@ class AppTheme {
         primaryContainer: const Color(0xFF21899C),
         secondary: Color(0xFFFE9879),
         background: Color(0xFFFE9879),
-        surface: const Color(0xFFF5E6CA),
+        surface: Color(0xFFFE9879),
         onPrimary: Colors.white,
         onSecondary: Colors.black,
         onBackground: Colors.black,
