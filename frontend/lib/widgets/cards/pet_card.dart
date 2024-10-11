@@ -30,7 +30,7 @@ class PetCard extends StatelessWidget {
             height: cardHeight,
             decoration: BoxDecoration(
               color: Color(0xFF21899C),
-              borderRadius: BorderRadius.circular(55),
+              borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 // BoxShadow(
                 //   color: Colors.black.withOpacity(0.3),

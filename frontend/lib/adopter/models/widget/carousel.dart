@@ -1,3 +1,5 @@
+// CAROUSEL BACKUP CODE
+
 class CarouselItem {
   final String text;
   final String image;
@@ -14,11 +16,11 @@ List<CarouselItem> carouselData = [
     image: 'images/image2.png',
   ),
   CarouselItem(
-    text: 'Chat and communicate with adoption shelters!',
+    text: 'Chat and communicate with Adoptees!',
     image: 'images/image1.png',
   ),
   CarouselItem(
-    text: 'You should adopt a pet now!',
+    text: "They are waiting for you",
     image: 'images/image3.png',
   ),
 ];
