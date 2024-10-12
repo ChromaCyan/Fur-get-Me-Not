@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_details/pet_details_state.dart';
+import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_event.dart';
+import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
+import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_bloc.dart';
+import 'package:fur_get_me_not/adoptee/screens/home_screen.dart';
 import 'package:fur_get_me_not/widgets/buttons/back_button.dart';
 import 'package:fur_get_me_not/widgets/admin_pet_details/medical_card.dart';
 import 'package:fur_get_me_not/widgets/admin_pet_details/vaccine_card.dart';
 import 'package:fur_get_me_not/widgets/admin_pet_details/pet_info.dart';
 import 'package:fur_get_me_not/widgets/pet_details/toggle_button.dart';
+import 'package:fur_get_me_not/adoptee/screens/pet_management/edit_pet_form.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final String petId;
@@ -17,9 +21,7 @@ class PetDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use the bloc
     final petDetailsBloc = BlocProvider.of<AdopteePetDetailsBloc>(context);
-    // Dispatch an event to load pet details
     petDetailsBloc.add(LoadPetDetailsEvent(petId: petId));
 
     return Scaffold(
@@ -29,7 +31,7 @@ class PetDetailsPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is PetDetailsLoaded) {
             final pet = state.pet;
-            return _PetDetailsView(pet: pet); // Your custom view widget
+            return _PetDetailsView(pet: pet);
           } else if (state is PetDetailsError) {
             return Center(child: Text('Error: ${state.message}'));
           }
@@ -40,11 +42,10 @@ class PetDetailsPage extends StatelessWidget {
   }
 }
 
-
 class _PetDetailsView extends StatefulWidget {
   final AdminPet pet;
 
-  const _PetDetailsView({Key? key, required this.pet,}) : super(key: key);
+  const _PetDetailsView({Key? key, required this.pet}) : super(key: key);
 
   @override
   State<_PetDetailsView> createState() => _PetDetailsViewState();
@@ -57,6 +58,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return SizedBox(
       height: size.height,
       child: Stack(
@@ -87,8 +89,13 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       showPetInfo
                           ? PetInfoWidget(pet: widget.pet)
                           : showVaccineHistory
-                          ? VaccineHistoryWidget(vaccineHistory: widget.pet.vaccineHistory)
-                          : MedicalHistoryWidget(medicalHistory: widget.pet.medicalHistory),
+                              ? VaccineHistoryWidget(
+                                  vaccineHistory: widget.pet.vaccineHistory)
+                              : MedicalHistoryWidget(
+                                  medicalHistory: widget.pet.medicalHistory),
+                      const SizedBox(height: 20),
+                      // Add Edit and Delete buttons
+                      buildEditDeleteButtons(context),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -112,10 +119,6 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               widget.pet.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            // const Text(
-            //   "Address or location",
-            //   style: TextStyle(fontSize: 16, color: Colors.grey),
-            // ),
           ],
         ),
       ],
@@ -210,62 +213,77 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     );
   }
 
-  ClipRRect moreInfo(Color pawColor, Color backgroundColor, String title, String value) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: -20,
-            right: -20,
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: backgroundColor,
+  Widget buildEditDeleteButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditPetForm(pet: widget.pet),
               ),
-            ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.orange,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
-          Container(
-            height: 60,
-            width: 100,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+          child: const Text('Edit'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            _deletePet(context, widget.pet.id ?? '');
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
-        ],
-      ),
+          child: const Text('Delete'),
+        ),
+      ],
+    );
+  }
+
+  void _deletePet(BuildContext context, String petId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion'),
+          content: const Text('Are you sure you want to delete this pet?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Trigger pet deletion
+                context
+                    .read<PetManagementBloc>()
+                    .add(RemovePetEvent(petId: petId));
+
+                // Show success message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Pet deleted successfully')),
+                );
+
+                // Navigate to home screen after deletion
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdopteeHomeScreen()),
+                  (Route<dynamic> route) => false, // Remove all previous routes
+                );
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

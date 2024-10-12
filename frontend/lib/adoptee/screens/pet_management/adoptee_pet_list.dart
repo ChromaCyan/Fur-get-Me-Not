@@ -8,7 +8,6 @@ import 'package:fur_get_me_not/adoptee/screens/pet_management/pet_details_screen
 import 'package:fur_get_me_not/widgets/cards/admin_pet_card.dart';
 import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 import 'add_pet_form.dart';
-import 'package:fur_get_me_not/widgets/forms/warning_dialogue.dart';
 
 class PetManagementScreen extends StatefulWidget {
   const PetManagementScreen({super.key});
@@ -21,41 +20,8 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
   @override
   void initState() {
     super.initState();
+    // Load pet management data when the screen initializes
     context.read<PetManagementBloc>().add(LoadPetManagementEvent());
-  }
-
-  void _editPet(AdminPet pet) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditPetForm(pet: pet),
-      ),
-    );
-  }
-
-  void _deletePet(String petId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return ConfirmationDialog(
-          title: 'Confirm Deletion',
-          content: 'Are you sure you want to delete this pet?',
-          onConfirm: () {
-            // Add the removal event
-            context.read<PetManagementBloc>().add(RemovePetEvent(petId: petId));
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Pet deleted successfully')),
-            );
-            // Close the dialog only after confirming the deletion
-            Navigator.of(context).pop(); // Close the confirmation dialog
-          },
-          onCancel: () {
-            // Simply close the dialog
-            Navigator.of(context).pop();
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -67,46 +33,74 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            BlocBuilder<PetManagementBloc, PetManagementState>(
-              builder: (context, state) {
-                if (state is PetManagementLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is PetManagementLoaded) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: List.generate(state.pets.length, (index) {
-                        final pet = state.pets[index];
-                        return PetCard(
-                          pet: pet,
-                          size: size,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PetDetailsPage(petId: pet.id ?? ''),
-                              ),
-                            );
-                          },
-                          onDelete: () => _deletePet(pet.id ?? ''),
-                          onEdit: () => _editPet(pet),
-                        );
-                      }),
-                    ),
-                  );
-                } else if (state is PetManagementError) {
-                  return Center(child: Text(state.message));
-                } else {
-                  return const Center(child: Text('Error: Unknown state'));
-                }
-              },
+            // Placeholder for carousel or other header widgets if needed
+            const SizedBox(height: 20),
+            Expanded(
+              child: BlocBuilder<PetManagementBloc, PetManagementState>(
+                builder: (context, state) {
+                  // Show loading indicator when in the loading state
+                  if (state is PetManagementLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  // When pets are loaded, display them in a grid view
+                  else if (state is PetManagementLoaded) {
+                    // If no pets are available, show a message
+                    if (state.pets.isEmpty) {
+                      return const Center(
+                        child: Text('No pets available. Add a pet to manage.'),
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GridView.builder(
+                        itemCount: state.pets.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          childAspectRatio: 0.75,
+                        ),
+                        itemBuilder: (context, index) {
+                          final pet = state.pets[index];
+                          return PetCard(
+                            pet: pet,
+                            size: size,
+                            onTap: () {
+                              // Navigate to PetDetailsPage when a pet card is tapped
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PetDetailsPage(
+                                    petId: pet.id ?? '',
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  }
+                  // Display error message if there was an error loading the pets
+                  else if (state is PetManagementError) {
+                    return Center(child: Text(state.message));
+                  }
+                  // Handle unknown state
+                  else {
+                    return const Center(child: Text('Error: Unknown state'));
+                  }
+                },
+              ),
             ),
           ],
         ),
       ),
+      // Floating action button for adding a new pet
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
+          Navigator.push(
+            context,
             MaterialPageRoute(
               builder: (context) => AddPetForm(),
             ),
