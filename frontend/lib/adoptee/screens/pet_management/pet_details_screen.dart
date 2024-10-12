@@ -64,7 +64,13 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       child: Stack(
         children: [
           itemsImageAndBackground(size),
-          BackButtonWidget(),
+          Column(
+            children: [
+              const SizedBox(
+                  height: 40), // Add space here to lower the BackButtonWidget
+              BackButtonWidget(),
+            ],
+          ),
           Positioned(
             bottom: 0,
             child: Container(
@@ -94,7 +100,6 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                               : MedicalHistoryWidget(
                                   medicalHistory: widget.pet.medicalHistory),
                       const SizedBox(height: 20),
-                      // Add Edit and Delete buttons
                       buildEditDeleteButtons(context),
                       const SizedBox(height: 20),
                     ],
@@ -227,20 +232,32 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            backgroundColor: Colors.orange, // Background color for Edit button
+            foregroundColor: Colors.white, // Text color for Edit button
+            padding: const EdgeInsets.symmetric(
+                horizontal: 50, vertical: 12), // Padding
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Rounded corners
+            ),
           ),
-          child: const Text('Edit'),
+          child:
+              const Text('Edit', style: TextStyle(fontSize: 16)), // Text style
         ),
         ElevatedButton(
           onPressed: () {
             _deletePet(context, widget.pet.id ?? '');
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            backgroundColor: Colors.red, // Background color for Delete button
+            foregroundColor: Colors.white, // Text color for Delete button
+            padding: const EdgeInsets.symmetric(
+                horizontal: 50, vertical: 12), // Padding
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Rounded corners
+            ),
           ),
-          child: const Text('Delete'),
+          child: const Text('Delete',
+              style: TextStyle(fontSize: 16)), // Text style
         ),
       ],
     );

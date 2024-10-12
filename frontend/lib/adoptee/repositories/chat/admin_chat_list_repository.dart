@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/adoptee/models/chat/admin_chat.dart';
 import 'package:fur_get_me_not/adoptee/models/chat/admin_chat_list.dart';
 
 class AdminChatRepository {
-  final String baseUrl = 'http://192.168.10.110:5000'; 
+  final String baseUrl = 'http://192.168.100.134:5000';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -42,7 +42,8 @@ class AdminChatRepository {
   }
 
   // Fetch messages for a specific chat
-  Future<List<AdminChatMessage>> fetchMessagesForUser(String otherUserId) async {
+  Future<List<AdminChatMessage>> fetchMessagesForUser(
+      String otherUserId) async {
     try {
       final token = await getToken();
       if (token == null) {

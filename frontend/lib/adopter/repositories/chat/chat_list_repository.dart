@@ -5,7 +5,8 @@ import 'package:fur_get_me_not/adopter/models/chat/chat.dart';
 import 'package:fur_get_me_not/adopter/models/chat/chat_list.dart';
 
 class AdopterChatRepository {
-  final String baseUrl = 'http://192.168.10.110:5000'; // Replace with your actual base URL
+  final String baseUrl =
+      'http://192.168.100.134:5000'; // Replace with your actual base URL
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -21,7 +22,8 @@ class AdopterChatRepository {
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl/chats/chat-list'), // Ensure this route is valid for adopters
+        Uri.parse(
+            '$baseUrl/chats/chat-list'), // Ensure this route is valid for adopters
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -42,7 +44,8 @@ class AdopterChatRepository {
   }
 
   // Fetch messages for a specific chat
-  Future<List<AdopterChatMessage>> fetchMessagesForUser(String otherUserId) async {
+  Future<List<AdopterChatMessage>> fetchMessagesForUser(
+      String otherUserId) async {
     try {
       final token = await getToken();
       if (token == null) {
@@ -50,7 +53,8 @@ class AdopterChatRepository {
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl/messages/$otherUserId'), // Ensure this route is valid for adopters
+        Uri.parse(
+            '$baseUrl/messages/$otherUserId'), // Ensure this route is valid for adopters
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -79,7 +83,8 @@ class AdopterChatRepository {
       }
 
       final response = await http.post(
-        Uri.parse('$baseUrl/messages/new-message'), // Ensure this route is valid for sending messages
+        Uri.parse(
+            '$baseUrl/messages/new-message'), // Ensure this route is valid for sending messages
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

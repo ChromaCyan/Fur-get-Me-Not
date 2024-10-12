@@ -3,11 +3,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthRepository {
-<<<<<<< Updated upstream
-  final String baseUrl = 'http://192.168.244.108:5000/users';
-=======
-  final String baseUrl = 'http://192.168.10.110:5000/users';
->>>>>>> Stashed changes
+  final String baseUrl = 'http://192.168.100.134:5000/users';
+
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<Map<String, dynamic>> login({
