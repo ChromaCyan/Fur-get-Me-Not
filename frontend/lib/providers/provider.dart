@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fur_get_me_not/adoptee/bloc/chat/chat_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_management/pet_management_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_form/adoption_form_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_status/adoption_status_bloc.dart';
@@ -19,34 +20,40 @@ import 'package:fur_get_me_not/adopter/repositories/adoption_list/pet_repository
 import 'package:fur_get_me_not/adopter/repositories/reminder/reminder_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_status/adoption_status_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.dart';
-import 'package:fur_get_me_not/adopter/repositories/chat/chat_repository.dart';
 import 'package:fur_get_me_not/adoptee/repositories/chat/admin_chat_list_repository.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_list/pet_list_bloc.dart';
 import 'package:fur_get_me_not/adopter/repositories/pet_list/adopted_pet_repository.dart';
 import 'package:fur_get_me_not/adoptee/bloc/pet_details/pet_details_bloc.dart';
+import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.dart';
+import 'package:fur_get_me_not/adoptee/repositories/chat/admin_chat_list_repository.dart';
+import 'package:fur_get_me_not/adopter/bloc/chat_list/chat_list_bloc.dart';
 
 class AppProviders {
   static List<BlocProvider> getProviders() {
     final PetRepository petRepository = PetRepository();
     final AuthRepository loginRepository = AuthRepository();
-    final ReminderRepository reminderRepository = ReminderRepository();
-    final ChatListRepository chatListRepository = ChatListRepository();
-    final ChatRepository chatRepository = ChatRepository();
+    final AdoptedPetRepository adoptedPetRepository = AdoptedPetRepository();
     final AdoptionFormRepository adoptionFormRepository = AdoptionFormRepository();
-    final AdminChatListRepository adminChatListRepository = AdminChatListRepository();
+    final AdminChatRepository adminChatListRepository = AdminChatRepository();
     final AdminPetRepository adminPetRepository = AdminPetRepository();
     final AdoptionStatusRepository adoptionStatusRepository = AdoptionStatusRepository();
     final AdoptionRequestRepository adoptionRequestRepository = AdoptionRequestRepository();
-    final AdoptedPetRepository adoptedPetRepository = AdoptedPetRepository();
+
+    // New Chat Repositories
+    final AdopterChatRepository adopterChatRepository = AdopterChatRepository();
+    final AdminChatRepository adminChatRepository =AdminChatRepository();
 
     return [
+      //Login and Nav
       BlocProvider<AuthBloc>(
         create: (context) => AuthBloc(authRepository: loginRepository),
       ),
       BlocProvider<BottomNavCubit>(
         create: (context) => BottomNavCubit(),
       ),
+
+      //Adoption Process
       BlocProvider<AdoptionBrowseBloc>(
         create: (context) => AdoptionBrowseBloc(petRepository: petRepository),
       ),
@@ -56,23 +63,11 @@ class AppProviders {
       BlocProvider<AdopteePetDetailsBloc>(
         create: (context) => AdopteePetDetailsBloc(petRepository: adminPetRepository),
       ),
-      BlocProvider<ReminderBloc>(
-        create: (context) => ReminderBloc(reminderRepository),
-      ),
       BlocProvider<AdoptionStatusBloc>(
         create: (context) => AdoptionStatusBloc(adoptionStatusRepository: adoptionStatusRepository),
       ),
-      BlocProvider<ChatListBloc>(
-        create: (context) => ChatListBloc(chatListRepository),
-      ),
-      BlocProvider<ChatBloc>(
-        create: (context) => ChatBloc(chatRepository),
-      ),
       BlocProvider<AdoptionBloc>(
         create: (context) => AdoptionBloc(adoptionFormRepository),
-      ),
-      BlocProvider<AdminChatListBloc>(
-        create: (context) => AdminChatListBloc(adminChatListRepository),
       ),
       BlocProvider<PetManagementBloc>(
         create: (context) => PetManagementBloc(petRepository: adminPetRepository),
@@ -83,6 +78,27 @@ class AppProviders {
       BlocProvider<PetListBloc>(
         create: (context) => PetListBloc(petRepository: adoptedPetRepository),
       ),
+
+      //Chat List
+      BlocProvider<AdminChatListBloc>(
+        create: (context) => AdminChatListBloc(adminChatListRepository),
+      ),
+       BlocProvider<AdminChatBloc>(
+        create: (context) => AdminChatBloc(adminChatRepository),
+      ),
+      BlocProvider<ChatListBloc>(
+        create: (context) => ChatListBloc(adopterChatRepository),
+      ),
+
+            
+      // Uncomment if ReminderBloc is needed
+      // BlocProvider<ReminderBloc>(
+      //   create: (context) => ReminderBloc(reminderRepository),
+      // ),
+      
+      // BlocProvider<ChatBloc>(
+      //   create: (context) => ChatBloc(chatListRepository),
+      // ),
     ];
   }
 }

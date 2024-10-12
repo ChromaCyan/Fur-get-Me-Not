@@ -1,30 +1,30 @@
-// blocs/reminder_state.dart
-import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/adopter/models/reminder/reminder.dart';
+// // blocs/reminder_state.dart
+// import 'package:equatable/equatable.dart';
+// import 'package:fur_get_me_not/adopter/models/reminder/reminder.dart';
 
-abstract class ReminderState extends Equatable {
-  const ReminderState();
+// abstract class ReminderState extends Equatable {
+//   const ReminderState();
 
-  @override
-  List<Object?> get props => [];
-}
+//   @override
+//   List<Object?> get props => [];
+// }
 
-class ReminderLoading extends ReminderState {}
+// class ReminderLoading extends ReminderState {}
 
-class ReminderLoaded extends ReminderState {
-  final List<Reminder> reminders;
+// class ReminderLoaded extends ReminderState {
+//   final List<Reminder> reminders;
 
-  const ReminderLoaded(this.reminders);
+//   const ReminderLoaded(this.reminders);
 
-  @override
-  List<Object?> get props => [reminders];
-}
+//   @override
+//   List<Object?> get props => [reminders];
+// }
 
-class ReminderError extends ReminderState {
-  final String message;
+// class ReminderError extends ReminderState {
+//   final String message;
 
-  const ReminderError(this.message);
+//   const ReminderError(this.message);
 
-  @override
-  List<Object?> get props => [message];
-}
+//   @override
+//   List<Object?> get props => [message];
+// }
