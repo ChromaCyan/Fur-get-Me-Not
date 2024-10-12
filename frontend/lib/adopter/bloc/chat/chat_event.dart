@@ -1,14 +1,25 @@
-abstract class ChatEvent {}
+import 'package:equatable/equatable.dart';
 
-class FetchChatMessages extends ChatEvent {
-  final String userName;
-
-  FetchChatMessages(this.userName);
+abstract class ChatMessageEvent extends Equatable {
+  @override
+  List<Object> get props => [];
 }
 
-class SendMessage extends ChatEvent {
-  final String userName;
-  final String message;
+class FetchMessages extends ChatMessageEvent {
+  final String otherUserId;
 
-  SendMessage(this.userName, this.message);
+  FetchMessages(this.otherUserId);
+
+  @override
+  List<Object> get props => [otherUserId];
+}
+
+class SendMessage extends ChatMessageEvent {
+  final String content;
+  final String otherUserId;
+
+  SendMessage(this.content, this.otherUserId);
+
+  @override
+  List<Object> get props => [content, otherUserId];
 }

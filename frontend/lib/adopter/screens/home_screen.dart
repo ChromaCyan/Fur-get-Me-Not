@@ -85,9 +85,8 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
             },
             children: [
               AdoptionScreen(),
-              ReminderScreen(),
               PetListScreen(),
-              ChatListScreen(),
+              // ChatListScreen(),
               AdoptionStatusScreen(),
             ],
           ),
@@ -105,12 +104,10 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
       case 0:
         return 'Adopt a pet';
       case 1:
-        return 'Reminders';
-      case 2:
         return 'My Adopted Pets';
-      case 3:
+      case 2:
         return 'Chat';
-      case 4:
+      case 3:
         return 'Adoption Status';
       default:
         return 'Home';

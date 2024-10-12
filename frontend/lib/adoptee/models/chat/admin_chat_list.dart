@@ -1,31 +1,22 @@
-class Chat {
-  final String name;
+class AdminChatList {
+  final String chatId;
   final String lastMessage;
-  final String profilePicture;
-  final DateTime timestamp;
+  final DateTime updatedAt;
+  final String otherUserName;
 
-  Chat({
-    required this.name,
+  AdminChatList({
+    required this.chatId,
     required this.lastMessage,
-    required this.profilePicture,
-    required this.timestamp,
+    required this.updatedAt,
+    required this.otherUserName,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'lastMessage': lastMessage,
-      'profilePicture': profilePicture,
-      'timestamp': timestamp.toIso8601String(),
-    };
-  }
-
-  factory Chat.fromJson(Map<String, dynamic> json) {
-    return Chat(
-      name: json['name'],
+  factory AdminChatList.fromJson(Map<String, dynamic> json) {
+    return AdminChatList(
+      chatId: json['chatId'],
       lastMessage: json['lastMessage'],
-      profilePicture: json['profilePicture'],
-      timestamp: DateTime.parse(json['timestamp']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      otherUserName: json['otherUser']['firstName'] + ' ' + json['otherUser']['lastName'],
     );
   }
 }

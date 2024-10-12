@@ -1,28 +1,28 @@
 import 'package:equatable/equatable.dart';
 import 'package:fur_get_me_not/adoptee/models/chat/admin_chat_list.dart';
 
-abstract class ChatState extends Equatable {
+abstract class ChatListState extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-class ChatInitial extends ChatState {}
+class ChatListInitial extends ChatListState {}
 
-class ChatLoading extends ChatState {}
+class ChatListLoading extends ChatListState {}
 
-class ChatLoaded extends ChatState {
-  final List<Chat> chats;
+class ChatListLoaded extends ChatListState {
+  final List<AdminChatList> chats;
 
-  ChatLoaded(this.chats);
+  ChatListLoaded(this.chats);
 
   @override
   List<Object> get props => [chats];
 }
 
-class ChatError extends ChatState {
+class ChatListError extends ChatListState {
   final String message;
 
-  ChatError(this.message);
+  ChatListError(this.message);
 
   @override
   List<Object> get props => [message];

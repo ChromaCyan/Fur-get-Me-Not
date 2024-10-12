@@ -5,13 +5,13 @@ import 'chat_list_event.dart';
 import 'chat_list_state.dart';
 
 class ChatListBloc extends Bloc<ChatEvent, ChatState> {
-  final ChatListRepository chatRepository;
+  final AdopterChatRepository chatRepository;
 
   ChatListBloc(this.chatRepository) : super(ChatInitial()) {
     on<FetchChats>((event, emit) async {
       emit(ChatLoading());
       try {
-        final chats = await chatRepository.fetchAllChats();
+        final chats = await chatRepository.fetchAdopterChatList();
         emit(ChatLoaded(chats));
       } catch (e) {
         emit(ChatError('Failed to load chats: $e'));

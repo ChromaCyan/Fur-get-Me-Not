@@ -1,20 +1,29 @@
-import 'package:fur_get_me_not/adopter/repositories/chat/chat_repository.dart';
+import 'package:equatable/equatable.dart';
 import 'package:fur_get_me_not/adopter/models/chat/chat.dart';
 
-abstract class ChatState {}
-
-class ChatInitial extends ChatState {}
-
-class ChatLoading extends ChatState {}
-
-class ChatMessagesLoaded extends ChatState {
-  final List<ChatMessage> messages;
-
-  ChatMessagesLoaded(this.messages);
+abstract class ChatMessageState extends Equatable {
+  @override
+  List<Object> get props => [];
 }
 
-class ChatError extends ChatState {
+class ChatMessageInitial extends ChatMessageState {}
+
+class ChatMessageLoading extends ChatMessageState {}
+
+class ChatMessageLoaded extends ChatMessageState {
+  final List<AdopterChatMessage> messages;
+
+  ChatMessageLoaded(this.messages);
+
+  @override
+  List<Object> get props => [messages];
+}
+
+class ChatMessageError extends ChatMessageState {
   final String message;
 
-  ChatError(this.message);
+  ChatMessageError(this.message);
+
+  @override
+  List<Object> get props => [message];
 }
