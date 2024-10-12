@@ -4,7 +4,11 @@ import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class PetRepository {
+<<<<<<< Updated upstream
   final String baseUrl = 'http://192.168.244.108:5000/pets';
+=======
+  final String baseUrl = 'http://192.168.10.110:5000/pets';
+>>>>>>> Stashed changes
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {

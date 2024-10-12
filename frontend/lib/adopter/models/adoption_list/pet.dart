@@ -83,14 +83,16 @@ class Pet {
 }
 
 class Adoptee {
-  String id; // Assuming you want to keep the adoptee's ID
+  String id; 
   String firstName;
   String lastName;
+  String chatId; 
 
   Adoptee({
     required this.id,
     required this.firstName,
     required this.lastName,
+    required this.chatId,
   });
 
   factory Adoptee.fromJson(Map<String, dynamic> json) {
@@ -98,6 +100,7 @@ class Adoptee {
       id: json['_id'] ?? '',
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
+      chatId: json['chatId'] ?? '',
     );
   }
 
@@ -106,9 +109,11 @@ class Adoptee {
       '_id': id,
       'firstName': firstName,
       'lastName': lastName,
+      'chatId': chatId,
     };
   }
 }
+
 
 class MedicalHistory {
   String condition;

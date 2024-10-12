@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fur_get_me_not/adopter/bloc/nav_bar/nav_cubit.dart';
-import 'package:fur_get_me_not/adopter/screens/reminder/reminder_screen.dart';
 import 'package:fur_get_me_not/adopter/screens/adoption_list/pet_details_screen.dart';
 import 'package:fur_get_me_not/adopter/screens/pages.dart';
 import 'adoption_status/adoption_status.dart';
@@ -60,7 +59,7 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
             duration: const Duration(milliseconds: 300),
             child: Text(
               _getDynamicTitle(context),
-              key: ValueKey<int>(_selectedIndex), // Unique key for animation
+              key: ValueKey<int>(_selectedIndex), 
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.black54,
@@ -86,7 +85,7 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
             children: [
               AdoptionScreen(),
               PetListScreen(),
-              // ChatListScreen(),
+              ChatListScreen(),
               AdoptionStatusScreen(),
             ],
           ),

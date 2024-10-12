@@ -60,11 +60,7 @@ class MyApp extends StatelessWidget {
         title: 'Fur-get Me Not',
         theme: AppTheme.theme,
         debugShowCheckedModeBanner: false,
-        home: _getInitialScreen(), // Determine the initial screen
-        routes: {
-          '/add_reminder': (context) => AddReminderScreen(),
-          // Other routes...
-        },
+        home: _getInitialScreen(),
       ),
     );
   }
@@ -72,11 +68,11 @@ class MyApp extends StatelessWidget {
   // Determine the initial screen based on onboarding, login, and role status
   Widget _getInitialScreen() {
     if (!hasCompletedOnboarding) {
-      return PetsOnBoardingScreen(); // Show onboarding if not completed
+      return PetsOnBoardingScreen();
     } else if (!isLoggedIn) {
-      return LoginScreen(); // Show login screen if user is logged out
+      return LoginScreen(); 
     } else {
-      return _getHomeScreen(role); // Show home screen based on role
+      return _getHomeScreen(role);
     }
   }
 
@@ -87,7 +83,7 @@ class MyApp extends StatelessWidget {
     } else if (role == 'adoptee') {
       return AdopteeHomeScreen();
     } else {
-      return LoginScreen(); // Fallback to login screen if role is unknown
+      return LoginScreen();
     }
   }
 }

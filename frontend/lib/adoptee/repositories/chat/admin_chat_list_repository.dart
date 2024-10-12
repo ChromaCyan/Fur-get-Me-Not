@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/adoptee/models/chat/admin_chat.dart';
 import 'package:fur_get_me_not/adoptee/models/chat/admin_chat_list.dart';
 
 class AdminChatRepository {
-  final String baseUrl = 'http://192.168.18.239:5000'; // Replace with your actual base URL
+  final String baseUrl = 'http://192.168.10.110:5000'; 
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {

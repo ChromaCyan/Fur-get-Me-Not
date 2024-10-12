@@ -89,6 +89,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                         lastName: widget.pet.adoptee.lastName,
                         gender: widget.pet.gender,
                         profileImageUrl: 'images/image2.png',
+                        chatId: widget.pet.adoptee.chatId, 
                       ),
                       const SizedBox(height: 20),
                       buildToggleButtons(),
@@ -111,6 +112,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       ),
     );
   }
+
 
   Widget nameAddressAndFavoriteButton() {
     return Row(

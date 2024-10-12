@@ -11,9 +11,6 @@ class ChatListScreen extends StatelessWidget {
     context.read<AdminChatListBloc>().add(FetchChats());
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat List'),
-      ),
       body: BlocBuilder<AdminChatListBloc, ChatListState>(
         builder: (context, state) {
           if (state is ChatListLoading) {

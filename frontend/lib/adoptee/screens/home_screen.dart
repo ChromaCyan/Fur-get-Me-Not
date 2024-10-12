@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/nav_bar/nav_cubit.dart';
 import 'package:fur_get_me_not/adoptee/screens/pages.dart';
 import 'package:fur_get_me_not/widgets/navigations/adoptee_bottom_nav_bar.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart'; // Add this import
-import 'package:fur_get_me_not/authentication/screen/login_screen.dart'; // Add login screen import
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fur_get_me_not/authentication/screen/login_screen.dart'; 
 
 class AdopteeHomeScreen extends StatefulWidget {
   const AdopteeHomeScreen({Key? key}) : super(key: key);

@@ -9,7 +9,7 @@ import 'package:fur_get_me_not/widgets/navigations/chat_bar.dart';
 class ChatScreen extends StatefulWidget {
   final String userName;
   final String profileImageUrl;
-  final String chatId; // Add this line
+  final String chatId;
 
   const ChatScreen({
     Key? key,
@@ -24,11 +24,19 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _messageController = TextEditingController(); // Controller for text field
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -40,13 +48,12 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: BlocProvider(
         create: (context) => AdminChatBloc(context.read<AdminChatRepository>())
-          ..add(FetchMessages(widget.chatId)), // Use chatId to fetch messages
+          ..add(FetchMessages(widget.chatId)),
         child: BlocBuilder<AdminChatBloc, ChatMessageState>(
           builder: (context, state) {
             if (state is ChatMessageLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ChatMessageLoaded) {
-              // Scroll to the bottom when messages are loaded
               _scrollToBottom();
 
               return Column(
@@ -54,17 +61,27 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: ListView.builder(
                       controller: _scrollController,
-                      reverse: true, // This makes new messages appear at the bottom
+                      reverse: true,
                       itemCount: state.messages.length,
                       itemBuilder: (context, index) {
-                        final message = state.messages[state.messages.length - 1 - index]; // Reverse the order
+                        final message = state.messages[state.messages.length - 1 - index];
                         return ListTile(
-                          title: Text(message.senderName),
-                          subtitle: Text(message.content),
-                          trailing: Text(
-                            "${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}", // Ensure minutes are padded
-                            style: const TextStyle(fontSize: 12),
+                          title: Text(
+                            message.senderName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
                           ),
+                          subtitle: Text(
+                            message.content,
+                            style: const TextStyle(fontSize: 16), 
+                          ),
+                          trailing: Text(
+                            "${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}",
+                            style: const TextStyle(fontSize: 12, color: Colors.grey), // Style timestamp
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15), // Add padding
                         );
                       },
                     ),
@@ -76,12 +93,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       children: [
                         Expanded(
                           child: TextField(
+                            controller: _messageController,
                             onSubmitted: (text) {
                               if (text.isNotEmpty) {
                                 context.read<AdminChatBloc>().add(SendMessage(text, widget.userName));
+                                _messageController.clear(); 
                               }
                             },
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Type a message',
                               border: OutlineInputBorder(),
                             ),
@@ -93,9 +112,27 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               );
             } else if (state is ChatMessageError) {
-              return Center(child: Text(state.message));
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Oops! Something went wrong: ${state.message}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16, color: Colors.red),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<AdminChatBloc>().add(FetchMessages(widget.chatId));
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              );
             }
-            return Container(); // Fallback case
+            return Container();
           },
         ),
       ),

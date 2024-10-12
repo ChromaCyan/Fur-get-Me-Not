@@ -6,6 +6,7 @@ class OwnerInfo extends StatelessWidget {
   final String lastName;
   final String gender;
   final String profileImageUrl;
+  final String chatId; 
 
   const OwnerInfo({
     Key? key,
@@ -13,6 +14,7 @@ class OwnerInfo extends StatelessWidget {
     required this.lastName,
     required this.gender,
     required this.profileImageUrl,
+    required this.chatId, 
   }) : super(key: key);
 
   @override
@@ -45,6 +47,7 @@ class OwnerInfo extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => ChatScreen(
+                  chatId: chatId, 
                   userName: '$firstName $lastName',
                   profileImageUrl: profileImageUrl,
                 ),
