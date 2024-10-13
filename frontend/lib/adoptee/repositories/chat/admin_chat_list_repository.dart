@@ -37,7 +37,7 @@ class AdminChatRepository {
       }
     } catch (error) {
       print('Error fetching chat list: $error');
-      throw Exception('Error fetching chat list');
+      throw Exception('Error fetching chat list: $error');
     }
   }
 
@@ -71,7 +71,6 @@ class AdminChatRepository {
     }
   }
 
-  // Send a new message
   Future<void> sendMessage(String content, String otherUserId) async {
     try {
       final token = await getToken();
@@ -91,9 +90,17 @@ class AdminChatRepository {
         }),
       );
 
+      print('Response body: ${response.body}');
+
       if (response.statusCode != 200) {
+        // Log additional information for debugging
+        print('Failed to send message: ${response.reasonPhrase}, Body: ${response.body}');
         throw Exception('Failed to send message: ${response.reasonPhrase}');
       }
+
+      // Optionally parse the response if needed
+      final responseData = json.decode(response.body);
+
     } catch (error) {
       print('Error sending message: $error');
       throw Exception('Error sending message');

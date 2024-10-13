@@ -22,7 +22,7 @@ class AdopterChatRepository {
 
       final response = await http.get(
         Uri.parse(
-            '$baseUrl/chats/chat-list'), // Ensure this route is valid for adopters
+            '$baseUrl/chats/chat-list'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -53,11 +53,13 @@ class AdopterChatRepository {
 
       final response = await http.get(
         Uri.parse(
-            '$baseUrl/messages/$otherUserId'), // Ensure this route is valid for adopters
+            '$baseUrl/messages/$otherUserId'),
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
+
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
@@ -73,8 +75,7 @@ class AdopterChatRepository {
     }
   }
 
-  // Send a new message
-  Future<void> sendMessage(String content, String otherUserId) async {
+  Future<String> sendMessage(String content, String otherUserId) async {
     try {
       final token = await getToken();
       if (token == null) {
@@ -82,8 +83,7 @@ class AdopterChatRepository {
       }
 
       final response = await http.post(
-        Uri.parse(
-            '$baseUrl/messages/new-message'), // Ensure this route is valid for sending messages
+        Uri.parse('$baseUrl/messages/new-message'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -97,9 +97,19 @@ class AdopterChatRepository {
       if (response.statusCode != 200) {
         throw Exception('Failed to send message: ${response.reasonPhrase}');
       }
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
+      // Ensure the response contains the chatId
+      if (responseData['chatId'] == null) {
+        throw Exception('No chat ID returned from the server');
+      }
+
+      return responseData['chatId'];
     } catch (error) {
       print('Error sending message: $error');
       throw Exception('Error sending message');
     }
   }
+
 }
