@@ -13,6 +13,9 @@ class RegisterSubmitted extends AuthEvent {
   final String email;
   final String password;
   final String role; // Use role instead of isAdopter
+  final String sex; // Non-nullable
+  final int age; // Non-nullable
+  final String address; // Non-nullable
 
   RegisterSubmitted({
     required this.firstName,
@@ -20,5 +23,8 @@ class RegisterSubmitted extends AuthEvent {
     required this.email,
     required this.password,
     required this.role, // Update this
+    required this.sex,
+    required this.age,
+    required this.address,
   });
 }

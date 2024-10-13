@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,49 +18,74 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
-  // Variables to toggle visibility of passwords
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-
   String _selectedRole = 'adopter'; // Default role
+  String? _selectedSex;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: BlocProvider(
-          create: (context) => AuthBloc(authRepository: AuthRepository()),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  logo(size.height / 8),
-                  SizedBox(height: size.height * 0.03),
-                  richText(24),
-                  SizedBox(height: size.height * 0.03),
-                  fullNameTextField(),
-                  SizedBox(height: size.height * 0.02),
-                  emailTextField(),
-                  SizedBox(height: size.height * 0.02),
-                  passwordTextField(),
-                  SizedBox(height: size.height * 0.02),
-                  confirmPasswordTextField(),
-                  SizedBox(height: size.height * 0.02),
-                  roleDropdown(),
-                  SizedBox(height: size.height * 0.03),
-                  registerButton(context),
-                  SizedBox(height: size.height * 0.02),
-                  footerText(context),
-                ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF21899C), Color(0xFFFE9879)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: BlocProvider(
+            create: (context) => AuthBloc(authRepository: AuthRepository()),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  color: Colors.white.withOpacity(0.9),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        logo(size.height / 10),
+                        SizedBox(height: size.height * 0.02),
+                        richText(24),
+                        SizedBox(height: size.height * 0.02),
+                        profilePictureWidget(),
+                        SizedBox(height: size.height * 0.03),
+                        fullNameTextField(),
+                        SizedBox(height: size.height * 0.02),
+                        emailTextField(),
+                        SizedBox(height: size.height * 0.02),
+                        passwordTextField(),
+                        SizedBox(height: size.height * 0.02),
+                        confirmPasswordTextField(),
+                        SizedBox(height: size.height * 0.02),
+                        sexDropdown(),
+                        SizedBox(height: size.height * 0.02),
+                        ageTextField(),
+                        SizedBox(height: size.height * 0.02),
+                        addressTextField(),
+                        SizedBox(height: size.height * 0.02),
+                        roleDropdown(),
+                        SizedBox(height: size.height * 0.03),
+                        registerButton(context),
+                        SizedBox(height: size.height * 0.02),
+                        footerText(context),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -80,20 +106,77 @@ class _RegisterScreenState extends State<RegisterScreen> {
       TextSpan(
         style: GoogleFonts.inter(
           fontSize: fontSize,
-          color: const Color(0xFF21899C),
+          color: const Color(0xFF15224F),
           letterSpacing: 3,
           height: 1.03,
         ),
         children: const [
-          TextSpan(
-              text: 'REGISTER ', style: TextStyle(fontWeight: FontWeight.w800)),
-          TextSpan(
-              text: 'PAGE ',
-              style: TextStyle(
-                  color: Color(0xFFFE9879), fontWeight: FontWeight.w800)),
+          TextSpan(text: 'REGISTER ', style: TextStyle(fontWeight: FontWeight.w800)),
+          TextSpan(text: 'PAGE ', style: TextStyle(color: Color(0xFFFE9879), fontWeight: FontWeight.w800)),
         ],
       ),
       textAlign: TextAlign.center,
+    );
+  }
+
+  Widget profilePictureWidget() {
+    return GestureDetector(
+      onTap: () {
+        // Logic to pick an image can be implemented here
+      },
+      child: CircleAvatar(
+        radius: 50,
+        backgroundColor: Colors.grey[300],
+        child: Icon(Icons.camera_alt, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget sexDropdown() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(width: 1.0, color: const Color(0xFFEFEFEF)),
+      ),
+      child: DropdownButton<String>(
+        value: _selectedSex,
+        hint: Text('Select Sex'),
+        items: <String>['Male', 'Female'].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedSex = newValue!;
+          });
+        },
+        isExpanded: true,
+        underline: SizedBox(),
+      ),
+    );
+  }
+
+  Widget ageTextField() {
+    return inputField(
+      controller: _ageController,
+      labelText: 'Age',
+      keyboardType: TextInputType.number,
+      obscureText: false,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly], // Only accept digits
+    );
+  }
+
+  Widget addressTextField() {
+    return inputField(
+      controller: _addressController,
+      labelText: 'Address',
+      obscureText: false,
     );
   }
 
@@ -152,7 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget roleDropdown() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(width: 1.0, color: const Color(0xFFEFEFEF)),
@@ -163,10 +246,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(
-              value[0].toUpperCase() +
-                  value.substring(1), // Capitalize first letter
-              style: GoogleFonts.inter(
-                  fontSize: 16.0, color: const Color(0xFF15224F)),
+              value[0].toUpperCase() + value.substring(1),
+              style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
             ),
           );
         }).toList(),
@@ -176,7 +257,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           });
         },
         isExpanded: true,
-        underline: SizedBox(), // Remove the underline
+        underline: SizedBox(),
       ),
     );
   }
@@ -187,28 +268,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
     TextInputType? keyboardType,
     bool obscureText = false,
     Widget? suffixIcon,
+    List<TextInputFormatter>? inputFormatters,
   }) {
-    return Container(
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(width: 1.0, color: const Color(0xFFEFEFEF)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: TextFormField(
         controller: controller,
-        style:
-            GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+        style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
         maxLines: 1,
         cursorColor: const Color(0xFF15224F),
         obscureText: obscureText,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           labelText: labelText,
-          labelStyle:
-              GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
-          border: InputBorder.none,
-          suffixIcon: suffixIcon, // Add suffix icon if provided
+          labelStyle: GoogleFonts.inter(fontSize: 14.0, color: const Color(0xFF969AA8)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide.none,
+          ),
+          suffixIcon: suffixIcon,
         ),
       ),
     );
@@ -218,84 +311,111 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthRegisterSuccess) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('User registered!')));
-
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User registered!')));
           Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => LoginScreen()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
           });
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.error)));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
         }
       },
       builder: (context, state) {
-        if (state is AuthLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return Container(
+        return AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
           alignment: Alignment.center,
           height: 60,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50.0),
-            color: const Color(0xFF21899C),
+            borderRadius: BorderRadius.circular(30.0),
+            gradient: LinearGradient(
+              colors: [Color(0xFF21899C), Color(0xFF006D77)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
           ),
           child: ElevatedButton(
-            onPressed: () {
-              if (_passwordController.text != _confirmPasswordController.text) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Passwords do not match!')));
-                return;
-              }
+            onPressed: state is AuthLoading
+                ? null
+                : () {
+                    if (_passwordController.text != _confirmPasswordController.text) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Passwords do not match!')));
+                      return;
+                    }
 
-              final fullName = _fullNameController.text.split(' ');
-              String firstName = fullName.isNotEmpty ? fullName[0] : '';
-              String lastName =
-                  fullName.length > 1 ? fullName.sublist(1).join(' ') : '';
+                    final fullName = _fullNameController.text.trim().split(' ');
+                    String firstName = fullName.isNotEmpty ? fullName[0] : '';
+                    String lastName = fullName.length > 1 ? fullName.sublist(1).join(' ') : '';
 
-              if (_fullNameController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill up Full Name')));
-              } else if (_emailController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill up Email')));
-              } else if (_passwordController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill up Password')));
-              } else if (_confirmPasswordController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill up Confirm Password')));
-              } else if (lastName.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill up Last Name')));
-              } else {
-                context.read<AuthBloc>().add(
-                      RegisterSubmitted(
-                        firstName: firstName,
-                        lastName: lastName,
-                        email: _emailController.text,
-                        password: _passwordController.text,
-                        role: _selectedRole,
-                      ),
-                    );
-              }
-            },
+                    if (_fullNameController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please fill up Full Name')));
+                    } else if (_emailController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please fill up Email')));
+                    } else if (_passwordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please fill up Password')));
+                    } else if (_confirmPasswordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please fill up Confirm Password')));
+                    } else if (_selectedSex!.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please select Sex')));
+                    } else if (_ageController.text.isEmpty || int.tryParse(_ageController.text) == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please enter a valid Age')));
+                    } else if (_addressController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please fill up Address')));
+                    } else {
+                      context.read<AuthBloc>().add(
+                        RegisterSubmitted(
+                          firstName: firstName,
+                          lastName: lastName,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          role: _selectedRole,
+                          sex: _selectedSex!,
+                          age: int.parse(_ageController.text), // This is safe now
+                          address: _addressController.text,
+                        ),
+                      );
+                    }
+
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
-              elevation: 0,
+              shadowColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
+                borderRadius: BorderRadius.circular(30),
+              ),
             ),
-            child: Text(
-              'Register',
-              style: GoogleFonts.inter(
-                  fontSize: 16.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  height: 1.5),
-            ),
+            child: state is AuthLoading
+                ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  )
+                : Text(
+                    'Register',
+                    style: GoogleFonts.inter(
+                      fontSize: 18.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      height: 1.5,
+                    ),
+                  ),
           ),
         );
       },
@@ -306,13 +426,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Center(
       child: Column(
         children: [
-          const Text("Already have an account?"),
+          const Text(
+            "Already have an account?",
+            style: TextStyle(color: Color(0xFF15224F)),
+          ),
           TextButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
             },
-            child: const Text('Sign In'),
+            child: const Text(
+              'Sign In',
+              style: TextStyle(color: Color(0xFFFE9879)),
+            ),
           ),
         ],
       ),

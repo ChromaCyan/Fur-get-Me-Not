@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthRepository {
-  final String baseUrl = 'http://192.168.18.239:5000/users';
+  final String baseUrl = 'http://192.168.0.12:5000/users';
 
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
@@ -46,6 +46,10 @@ class AuthRepository {
     required String email,
     required String password,
     required String role,
+    required String sex,
+    required int age,
+    required String address,
+
   }) async {
     try {
       final response = await http.post(
@@ -56,6 +60,9 @@ class AuthRepository {
           'email': email,
           'password': password,
           'role': role,
+          'sex': sex,
+          'age': age,
+          'address': address,
         }),
         headers: {'Content-Type': 'application/json'},
       );
