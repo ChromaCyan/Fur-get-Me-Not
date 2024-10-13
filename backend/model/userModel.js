@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
         enum: ['adopter', 'adoptee'],
         required: true,
     },
+    profileImage: {
+        type: String, 
+    },
+    address: {
+        type: String, 
+    },
 }, { timestamps: true });
 
 
