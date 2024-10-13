@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fur_get_me_not/widgets/headers/app_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:fur_get_me_not/widgets/forms/form_field.dart';
@@ -29,15 +30,18 @@ class _AddPetFormState extends State<AddPetForm> {
   final TextEditingController conditionController = TextEditingController();
   final TextEditingController diagnosisDateController = TextEditingController();
   final TextEditingController treatmentController = TextEditingController();
-  final TextEditingController veterinarianNameController = TextEditingController();
+  final TextEditingController veterinarianNameController =
+      TextEditingController();
   final TextEditingController clinicNameController = TextEditingController();
   final TextEditingController treatmentDateController = TextEditingController();
-  final TextEditingController recoveryStatusController = TextEditingController();
+  final TextEditingController recoveryStatusController =
+      TextEditingController();
   final TextEditingController notesController = TextEditingController();
 
   // Controllers for vaccine history
   final TextEditingController vaccineNameController = TextEditingController();
-  final TextEditingController vaccinationDateController = TextEditingController();
+  final TextEditingController vaccinationDateController =
+      TextEditingController();
   final TextEditingController nextDueDateController = TextEditingController();
 
   String? selectedGender;
@@ -68,7 +72,8 @@ class _AddPetFormState extends State<AddPetForm> {
       lastDate: DateTime(2101),
     );
     if (picked != null) {
-      controller.text = '${picked.toLocal()}'.split(' ')[0]; // Format date to YYYY-MM-DD
+      controller.text =
+          '${picked.toLocal()}'.split(' ')[0]; // Format date to YYYY-MM-DD
     }
   }
 
@@ -80,7 +85,8 @@ class _AddPetFormState extends State<AddPetForm> {
 
       try {
         // Upload the image and get the URL
-        String imageUrl = await AdminPetRepository().uploadImage(_selectedPetImage!);
+        String imageUrl =
+            await AdminPetRepository().uploadImage(_selectedPetImage!);
         print('Image URL obtained: $imageUrl'); // Debugging line
 
         // Create a new MedicalHistory instance
@@ -126,12 +132,15 @@ class _AddPetFormState extends State<AddPetForm> {
           status: 'available',
         );
 
-        context.read<PetManagementBloc>().add(AddPetEvent(pet: newPet, image: _selectedPetImage!));
+        context
+            .read<PetManagementBloc>()
+            .add(AddPetEvent(pet: newPet, image: _selectedPetImage!));
 
         Navigator.pop(context);
       } catch (e) {
         print('Error while adding pet: $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
       } finally {
         setState(() {
           _isLoading = false;
@@ -144,7 +153,11 @@ class _AddPetFormState extends State<AddPetForm> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Center(
-        child: Text(title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: const Color(0xFF21899C))),
+        child: Text(title,
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF21899C))),
       ),
     );
   }
@@ -162,13 +175,15 @@ class _AddPetFormState extends State<AddPetForm> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF21899C),
-        title: Text('Add a pet for adoption'),
+      appBar: CustomAppBar(
+        title: 'Add a pet for adoption',
+        hasBackButton: true,
+        onBackButtonPressed: () {
+          Navigator.pop(context);
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -193,18 +208,19 @@ class _AddPetFormState extends State<AddPetForm> {
                         ),
                         child: _selectedPetImage == null
                             ? IconButton(
-                          icon: Icon(Icons.add_a_photo, size: 40, color: Colors.grey[600]),
-                          onPressed: _selectAndUploadImage,
-                        )
+                                icon: Icon(Icons.add_a_photo,
+                                    size: 40, color: Colors.grey[600]),
+                                onPressed: _selectAndUploadImage,
+                              )
                             : ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _selectedPetImage!,
-                            width: 150,
-                            height: 150,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(
+                                  _selectedPetImage!,
+                                  width: 150,
+                                  height: 150,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                       ),
 
                       SizedBox(height: 16),
@@ -214,13 +230,17 @@ class _AddPetFormState extends State<AddPetForm> {
                         onPressed: _selectAndUploadImage,
                         icon: Icon(Icons.upload_file, color: Colors.white),
                         label: Text(
-                          _selectedPetImage != null ? 'Change Pet Image' : 'Add Pet Image',
+                          _selectedPetImage != null
+                              ? 'Change Pet Image'
+                              : 'Add Pet Image',
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(8), // Rounded corners
                           ),
                         ),
                       ),
@@ -332,99 +352,101 @@ class _AddPetFormState extends State<AddPetForm> {
                 ),
                 SizedBox(height: 16),
 
-
                 _buildSectionTitle('🏥 Medical History'),
                 _buildBox(
                   Column(
-                   children: [
-                     // Medical History
-                     Text('Medical History', style: TextStyle(fontWeight: FontWeight.bold)),
-                     CustomTextFormField(
-                       controller: conditionController,
-                       labelText: 'Condition',
-                     ),
-                     SizedBox(height: 8),
+                    children: [
+                      // Medical History
+                      Text('Medical History',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      CustomTextFormField(
+                        controller: conditionController,
+                        labelText: 'Condition',
+                      ),
+                      SizedBox(height: 8),
 
-                     // Use a TextFormField that opens a date picker
-                     GestureDetector(
-                       onTap: () => _selectDate(diagnosisDateController),
-                       child: AbsorbPointer(
-                         child: CustomTextFormField(
-                           controller: diagnosisDateController,
-                           labelText: 'Diagnosis Date',
-                           validator: (value) {
-                             if (value == null || value.isEmpty) {
-                               return 'Please select a diagnosis date';
-                             }
-                             return null;
-                           },
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 8),
+                      // Use a TextFormField that opens a date picker
+                      GestureDetector(
+                        onTap: () => _selectDate(diagnosisDateController),
+                        child: AbsorbPointer(
+                          child: CustomTextFormField(
+                            controller: diagnosisDateController,
+                            labelText: 'Diagnosis Date',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a diagnosis date';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
 
-                     CustomTextFormField(
-                       controller: treatmentController,
-                       labelText: 'Treatment',
-                     ),
-                     SizedBox(height: 8),
+                      CustomTextFormField(
+                        controller: treatmentController,
+                        labelText: 'Treatment',
+                      ),
+                      SizedBox(height: 8),
 
-                     CustomTextFormField(
-                       controller: veterinarianNameController,
-                       labelText: 'Veterinarian Name',
-                     ),
-                     SizedBox(height: 8),
+                      CustomTextFormField(
+                        controller: veterinarianNameController,
+                        labelText: 'Veterinarian Name',
+                      ),
+                      SizedBox(height: 8),
 
-                     CustomTextFormField(
-                       controller: clinicNameController,
-                       labelText: 'Clinic Name',
-                     ),
-                     SizedBox(height: 8),
+                      CustomTextFormField(
+                        controller: clinicNameController,
+                        labelText: 'Clinic Name',
+                      ),
+                      SizedBox(height: 8),
 
-                     // Use a TextFormField that opens a date picker
-                     GestureDetector(
-                       onTap: () => _selectDate(treatmentDateController),
-                       child: AbsorbPointer(
-                         child: CustomTextFormField(
-                           controller: treatmentDateController,
-                           labelText: 'Treatment Date',
-                         ),
-                       ),
-                     ),
-                     SizedBox(height: 8),
+                      // Use a TextFormField that opens a date picker
+                      GestureDetector(
+                        onTap: () => _selectDate(treatmentDateController),
+                        child: AbsorbPointer(
+                          child: CustomTextFormField(
+                            controller: treatmentDateController,
+                            labelText: 'Treatment Date',
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
 
-                     CustomDropdownFormField(
-                       labelText: 'Recovery Status',
-                       value: selectedRecoveryStatus,
-                       items: ['Recovered', 'Ongoing Treatment', 'Chronic'],
-                       onChanged: (newValue) {
-                         setState(() {
-                           selectedRecoveryStatus = newValue;
-                         });
-                       },
-                       validator: (value) {
-                         if (value == null) {
-                           return 'Please select a recovery status';
-                         }
-                         return null;
-                       },
-                     ),
+                      CustomDropdownFormField(
+                        labelText: 'Recovery Status',
+                        value: selectedRecoveryStatus,
+                        items: ['Recovered', 'Ongoing Treatment', 'Chronic'],
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedRecoveryStatus = newValue;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select a recovery status';
+                          }
+                          return null;
+                        },
+                      ),
 
-                     SizedBox(height: 8),
+                      SizedBox(height: 8),
 
-                     CustomTextFormField(
-                       controller: notesController,
-                       labelText: 'Notes',
-                     ),
-                   ],
+                      CustomTextFormField(
+                        controller: notesController,
+                        labelText: 'Notes',
+                      ),
+                    ],
                   ),
                 ),
 
                 _buildSectionTitle('💉 Vaccine History'),
                 _buildBox(
                   Column(
-                    children: [// Vaccine History
-                      Text('Vaccine History', style: TextStyle(fontWeight: FontWeight.bold)),
+                    children: [
+                      // Vaccine History
+                      Text('Vaccine History',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       CustomTextFormField(
                         controller: vaccineNameController,
                         labelText: 'Vaccine Name',
@@ -469,10 +491,12 @@ class _AddPetFormState extends State<AddPetForm> {
                           Navigator.pop(context);
                         },
                         style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 16),
                           backgroundColor: Colors.red[400],
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(8), // Rounded corners
                           ),
                         ),
                         child: Text(
@@ -489,22 +513,26 @@ class _AddPetFormState extends State<AddPetForm> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _submitForm,
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(8), // Rounded corners
                           ),
                         ),
                         child: _isLoading
-                            ? CircularProgressIndicator(color: Colors.black) // Change to black for better visibility
+                            ? CircularProgressIndicator(
+                                color: Colors
+                                    .black) // Change to black for better visibility
                             : Text(
-                          'Submit',
-                          style: TextStyle(color: Colors.white), // Text color
-                        ),
+                                'Submit',
+                                style: TextStyle(
+                                    color: Colors.white), // Text color
+                              ),
                       ),
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
