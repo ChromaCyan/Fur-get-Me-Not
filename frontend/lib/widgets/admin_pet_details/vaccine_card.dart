@@ -10,18 +10,16 @@ class VaccineHistoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Set specific width and height for the Card
-      width: 380, // Change to your desired width
-      // height: 250, // Change to your desired height
+      width: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
       decoration: BoxDecoration(
-        color: Colors.white, // Background color
-        borderRadius: BorderRadius.circular(12), // Optional: rounded corners
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black26, // Shadow color
-            blurRadius: 10.0, // How blurred the shadow is
-            spreadRadius: 0.5, // How much the shadow spreads
-            offset: Offset(0, 0), // Direction of the shadow
+            color: Colors.black26,
+            blurRadius: 10.0,
+            spreadRadius: 0.5,
+            offset: Offset(0, 0),
           ),
         ],
       ),
@@ -31,21 +29,58 @@ class VaccineHistoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            Text('Vaccine Name: ${vaccineHistory.vaccineName}'),
-            Text(
-                'Vaccination Date: ${vaccineHistory.vaccinationDate.toLocal().toString().split(' ')[0]}'),
+            _buildInfoContainer('Vaccine Name', vaccineHistory.vaccineName),
+            _buildInfoContainer(
+              'Vaccination Date',
+              vaccineHistory.vaccinationDate.toLocal().toString().split(' ')[0],
+            ),
             if (vaccineHistory.nextDueDate != null)
-              Text(
-                  'Next Due Date: ${vaccineHistory.nextDueDate!.toLocal().toString().split(' ')[0]}'),
+              _buildInfoContainer(
+                'Next Due Date',
+                vaccineHistory.nextDueDate!.toLocal().toString().split(' ')[0],
+              ),
             if (vaccineHistory.veterinarianName != null)
-              Text('Veterinarian: ${vaccineHistory.veterinarianName}'),
+              _buildInfoContainer(
+                  'Veterinarian', vaccineHistory.veterinarianName!),
             if (vaccineHistory.clinicName != null)
-              Text('Clinic: ${vaccineHistory.clinicName}'),
+              _buildInfoContainer('Clinic', vaccineHistory.clinicName!),
             if (vaccineHistory.notes != null)
-              Text('Notes: ${vaccineHistory.notes}'),
+              _buildInfoContainer('Notes', vaccineHistory.notes!),
             const SizedBox(height: 8),
           ],
         ),
+      ),
+    );
+  }
+
+  // Helper function to create reusable info containers
+  Widget _buildInfoContainer(String label, String value) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[200], // Light background color
+        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFFE9879),
+            ),
+          ),
+        ],
       ),
     );
   }

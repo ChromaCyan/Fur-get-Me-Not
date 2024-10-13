@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/adoptee/models/chat/admin_chat.dart';
 import 'package:fur_get_me_not/adoptee/models/chat/admin_chat_list.dart';
 
 class AdminChatRepository {
-  final String baseUrl = 'http://192.168.18.239:5000';
+  final String baseUrl = 'http://192.168.100.134:5000';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -94,13 +94,13 @@ class AdminChatRepository {
 
       if (response.statusCode != 200) {
         // Log additional information for debugging
-        print('Failed to send message: ${response.reasonPhrase}, Body: ${response.body}');
+        print(
+            'Failed to send message: ${response.reasonPhrase}, Body: ${response.body}');
         throw Exception('Failed to send message: ${response.reasonPhrase}');
       }
 
       // Optionally parse the response if needed
       final responseData = json.decode(response.body);
-
     } catch (error) {
       print('Error sending message: $error');
       throw Exception('Error sending message');

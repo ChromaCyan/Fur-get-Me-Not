@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/adopter/models/chat/chat.dart';
 import 'package:fur_get_me_not/adopter/models/chat/chat_list.dart';
 
 class AdopterChatRepository {
-  final String baseUrl = 'http://192.168.18.239:5000';
+  final String baseUrl = 'http://192.168.100.134:5000';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -21,8 +21,7 @@ class AdopterChatRepository {
       }
 
       final response = await http.get(
-        Uri.parse(
-            '$baseUrl/chats/chat-list'),
+        Uri.parse('$baseUrl/chats/chat-list'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -52,8 +51,7 @@ class AdopterChatRepository {
       }
 
       final response = await http.get(
-        Uri.parse(
-            '$baseUrl/messages/$otherUserId'),
+        Uri.parse('$baseUrl/messages/$otherUserId'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -111,5 +109,4 @@ class AdopterChatRepository {
       throw Exception('Error sending message');
     }
   }
-
 }

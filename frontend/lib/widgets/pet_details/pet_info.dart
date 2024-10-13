@@ -18,6 +18,7 @@ class PetInfoWidget extends StatelessWidget {
         Text("Height: ${pet.height} cm"),
         Text("Weight: ${pet.weight} kg"),
         Text("Special Care: ${pet.specialCareInstructions}"),
+        Text("data"),
       ],
     );
   }

@@ -10,18 +10,16 @@ class MedicalHistoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Set specific width and height for the Card
-      width: 300, // Change to your desired width
-      // height: 300, // Change to your desired height if needed
+      width: MediaQuery.of(context).size.width * 0.85, // 85% of screen width
       decoration: BoxDecoration(
-        color: Colors.white, // Background color
-        borderRadius: BorderRadius.circular(12), // Optional: rounded corners
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black26, // Shadow color
-            blurRadius: 10.0, // How blurred the shadow is
-            spreadRadius: 0.5, // How much the shadow spreads
-            offset: Offset(0, 0), // Direction of the shadow
+            color: Colors.black26,
+            blurRadius: 10.0,
+            spreadRadius: 0.5,
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -31,23 +29,64 @@ class MedicalHistoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
-            Text('Condition: ${medicalHistory.condition}'),
-            Text(
-                'Diagnosis Date: ${medicalHistory.diagnosisDate.toLocal().toString().split(' ')[0]}'),
-            Text('Treatment: ${medicalHistory.treatment}'),
+            _buildInfoContainer('Condition', medicalHistory.condition),
+            _buildInfoContainer(
+              'Diagnosis Date',
+              medicalHistory.diagnosisDate.toLocal().toString().split(' ')[0],
+            ),
+            _buildInfoContainer('Treatment', medicalHistory.treatment),
             if (medicalHistory.veterinarianName != null)
-              Text('Veterinarian: ${medicalHistory.veterinarianName}'),
+              _buildInfoContainer(
+                  'Veterinarian', medicalHistory.veterinarianName!),
             if (medicalHistory.clinicName != null)
-              Text('Clinic: ${medicalHistory.clinicName}'),
+              _buildInfoContainer('Clinic', medicalHistory.clinicName!),
             if (medicalHistory.treatmentDate != null)
-              Text(
-                  'Treatment Date: ${medicalHistory.treatmentDate!.toLocal().toString().split(' ')[0]}'),
-            Text('Recovery Status: ${medicalHistory.recoveryStatus}'),
+              _buildInfoContainer(
+                'Treatment Date',
+                medicalHistory.treatmentDate!
+                    .toLocal()
+                    .toString()
+                    .split(' ')[0],
+              ),
+            _buildInfoContainer(
+                'Recovery Status', medicalHistory.recoveryStatus),
             if (medicalHistory.notes != null)
-              Text('Notes: ${medicalHistory.notes}'),
+              _buildInfoContainer('Notes', medicalHistory.notes!),
             const SizedBox(height: 8),
           ],
         ),
+      ),
+    );
+  }
+
+  // Reusable method to create containers for label-value pairs
+  Widget _buildInfoContainer(String label, String value) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[200], // Light background for separation
+        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFFE9879),
+            ),
+          ),
+        ],
       ),
     );
   }

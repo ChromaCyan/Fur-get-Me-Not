@@ -29,7 +29,8 @@ class PetDetailsPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is AdoptedPetDetailsLoaded) {
             final pet = state.pet;
-            return _PetDetailsView(pet: pet, showPetInfo: state.showPetInfo); // Pass showPetInfo
+            return _PetDetailsView(
+                pet: pet, showPetInfo: state.showPetInfo); // Pass showPetInfo
           } else if (state is AdoptedPetDetailsError) {
             return Center(child: Text('Error: ${state.message}'));
           }
@@ -44,7 +45,9 @@ class _PetDetailsView extends StatefulWidget {
   final AdoptedPet pet; // Fixed variable name
   final bool showPetInfo;
 
-  const _PetDetailsView({Key? key, required this.pet, required this.showPetInfo}) : super(key: key);
+  const _PetDetailsView(
+      {Key? key, required this.pet, required this.showPetInfo})
+      : super(key: key);
 
   @override
   State<_PetDetailsView> createState() => _PetDetailsViewState();
@@ -94,8 +97,12 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       showPetInfo
                           ? PetInfoWidget(pet: widget.pet)
                           : showVaccineHistory
-                          ? VaccineHistoryWidget(vaccineHistory: widget.pet.vaccineHistory) // Updated
-                          : MedicalHistoryWidget(medicalHistory: widget.pet.medicalHistory), // Updated
+                              ? VaccineHistoryWidget(
+                                  vaccineHistory:
+                                      widget.pet.vaccineHistory) // Updated
+                              : MedicalHistoryWidget(
+                                  medicalHistory:
+                                      widget.pet.medicalHistory), // Updated
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -138,7 +145,8 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               showVaccineHistory = false;
             });
             // Dispatch the event to toggle view
-            BlocProvider.of<AdoptedPetDetailsBloc>(context).add(ToggleAdoptedPetInfoViewEvent(showPetInfo: true));
+            BlocProvider.of<AdoptedPetDetailsBloc>(context)
+                .add(ToggleAdoptedPetInfoViewEvent(showPetInfo: true));
           },
         ),
         ToggleButton(
@@ -150,7 +158,8 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               showVaccineHistory = true;
             });
             // Dispatch the event to toggle view
-            BlocProvider.of<AdoptedPetDetailsBloc>(context).add(ToggleAdoptedPetInfoViewEvent(showPetInfo: false));
+            BlocProvider.of<AdoptedPetDetailsBloc>(context)
+                .add(ToggleAdoptedPetInfoViewEvent(showPetInfo: false));
           },
         ),
         ToggleButton(
@@ -162,7 +171,8 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               showVaccineHistory = false;
             });
             // Dispatch the event to toggle view
-            BlocProvider.of<AdoptedPetDetailsBloc>(context).add(ToggleAdoptedPetInfoViewEvent(showPetInfo: false));
+            BlocProvider.of<AdoptedPetDetailsBloc>(context)
+                .add(ToggleAdoptedPetInfoViewEvent(showPetInfo: false));
           },
         ),
       ],
@@ -219,7 +229,8 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     );
   }
 
-  ClipRRect moreInfo(Color pawColor, Color backgroundColor, String title, String value) {
+  ClipRRect moreInfo(
+      Color pawColor, Color backgroundColor, String title, String value) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Stack(

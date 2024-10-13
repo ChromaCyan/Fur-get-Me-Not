@@ -54,6 +54,25 @@ class _PetDetailsView extends StatefulWidget {
 class _PetDetailsViewState extends State<_PetDetailsView> {
   bool showPetInfo = true;
   bool showVaccineHistory = false;
+  late ScrollController _scrollController;
+  double _offset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      setState(() {
+        _offset = _scrollController.offset;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,48 +82,90 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       height: size.height,
       child: Stack(
         children: [
+          // Background with parallax effect
           itemsImageAndBackground(size),
-          Column(
-            children: [
-              const SizedBox(
-                  height: 40), // Add space here to lower the BackButtonWidget
-              BackButtonWidget(),
-            ],
-          ),
+
+          // Content with scrolling
           Positioned(
             bottom: 0,
-            child: Container(
-              height: size.height * 0.52,
+            child: SizedBox(
+              height: size.height,
               width: size.width,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(30),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      nameAddressAndFavoriteButton(),
-                      const SizedBox(height: 20),
-                      buildToggleButtons(),
-                      const SizedBox(height: 20),
-                      showPetInfo
-                          ? PetInfoWidget(pet: widget.pet)
-                          : showVaccineHistory
-                              ? VaccineHistoryWidget(
-                                  vaccineHistory: widget.pet.vaccineHistory)
-                              : MedicalHistoryWidget(
-                                  medicalHistory: widget.pet.medicalHistory),
-                      const SizedBox(height: 20),
-                      buildEditDeleteButtons(context),
-                      const SizedBox(height: 20),
-                    ],
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: size.height * 0.5, // Image height
+                    ),
                   ),
-                ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      height: size.height * 0.86,
+                      width: size.width,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(30),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            nameAddressAndFavoriteButton(),
+                            const SizedBox(height: 20),
+                            buildToggleButtons(),
+                            const SizedBox(height: 20),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  showPetInfo
+                                      ? PetInfoWidget(pet: widget.pet)
+                                      : showVaccineHistory
+                                          ? VaccineHistoryWidget(
+                                              vaccineHistory:
+                                                  widget.pet.vaccineHistory)
+                                          : MedicalHistoryWidget(
+                                              medicalHistory:
+                                                  widget.pet.medicalHistory),
+                                  const SizedBox(height: 20),
+                                  buildEditDeleteButtons(context),
+                                  const SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 40,
+            left: 15,
+            child: Container(
+              padding: EdgeInsets.all(1.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 2), // Shadow effect
+                  ),
+                ],
+              ),
+              child: BackButtonWidget(
+                // Custom back button widget
+                color: Colors.black,
+                iconSize: 24.0,
               ),
             ),
           ),
@@ -124,6 +185,10 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               widget.pet.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            Text(
+              widget.pet.breed,
+              style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+            )
           ],
         ),
       ],
@@ -168,52 +233,22 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     );
   }
 
+  // Parallax effect on image background
+  // Static image background
   Container itemsImageAndBackground(Size size) {
     return Container(
-      height: size.height * 0.50,
+      height: size.height * 0.5, // Static image height
       width: size.width,
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(0.5),
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            left: -60,
-            top: 30,
-            child: Transform.rotate(
-              angle: -11.5,
-              child: Image.asset(
-                'images/pet-cat2.png',
-                color: Colors.black,
-                height: 55,
-              ),
-            ),
-          ),
-          Positioned(
-            right: -60,
-            bottom: 0,
-            child: Transform.rotate(
-              angle: 12,
-              child: Image.asset(
-                'images/pet-cat2.png',
-                color: Colors.black,
-                height: 55,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 10,
-            left: 0,
-            right: 0,
-            child: Hero(
-              tag: widget.pet.petImageUrl,
-              child: Image.network(
-                widget.pet.petImageUrl,
-                height: size.height * 0.45,
-              ),
-            ),
-          ),
-        ],
+      child: Hero(
+        tag: widget.pet.petImageUrl,
+        child: Image.network(
+          widget.pet.petImageUrl,
+          height: size.height * 0.5, // Static image height
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -232,32 +267,28 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.orange, // Background color for Edit button
-            foregroundColor: Colors.white, // Text color for Edit button
-            padding: const EdgeInsets.symmetric(
-                horizontal: 50, vertical: 12), // Padding
+            backgroundColor: Colors.orange,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // Rounded corners
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-          child:
-              const Text('Edit', style: TextStyle(fontSize: 16)), // Text style
+          child: const Text('Edit', style: TextStyle(fontSize: 16)),
         ),
         ElevatedButton(
           onPressed: () {
             _deletePet(context, widget.pet.id ?? '');
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red, // Background color for Delete button
-            foregroundColor: Colors.white, // Text color for Delete button
-            padding: const EdgeInsets.symmetric(
-                horizontal: 50, vertical: 12), // Padding
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // Rounded corners
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
-          child: const Text('Delete',
-              style: TextStyle(fontSize: 16)), // Text style
+          child: const Text('Delete', style: TextStyle(fontSize: 16)),
         ),
       ],
     );
@@ -273,27 +304,24 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                // Trigger pet deletion
                 context
                     .read<PetManagementBloc>()
                     .add(RemovePetEvent(petId: petId));
 
-                // Show success message
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Pet deleted successfully')),
                 );
 
-                // Navigate to home screen after deletion
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => AdopteeHomeScreen()),
-                  (Route<dynamic> route) => false, // Remove all previous routes
+                  (Route<dynamic> route) => false,
                 );
               },
               child: const Text('Delete'),

@@ -7,7 +7,8 @@ import 'package:fur_get_me_not/adoptee/repositories/pet_management/admin_pet_rep
 class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
   final AdminPetRepository petRepository;
 
-  PetManagementBloc({required this.petRepository}) : super(PetManagementLoading()) {
+  PetManagementBloc({required this.petRepository})
+      : super(PetManagementLoading()) {
     on<LoadPetManagementEvent>(_onLoadPetManagementEvent);
     on<AddPetEvent>(_onAddPetEvent);
     on<UpdatePetEvent>(_onUpdatePetEvent);
@@ -15,7 +16,8 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
     on<RemovePetEvent>(_onRemovePetEvent);
   }
 
-  void _onLoadPetManagementEvent(LoadPetManagementEvent event, Emitter<PetManagementState> emit) async {
+  void _onLoadPetManagementEvent(
+      LoadPetManagementEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
       final pets = await petRepository.getAvailablePets();
@@ -25,7 +27,8 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
     }
   }
 
-  void _onAddPetEvent(AddPetEvent event, Emitter<PetManagementState> emit) async {
+  void _onAddPetEvent(
+      AddPetEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
       await petRepository.addPet(event.pet, event.image);
@@ -36,7 +39,8 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
     }
   }
 
-  void _onUpdatePetEvent(UpdatePetEvent event, Emitter<PetManagementState> emit) async {
+  void _onUpdatePetEvent(
+      UpdatePetEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
       await petRepository.updatePet(event.pet, image: event.image);
@@ -46,7 +50,8 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
     }
   }
 
-  void _onFetchUserPetsEvent(FetchUserPetsEvent event, Emitter<PetManagementState> emit) async {
+  void _onFetchUserPetsEvent(
+      FetchUserPetsEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
       final pets = await petRepository.getUserPets();
@@ -56,14 +61,16 @@ class PetManagementBloc extends Bloc<PetManagementEvent, PetManagementState> {
     }
   }
 
-  void _onRemovePetEvent(RemovePetEvent event, Emitter<PetManagementState> emit) async {
+  void _onRemovePetEvent(
+      RemovePetEvent event, Emitter<PetManagementState> emit) async {
     emit(PetManagementLoading());
     try {
       await petRepository.removePet(event.petId);
       final pets = await petRepository.getAvailablePets();
       emit(PetManagementLoaded(pets: pets));
     } catch (e) {
-      emit(PetManagementError(message: "Failed to remove pet: ${e.toString()}"));
+      emit(
+          PetManagementError(message: "Failed to remove pet: ${e.toString()}"));
     }
   }
 }
