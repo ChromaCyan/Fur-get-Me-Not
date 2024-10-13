@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/adopter/models/chat/chat_list.dart';
+import 'package:fur_get_me_not/adopter/models/chat/chat_list.dart';
 import 'package:fur_get_me_not/adopter/screens/chat/chat_screen.dart';
 
 class ChatCard extends StatelessWidget {
@@ -29,7 +30,7 @@ class ChatCard extends StatelessWidget {
               builder: (context) => ChatScreen(
                 userName: chat.otherUserName,
                 profileImageUrl: 'images/image1.png',
-                chatId: chat.chatId, 
+                chatId: chat.otherUserId,
               ),
             ),
           );

@@ -14,7 +14,7 @@ exports.getMessagesForUser = async (req, res) => {
     }).select('_id');
 
     if (!chat) {
-      return res.status(404).json({ message: 'No chat found between these users' });
+      return res.status(200).json([]); 
     }
 
     // Fetch the messages from the chat
@@ -22,11 +22,11 @@ exports.getMessagesForUser = async (req, res) => {
       .populate('senderId', 'firstName lastName')
       .sort('createdAt'); // Sort by creation date to display messages in order
 
-    // Add sender and recipient names to each message
+    // Enrich messages with sender and recipient names
     const enrichedMessages = await Promise.all(messages.map(async (message) => {
       const sender = await User.findById(message.senderId).select('firstName lastName');
       const recipient = await User.findById(otherUserId).select('firstName lastName');
-      
+
       return {
         ...message.toObject(),
         senderName: `${sender.firstName} ${sender.lastName}`,
@@ -41,7 +41,7 @@ exports.getMessagesForUser = async (req, res) => {
 };
 
 
-// Send a new message
+// Send a new message or create a new chat if it doesn't exist
 exports.sendMessage = async (req, res) => {
   try {
     const { content, otherUserId } = req.body;
@@ -57,7 +57,7 @@ exports.sendMessage = async (req, res) => {
       chat = new Chat({
         participants: [senderId, otherUserId]
       });
-      await chat.save();
+      await chat.save(); // Save the new chat
     }
 
     // Create a new message in the chat
@@ -67,7 +67,7 @@ exports.sendMessage = async (req, res) => {
       content,
     });
 
-    await newMessage.save();
+    await newMessage.save(); // Save the new message
 
     // Update the chat with the last message
     chat.lastMessage = content;
@@ -78,7 +78,9 @@ exports.sendMessage = async (req, res) => {
     const sender = await User.findById(senderId).select('firstName lastName');
     const recipient = await User.findById(otherUserId).select('firstName lastName');
 
+    // Return the response with message details and chatId
     res.status(200).json({
+      chatId: chat._id, // Include chatId in the response
       message: {
         ...newMessage.toObject(),
         senderName: `${sender.firstName} ${sender.lastName}`,

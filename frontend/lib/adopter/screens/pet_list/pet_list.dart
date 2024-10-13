@@ -4,7 +4,7 @@ import 'package:fur_get_me_not/adopter/bloc/pet_list/pet_list_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_list/pet_list_event.dart';
 import 'package:fur_get_me_not/adopter/screens/pet_list/pet_details_screen.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_list/pet_list_state.dart';
-import 'package:fur_get_me_not/widgets/cards/pet_card.dart';
+import 'package:fur_get_me_not/widgets/cards/adopted_pet_card.dart';
 import 'package:fur_get_me_not/widgets/headers/banner_card.dart';
 
 class PetListScreen extends StatefulWidget {
@@ -40,15 +40,15 @@ class _PetListScreenState extends State<PetListScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: List.generate(state.pets.length, (index) {
-                        final pet = state.pets[index];
-                        return PetCard(
-                          pet: pet,
+                        final adoptedPet = state.pets[index];
+                        return AdoptedPetCard(
+                          adoptedPet: adoptedPet,
                           size: size,
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => PetDetailsPage(petId: pet.id,),
+                                builder: (context) => PetDetailsPage(petId: adoptedPet.id), // Pass the pet ID
                               ),
                             );
                           },

@@ -193,7 +193,7 @@ exports.updateAdoptionStatus = async (req, res) => {
       pet.status = 'adopted';
       await pet.save(); // Save the updated pet
 
-      // Optionally, you can create an entry in the AdoptedPet model if needed
+      // Create an entry in AdoptedPet including medical and vaccine history
       const adoptedPet = new AdoptedPet({
         name: pet.name,
         breed: pet.breed,
@@ -204,6 +204,8 @@ exports.updateAdoptionStatus = async (req, res) => {
         petImageUrl: pet.petImageUrl,
         description: pet.description,
         specialCareInstructions: pet.specialCareInstructions,
+        medicalHistory: pet.medicalHistory, 
+        vaccineHistory: pet.vaccineHistory, 
         adopterId: adoptionRequest.adopterId, 
         adoptionDate: Date.now(), 
         status: 'Active',

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
+import 'package:fur_get_me_not/adopter/models/pet_list/adopted_pet.dart';
 
 abstract class PetListState extends Equatable {
   @override
@@ -9,7 +9,7 @@ abstract class PetListState extends Equatable {
 class PetListLoading extends PetListState {}
 
 class PetListLoaded extends PetListState {
-  final List<Pet> pets;
+  final List<AdoptedPet> pets; // Updated type
 
   PetListLoaded({required this.pets});
 

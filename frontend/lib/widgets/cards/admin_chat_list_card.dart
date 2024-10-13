@@ -24,13 +24,14 @@ class AdminChatCard extends StatelessWidget {
           style: const TextStyle(color: Colors.grey),
         ),
         onTap: () {
+          print('Navigating to chat with User ID: ${chat.otherUserId}');
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatScreen(
                 userName: chat.otherUserName,
                 profileImageUrl: 'images/image1.png',
-                chatId: chat.chatId,
+                chatId: chat.otherUserId,
               ),
             ),
           );

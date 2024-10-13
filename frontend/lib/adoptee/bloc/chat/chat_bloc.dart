@@ -24,7 +24,6 @@ class AdminChatBloc extends Bloc<ChatMessageEvent, ChatMessageState> {
       emit(ChatMessageLoading());
       try {
         await adminChatRepository.sendMessage(event.content, event.otherUserId);
-        // Optionally, fetch messages again after sending a message
         final messages = await adminChatRepository.fetchMessagesForUser(event.otherUserId);
         emit(ChatMessageLoaded(messages));
       } catch (e) {

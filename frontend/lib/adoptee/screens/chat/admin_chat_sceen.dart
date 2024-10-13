@@ -33,6 +33,13 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Fetch messages when the screen is initialized
+    BlocProvider.of<AdminChatBloc>(context).add(FetchMessages(widget.chatId));
+  }
+
+  @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
@@ -46,95 +53,91 @@ class _ChatScreenState extends State<ChatScreen> {
         userName: widget.userName,
         profileImageUrl: widget.profileImageUrl,
       ),
-      body: BlocProvider(
-        create: (context) => AdminChatBloc(context.read<AdminChatRepository>())
-          ..add(FetchMessages(widget.chatId)),
-        child: BlocBuilder<AdminChatBloc, ChatMessageState>(
-          builder: (context, state) {
-            if (state is ChatMessageLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is ChatMessageLoaded) {
-              _scrollToBottom();
+      body: BlocBuilder<AdminChatBloc, ChatMessageState>(
+        builder: (context, state) {
+          if (state is ChatMessageLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is ChatMessageLoaded) {
+            _scrollToBottom(); // Scroll to the bottom when messages are loaded
 
-              return Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      reverse: true,
-                      itemCount: state.messages.length,
-                      itemBuilder: (context, index) {
-                        final message = state.messages[state.messages.length - 1 - index];
-                        return ListTile(
-                          title: Text(
-                            message.senderName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          subtitle: Text(
-                            message.content,
-                            style: const TextStyle(fontSize: 16), 
-                          ),
-                          trailing: Text(
-                            "${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}",
-                            style: const TextStyle(fontSize: 12, color: Colors.grey), // Style timestamp
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15), // Add padding
-                        );
-                      },
-                    ),
-                  ),
-                  // Message input field
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _messageController,
-                            onSubmitted: (text) {
-                              if (text.isNotEmpty) {
-                                context.read<AdminChatBloc>().add(SendMessage(text, widget.userName));
-                                _messageController.clear(); 
-                              }
-                            },
-                            decoration: const InputDecoration(
-                              labelText: 'Type a message',
-                              border: OutlineInputBorder(),
-                            ),
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
+                    itemCount: state.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = state.messages[state.messages.length - 1 - index];
+                      return ListTile(
+                        title: Text(
+                          message.senderName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            } else if (state is ChatMessageError) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Oops! Something went wrong: ${state.message}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16, color: Colors.red),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<AdminChatBloc>().add(FetchMessages(widget.chatId));
+                        subtitle: Text(
+                          message.content,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        trailing: Text(
+                          "${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}",
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                      );
                     },
-                    child: const Text('Retry'),
                   ),
-                ],
-              );
-            }
-            return Container();
-          },
-        ),
+                ),
+                // Message input field
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _messageController,
+                          onSubmitted: (text) {
+                            if (text.isNotEmpty) {
+                              context.read<AdminChatBloc>().add(SendMessage(text, widget.userName));
+                              _messageController.clear();
+                            }
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Type a message',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else if (state is ChatMessageError) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                const SizedBox(height: 10),
+                Text(
+                  'Oops! Something went wrong: ${state.message}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16, color: Colors.red),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<AdminChatBloc>().add(FetchMessages(widget.chatId));
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            );
+          }
+          return Container(); // Fallback case
+        },
       ),
     );
   }

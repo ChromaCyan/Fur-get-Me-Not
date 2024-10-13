@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthRepository {
-  final String baseUrl = 'http://192.168.100.134:5000/users';
+  final String baseUrl = 'http://192.168.18.239:5000/users';
 
   final FlutterSecureStorage storage = FlutterSecureStorage();
 

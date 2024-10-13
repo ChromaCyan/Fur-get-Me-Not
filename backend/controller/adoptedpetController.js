@@ -3,11 +3,29 @@ const AdoptedPet = require('../model/adopted_petsModel');
 // Function to retrieve all adopted pets
 exports.getAllAdoptedPets = async (req, res) => {
   try {
-    const adoptedPets = await AdoptedPet.find({ status: 'active' });
+    const adoptedPets = await AdoptedPet.find({ status: 'Active' });
     res.status(200).json(adoptedPets);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error retrieving adopted pets', error });
+  }
+};
+
+
+// Function to retrieve all adopted pets by the logged-in user
+exports.getAdoptedPetsByUser = async (req, res) => {
+  try {
+    const { id } = req.user; // Assumes req.user contains the logged-in user information
+
+    // Fetch pets where adopterId matches the logged-in user's ID and the status is 'active'
+    const adoptedPets = await AdoptedPet.find({ adopterId: id, status: 'Active' })
+      .populate('adopterId', 'firstName lastName'); // Populate adopter details if needed
+
+    // Return the found pets
+    res.status(200).json(adoptedPets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving adopted pets for the user', error });
   }
 };
 
@@ -33,7 +51,7 @@ exports.archiveAdoptedPet = async (req, res) => {
       return res.status(404).json({ message: 'Adopted pet not found' });
     }
 
-    adoptedPet.status = 'archived'; 
+    adoptedPet.status = 'Archived'; 
     await adoptedPet.save();
 
     res.status(200).json({ message: 'Adopted pet archived successfully' });
@@ -50,7 +68,7 @@ exports.updateAdoptedPet = async (req, res) => {
 
   try {
     const adoptedPet = await AdoptedPet.findById(id);
-    if (!adoptedPet || adoptedPet.status === 'archived') {
+    if (!adoptedPet || adoptedPet.status === 'Archived') {
       return res.status(404).json({ message: 'Adopted pet not found or archived' });
     }
 

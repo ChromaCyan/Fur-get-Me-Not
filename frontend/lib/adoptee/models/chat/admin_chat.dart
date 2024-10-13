@@ -17,12 +17,14 @@ class AdminChatMessage {
 
   factory AdminChatMessage.fromJson(Map<String, dynamic> json) {
     return AdminChatMessage(
-      chatId: json['chatId'],
-      senderId: json['senderId'],
-      content: json['content'],
-      senderName: json['senderName'],
-      recipientName: json['recipientName'],
-      timestamp: DateTime.parse(json['timestamp']),
+      chatId: json['chatId'] as String,
+      // Extracting the senderId from the nested object
+      senderId: (json['senderId'] is Map) ? json['senderId']['_id'] as String : json['senderId'] as String,
+      content: json['content'] as String,
+      senderName: json['senderName'] as String,
+      recipientName: json['recipientName'] as String,
+      // Ensure the timestamp is parsed correctly as a string
+      timestamp: DateTime.parse(json['timestamp'] as String),
     );
   }
 }

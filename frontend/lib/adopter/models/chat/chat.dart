@@ -18,7 +18,7 @@ class AdopterChatMessage {
   factory AdopterChatMessage.fromJson(Map<String, dynamic> json) {
     return AdopterChatMessage(
       chatId: json['chatId'],
-      senderId: json['senderId'],
+      senderId: json['senderId']['_id'],
       content: json['content'],
       senderName: json['senderName'],
       recipientName: json['recipientName'],

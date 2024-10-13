@@ -17,8 +17,12 @@ exports.getChatListForUser = async (req, res) => {
 
     // Format the chat list to return relevant information
     const chatList = chats.map(chat => {
-      const otherUser = chat.participants[0]; 
-      const fullName = otherUser ? `${otherUser.firstName} ${otherUser.lastName}` : 'Unknown User'; 
+      const otherUser = chat.participants[0];
+
+      // Safely access otherUser properties and handle null cases
+      const firstName = otherUser ? otherUser.firstName : 'Unknown First Name';
+      const lastName = otherUser ? otherUser.lastName : 'Unknown Last Name';
+      const fullName = `${firstName} ${lastName}`; // Safe concatenation
 
       return {
         chatId: chat._id,
@@ -29,8 +33,8 @@ exports.getChatListForUser = async (req, res) => {
         lastMessage: chat.lastMessage,
         updatedAt: chat.updatedAt,
       };
-
     });
+
     res.status(200).json(chatList);
   } catch (error) {
     res.status(500).json({ message: error.message });
