@@ -117,12 +117,14 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
       .populate('adoptionFormId')
       .populate({
         path: 'petId',
-        match: { status: { $ne: 'removed' } }, 
+        match: { status: { $ne: 'removed' } }
       })
-      .populate('adopterId');
+      .populate({
+        path: 'adopterId',
+        select: 'firstName lastName email address'
+      });
 
     const filteredRequests = adoptionRequests.filter(request => request.petId !== null);
-
     res.status(200).json(filteredRequests);
   } catch (error) {
     console.error(error);
@@ -130,25 +132,27 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
   }
 };
 
-// Function to get all adoption forms submitted to the adoptee
-exports.getAdoptionFormsForAdoptee = async (req, res) => {
+
+
+// Function to get the adoption form for a specific adoption request
+exports.getAdoptionFormByRequestId = async (req, res) => {
+  const { requestId } = req.params;
   try {
-    const adoptionForms = await AdoptionForm.find({ adopterId: req.user.id })
-      .populate('adopterId') // Assuming you want adopter details
-      .populate({
-        path: 'petId',
-        match: { status: { $ne: 'removed' } }, // Exclude removed pets
-      });
+    // Find the adoption request by ID
+    const adoptionRequest = await AdoptionRequest.findById(requestId).populate('adoptionFormId');
 
-    // Filter out any forms where petId is null (meaning it was removed)
-    const filteredForms = adoptionForms.filter(form => form.petId !== null);
+    if (!adoptionRequest || !adoptionRequest.adoptionFormId) {
+      return res.status(404).json({ message: 'Adoption request or form not found' });
+    }
 
-    res.status(200).json(filteredForms);
+    // Return the adoption form details
+    res.status(200).json(adoptionRequest.adoptionFormId);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error retrieving adoption forms', error });
+    res.status(500).json({ message: 'Error retrieving adoption form', error });
   }
 };
+
 
 // Function to update the status of an adoption request
 exports.updateAdoptionStatus = async (req, res) => {

@@ -5,8 +5,7 @@ import 'package:fur_get_me_not/adopter/models/chat/chat.dart';
 import 'package:fur_get_me_not/adopter/models/chat/chat_list.dart';
 
 class AdopterChatRepository {
-  final String baseUrl =
-      'http://192.168.100.134:5000'; // Replace with your actual base URL
+  final String baseUrl = 'http://192.168.18.239:5000';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {

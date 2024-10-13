@@ -29,8 +29,8 @@ exports.getChatListForUser = async (req, res) => {
         lastMessage: chat.lastMessage,
         updatedAt: chat.updatedAt,
       };
-    });
 
+    });
     res.status(200).json(chatList);
   } catch (error) {
     res.status(500).json({ message: error.message });

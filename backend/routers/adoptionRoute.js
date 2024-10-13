@@ -4,6 +4,7 @@ const {
   getAdoptionStatusesForAdopter,
   getAdoptionRequestsForAdoptee,
   getAdoptionFormsForAdoptee,
+  getAdoptionFormByRequestId,  
   updateAdoptionStatus
 } = require('../controller/adoptionController');
 
@@ -24,8 +25,8 @@ router.get('/adoption-status', verifyToken, isAdopter, getAdoptionStatusesForAdo
 // Route for getting all adoption requests for the logged-in adoptee
 router.get('/adoption-request', verifyToken, isAdoptee, getAdoptionRequestsForAdoptee);
 
-// Route for getting all adoption forms submitted to the logged-in adoptee
-router.get('/adoption-forms', verifyToken, isAdoptee, getAdoptionFormsForAdoptee);
+// New route for getting a specific adoption form by request ID
+router.get('/adoption-form/:requestId', verifyToken, isAdoptee, getAdoptionFormByRequestId);
 
 // Route for updating the status of an adoption request
 router.put('/update-status', verifyToken, isAdoptee, updateAdoptionStatus);

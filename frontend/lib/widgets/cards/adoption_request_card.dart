@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_form.dart';
 import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.dart';
-import 'package:fur_get_me_not/adopter/screens/adoption_list/adoption_form.dart';
+import 'package:fur_get_me_not/adoptee/screens/adoption_request/adoption_form_details.dart';
 
 class AdoptionRequestCard extends StatefulWidget {
   final AdoptionRequest adoptionRequest;
@@ -133,10 +134,12 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
             SizedBox(height: 10),
             TextButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => AdoptionForm(petId: widget.petid)),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AdoptionForm(requestId: widget.adoptionRequest.requestId),
+                  ),
+                );
               },
               child: Text(
                 'View the Adoption Form they filled up:',
