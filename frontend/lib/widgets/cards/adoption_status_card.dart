@@ -10,7 +10,7 @@ class AdoptionStatusCard extends StatelessWidget {
     switch (adoption.status) {
       case 'Pending':
         return Colors.orange;
-      case 'Approved':
+      case 'Accepted':
         return Colors.blue;
       case 'Adoption Completed':
         return Colors.green;
@@ -29,7 +29,8 @@ class AdoptionStatusCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      elevation: 3,
+      elevation: 5,
+      color: const Color(0xFFE1F5FE), // Background color similar to AdoptionRequestCard
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -45,31 +46,41 @@ class AdoptionStatusCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 15),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      adoption.petName,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                Expanded( // Use Expanded for better layout
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        adoption.petName,
+                        style: TextStyle(
+                          fontSize: 20, // Increased font size for pet name
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF21899C), // Primary color for pet name
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 4),
+                      Text(
+                        'Request Date: ${adoption.requestDate}',
+                        style: TextStyle(fontSize: 14, color: Colors.black87), // Updated style
+                      ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Request Date: ${adoption.requestDate}',
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Status: ${adoption.status}',
+                  'Status:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  adoption.status,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

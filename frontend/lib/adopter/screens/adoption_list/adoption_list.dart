@@ -28,13 +28,26 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            ReusableCarousel(items: carouselData),
-            const SizedBox(height: 20),
-            Expanded(
-              child: BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              ReusableCarousel(items: carouselData),
+              const SizedBox(height: 20),
+              // Add the text label for Adoption Listing
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  'Adoption Listing',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black, // You can change the color as needed
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20), // Spacing between text and grid
+              BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
                 builder: (context, state) {
                   if (state is AdoptionBrowseLoading) {
                     return const Center(child: CircularProgressIndicator());
@@ -42,6 +55,8 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
                         itemCount: state.pets.length,
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -72,8 +87,8 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                   }
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
