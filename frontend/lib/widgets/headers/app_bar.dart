@@ -17,20 +17,29 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Color(0xFF21899C),
-      title: Text(title),
-      centerTitle: true,
+      backgroundColor: Color(0xFF21899C), // Background color of AppBar
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+      ),
+      // AppBar title
+      centerTitle: true, // Center the title
       leading: hasBackButton
           ? BackButtonWidget(
-              onPressed: onBackButtonPressed ?? () => Navigator.of(context).pop(),
-              color: Color(0xFFFE9879),
-              iconSize: 28.0,
+              onPressed:
+                  onBackButtonPressed ?? () => Navigator.of(context).pop(),
+              color: Color(0xFFFE9879), // Back button color
+              iconSize: 28.0, // Size of the back button icon
             )
-          : null, 
-      actions: actions,
+          : null, // No leading icon if `hasBackButton` is false
+      actions: actions, // Optional action buttons
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight); // Default height of the AppBar
 }
