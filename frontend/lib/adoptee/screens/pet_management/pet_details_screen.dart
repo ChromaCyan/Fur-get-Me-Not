@@ -188,7 +188,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
             Text(
               widget.pet.breed,
               style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
-            )
+            ),
           ],
         ),
       ],

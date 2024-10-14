@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
-import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_bloc.dart';
-import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_event.dart';
-import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_state.dart';
+import 'package:fur_get_me_not/adopter/models/pet_list/adopted_pet.dart';
+import 'package:fur_get_me_not/adopter/bloc/adopted_pet_details/adopted_pet_details_bloc.dart';
+import 'package:fur_get_me_not/adopter/bloc/adopted_pet_details/adopted_pet_details_event.dart';
+import 'package:fur_get_me_not/adopter/bloc/adopted_pet_details/adopted_pet_details_state.dart';
 import 'package:fur_get_me_not/widgets/buttons/back_button.dart';
-import 'package:fur_get_me_not/widgets/pet_details/medical_card.dart';
-import 'package:fur_get_me_not/widgets/pet_details/vaccine_card.dart';
-import 'package:fur_get_me_not/widgets/pet_details/pet_info.dart';
-import 'package:fur_get_me_not/widgets/pet_details/owner_info.dart';
+import 'package:fur_get_me_not/widgets/adopted_pet_details/medical_card.dart';
+import 'package:fur_get_me_not/widgets/adopted_pet_details/vaccine_card.dart';
+import 'package:fur_get_me_not/widgets/adopted_pet_details/pet_info.dart';
 import 'package:fur_get_me_not/widgets/pet_details/toggle_button.dart';
-import 'package:fur_get_me_not/adopter/screens/adoption_list/adoption_form.dart';
 
 class PetDetailsPage extends StatelessWidget {
   final String petId;
@@ -20,19 +18,20 @@ class PetDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use the bloc
-    final petDetailsBloc = BlocProvider.of<PetDetailsBloc>(context);
+    final petDetailsBloc = BlocProvider.of<AdoptedPetDetailsBloc>(context);
     // Dispatch an event to load pet details
-    petDetailsBloc.add(LoadPetDetailsEvent(petId: petId));
+    petDetailsBloc.add(LoadAdoptedPetDetailsEvent(petId: petId));
 
     return Scaffold(
-      body: BlocBuilder<PetDetailsBloc, PetDetailsState>(
+      body: BlocBuilder<AdoptedPetDetailsBloc, AdoptedPetDetailsState>(
         builder: (context, state) {
-          if (state is PetDetailsLoading) {
+          if (state is AdoptedPetDetailsLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is PetDetailsLoaded) {
+          } else if (state is AdoptedPetDetailsLoaded) {
             final pet = state.pet;
-            return _PetDetailsView(pet: pet); // Your custom view widget
-          } else if (state is PetDetailsError) {
+            return _PetDetailsView(
+                pet: pet, showPetInfo: state.showPetInfo); // Pass showPetInfo
+          } else if (state is AdoptedPetDetailsError) {
             return Center(child: Text('Error: ${state.message}'));
           }
           return Container();
@@ -43,20 +42,27 @@ class PetDetailsPage extends StatelessWidget {
 }
 
 class _PetDetailsView extends StatefulWidget {
-  final Pet pet;
+  final AdoptedPet pet; // Fixed variable name
+  final bool showPetInfo;
 
-  const _PetDetailsView({
-    Key? key,
-    required this.pet,
-  }) : super(key: key);
+  const _PetDetailsView(
+      {Key? key, required this.pet, required this.showPetInfo})
+      : super(key: key);
 
   @override
   State<_PetDetailsView> createState() => _PetDetailsViewState();
 }
 
 class _PetDetailsViewState extends State<_PetDetailsView> {
-  bool showPetInfo = true;
+  late bool showPetInfo; // Use late initialization
   bool showVaccineHistory = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the state based on the value from the Bloc
+    showPetInfo = widget.showPetInfo;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,26 +92,17 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       const SizedBox(height: 20),
                       nameAddressAndFavoriteButton(),
                       const SizedBox(height: 20),
-                      OwnerInfo(
-                        firstName: widget.pet.adoptee.firstName,
-                        lastName: widget.pet.adoptee.lastName,
-                        gender: widget.pet.gender,
-                        profileImageUrl: 'images/image2.png',
-                        chatId: widget.pet.adoptee.chatId,
-                        otherUserId: widget.pet.adoptee.id,
-                      ),
-                      const SizedBox(height: 20),
                       buildToggleButtons(),
                       const SizedBox(height: 20),
                       showPetInfo
                           ? PetInfoWidget(pet: widget.pet)
                           : showVaccineHistory
                               ? VaccineHistoryWidget(
-                                  vaccineHistory: widget.pet.vaccineHistory)
+                                  vaccineHistory:
+                                      widget.pet.vaccineHistory) // Updated
                               : MedicalHistoryWidget(
-                                  medicalHistory: widget.pet.medicalHistory),
-                      const SizedBox(height: 20),
-                      adoptMeButton(context),
+                                  medicalHistory:
+                                      widget.pet.medicalHistory), // Updated
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -129,10 +126,6 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               widget.pet.name,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            // const Text(
-            //   "Address or location",
-            //   style: TextStyle(fontSize: 16, color: Colors.grey),
-            // ),
           ],
         ),
       ],
@@ -151,6 +144,9 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               showPetInfo = true;
               showVaccineHistory = false;
             });
+            // Dispatch the event to toggle view
+            BlocProvider.of<AdoptedPetDetailsBloc>(context)
+                .add(ToggleAdoptedPetInfoViewEvent(showPetInfo: true));
           },
         ),
         ToggleButton(
@@ -161,6 +157,9 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               showPetInfo = false;
               showVaccineHistory = true;
             });
+            // Dispatch the event to toggle view
+            BlocProvider.of<AdoptedPetDetailsBloc>(context)
+                .add(ToggleAdoptedPetInfoViewEvent(showPetInfo: false));
           },
         ),
         ToggleButton(
@@ -171,40 +170,12 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               showPetInfo = false;
               showVaccineHistory = false;
             });
+            // Dispatch the event to toggle view
+            BlocProvider.of<AdoptedPetDetailsBloc>(context)
+                .add(ToggleAdoptedPetInfoViewEvent(showPetInfo: false));
           },
         ),
       ],
-    );
-  }
-
-  Widget adoptMeButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Navigate to the AdoptionForm with the petId
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AdoptionForm(petId: widget.pet.id),
-          ),
-        );
-      },
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Colors.green,
-        ),
-        child: const Center(
-          child: Text(
-            'Adopt Me',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
     );
   }
 

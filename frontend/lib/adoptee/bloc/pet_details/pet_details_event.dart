@@ -7,6 +7,7 @@ class LoadPetDetailsEvent extends PetDetailsEvent {
   final String petId;
   LoadPetDetailsEvent({required this.petId});
 }
+
 class AddPetEvent extends PetDetailsEvent {
   final AdminPet pet;
   final File image;
