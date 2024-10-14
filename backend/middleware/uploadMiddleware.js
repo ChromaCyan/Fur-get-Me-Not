@@ -16,5 +16,6 @@ const upload = multer({ storage });
 
 // Middleware to handle image uploads
 const uploadPetImage = upload.single('petImage');
+const uploadProfileImage = upload.single('profileImage');
 
-module.exports = { uploadPetImage };
+module.exports = { uploadPetImage, uploadProfileImage };

@@ -32,7 +32,7 @@ exports.getUserById = async (req, res) => {
 
 // CREATE USER
 exports.createUser = async (req, res) => {
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, password, address, role } = req.body;
 
     try {
         // Check if the user already exists
@@ -41,12 +41,17 @@ exports.createUser = async (req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
 
+        // Get profile image path if uploaded
+        const profileImageUrl = req.file ? req.file.path : null; // Save the image path
+
         const newUser = new User({
             firstName,
             lastName,
             email,
             password,
             role,
+            profileImageUrl,
+            address, 
         });
 
         await newUser.save();
@@ -59,6 +64,7 @@ exports.createUser = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
 
 
 // LOGIN USER
@@ -96,21 +102,25 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-// UPDATE USER
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, address } = req.body;
 
     try {
-        // Only update the password if it is provided and modified
-        if (password) {
-            req.body.password = password;
+        const profileImageUrl = req.file ? req.file.path : null;
+
+        const updateFields = { firstName, lastName, email, address };
+
+        if (profileImageUrl) {
+            updateFields.profileImageUrl = profileImageUrl;
         }
 
-        const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
+        const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
+
         if (!updatedUser) {
             return res.status(404).json({ message: "User not found" });
         }
+
         res.status(200).json(updatedUser);
     } catch (error) {
         res.status(400).json({ message: error.message });
