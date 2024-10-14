@@ -41,7 +41,7 @@ class AuthRepository {
   }
 
   Future<void> register({
-    String? profileImage, // Change from File? to String?
+    required String? profileImage,
     required String firstName,
     required String lastName,
     required String email,
@@ -80,7 +80,7 @@ class AuthRepository {
           'password': password,
           'role': role,
           'address': address,
-          'profileImage': imageUrl, // Include the image URL here
+          'profileImage': imageUrl,
         }),
         headers: {'Content-Type': 'application/json'},
       );
