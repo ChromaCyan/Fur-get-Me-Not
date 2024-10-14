@@ -47,12 +47,15 @@ class AuthRepository {
     required String email,
     required String password,
     required String role,
+    required String sex,
+    required int age,
     required String address,
     File? profileImage,
   }) async {
     try {
       // Create a multipart request
-      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/register'));
+      var request =
+          http.MultipartRequest('POST', Uri.parse('$baseUrl/register'));
 
       // Add the fields
       request.fields['firstName'] = firstName;
@@ -60,6 +63,8 @@ class AuthRepository {
       request.fields['email'] = email;
       request.fields['password'] = password;
       request.fields['role'] = role;
+      request.fields['sex'] = sex;
+      request.fields['age'] = age as String;
       request.fields['address'] = address;
 
       // Add the file if it exists
@@ -77,7 +82,8 @@ class AuthRepository {
       final responseData = await http.Response.fromStream(response);
 
       if (response.statusCode != 201) {
-        print('Registration failed: ${response.statusCode}, ${responseData.body}');
+        print(
+            'Registration failed: ${response.statusCode}, ${responseData.body}');
         throw Exception('Failed to register user: ${responseData.body}');
       }
     } catch (e) {
@@ -96,7 +102,8 @@ class AuthRepository {
   }) async {
     try {
       // Create a multipart request
-      var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/profile/$userId'));
+      var request =
+          http.MultipartRequest('PUT', Uri.parse('$baseUrl/profile/$userId'));
 
       // Add the fields
       request.fields['firstName'] = firstName;

@@ -11,12 +11,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterSubmitted>(_onRegisterSubmitted);
   }
 
-  Future<void> _onLoginSubmitted(LoginSubmitted event, Emitter<AuthState> emit) async {
+  Future<void> _onLoginSubmitted(
+      LoginSubmitted event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final result = await authRepository.login(email: event.email, password: event.password);
+      final result = await authRepository.login(
+          email: event.email, password: event.password);
       if (result['success']) {
-        emit(AuthLoginSuccess(result['userId'],result['token'], result['role']));
+        emit(AuthLoginSuccess(
+            result['userId'], result['token'], result['role']));
       } else {
         emit(AuthFailure(error: 'Invalid email or password'));
       }
@@ -25,7 +28,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onRegisterSubmitted(RegisterSubmitted event, Emitter<AuthState> emit) async {
+  Future<void> _onRegisterSubmitted(
+      RegisterSubmitted event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
       await authRepository.register(
