@@ -99,10 +99,10 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                           : showVaccineHistory
                               ? VaccineHistoryWidget(
                                   vaccineHistory:
-                                      widget.pet.vaccineHistory) // Updated
+                                      widget.pet.vaccineHistory) 
                               : MedicalHistoryWidget(
                                   medicalHistory:
-                                      widget.pet.medicalHistory), // Updated
+                                      widget.pet.medicalHistory), 
                       const SizedBox(height: 20),
                     ],
                   ),

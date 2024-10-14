@@ -279,7 +279,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget registerButton(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        // Keep the existing listener code
+        if (state is AuthRegisterSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User registered!')));
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+          });
+        } else if (state is AuthFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+        }
       },
       builder: (context, state) {
         return AnimatedContainer(

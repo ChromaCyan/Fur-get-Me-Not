@@ -4,7 +4,7 @@ import 'package:fur_get_me_not/adopter/models/pet_list/adopted_pet.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AdoptedPetRepository {
-  final String baseUrl = 'http://192.168.224.177:5000/adopted-pets';
+  final String baseUrl = 'http://localhost:5000/adopted-pets';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
