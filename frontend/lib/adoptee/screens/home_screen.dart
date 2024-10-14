@@ -72,7 +72,7 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
             duration: const Duration(milliseconds: 300),
             child: Text(
               _getDynamicTitle(context),
-              key: ValueKey<int>(_selectedIndex), // Unique key for animation
+              key: ValueKey<int>(_selectedIndex),
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.black54,

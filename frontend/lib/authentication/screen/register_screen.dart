@@ -8,6 +8,8 @@ import 'package:fur_get_me_not/authentication/bloc/auth_event.dart';
 import 'package:fur_get_me_not/authentication/bloc/auth_state.dart';
 import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart';
 import 'package:fur_get_me_not/authentication/screen/login_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -19,13 +21,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
-  String _selectedRole = 'adopter'; // Default role
-  String? _selectedSex;
+  String _selectedRole = 'adopter';
+  final ImagePicker _picker = ImagePicker();
+  XFile? _profileImage;
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +73,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(height: size.height * 0.02),
                         confirmPasswordTextField(),
                         SizedBox(height: size.height * 0.02),
-                        sexDropdown(),
-                        SizedBox(height: size.height * 0.02),
-                        ageTextField(),
-                        SizedBox(height: size.height * 0.02),
                         addressTextField(),
                         SizedBox(height: size.height * 0.02),
                         roleDropdown(),
@@ -101,6 +99,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  Widget profilePictureWidget() {
+    return GestureDetector(
+      onTap: () async {
+        final ImagePicker _picker = ImagePicker();
+        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+        setState(() {
+          _profileImage = image;
+        });
+      },
+      child: CircleAvatar(
+        radius: 50,
+        backgroundColor: Colors.grey[300],
+        backgroundImage: _profileImage != null
+            ? FileImage(File(_profileImage!.path))
+            : null,
+        child: _profileImage == null
+            ? Icon(Icons.camera_alt, color: Colors.white)
+            : null,
+      ),
+    );
+  }
+
   Widget richText(double fontSize) {
     return Text.rich(
       TextSpan(
@@ -116,59 +136,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ],
       ),
       textAlign: TextAlign.center,
-    );
-  }
-
-  Widget profilePictureWidget() {
-    return GestureDetector(
-      onTap: () {
-        // Logic to pick an image can be implemented here
-      },
-      child: CircleAvatar(
-        radius: 50,
-        backgroundColor: Colors.grey[300],
-        child: Icon(Icons.camera_alt, color: Colors.white),
-      ),
-    );
-  }
-
-  Widget sexDropdown() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(width: 1.0, color: const Color(0xFFEFEFEF)),
-      ),
-      child: DropdownButton<String>(
-        value: _selectedSex,
-        hint: Text('Select Sex'),
-        items: <String>['Male', 'Female'].map((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(
-              value,
-              style: GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
-            ),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedSex = newValue!;
-          });
-        },
-        isExpanded: true,
-        underline: SizedBox(),
-      ),
-    );
-  }
-
-  Widget ageTextField() {
-    return inputField(
-      controller: _ageController,
-      labelText: 'Age',
-      keyboardType: TextInputType.number,
-      obscureText: false,
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly], // Only accept digits
     );
   }
 
@@ -343,53 +310,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: ElevatedButton(
             onPressed: state is AuthLoading
                 ? null
-                : () {
-                    if (_passwordController.text != _confirmPasswordController.text) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Passwords do not match!')));
-                      return;
-                    }
+                : () async {  // Mark this as async
+              try {
+                // Ensure _profileImage is not null and create a File instance
+                if (_profileImage == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select a profile image')));
+                  return;
+                }
 
-                    final fullName = _fullNameController.text.trim().split(' ');
-                    String firstName = fullName.isNotEmpty ? fullName[0] : '';
-                    String lastName = fullName.length > 1 ? fullName.sublist(1).join(' ') : '';
+                // Upload the image and get the URL
+                String imageUrl = await AuthRepository().uploadProfileImage(File(_profileImage!.path));
+                print('Image URL obtained: $imageUrl'); // Debugging line
 
-                    if (_fullNameController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please fill up Full Name')));
-                    } else if (_emailController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please fill up Email')));
-                    } else if (_passwordController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please fill up Password')));
-                    } else if (_confirmPasswordController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please fill up Confirm Password')));
-                    } else if (_selectedSex!.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please select Sex')));
-                    } else if (_ageController.text.isEmpty || int.tryParse(_ageController.text) == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please enter a valid Age')));
-                    } else if (_addressController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please fill up Address')));
-                    } else {
-                      context.read<AuthBloc>().add(
-                        RegisterSubmitted(
-                          firstName: firstName,
-                          lastName: lastName,
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                          role: _selectedRole,
-                          sex: _selectedSex!,
-                          age: int.parse(_ageController.text), // This is safe now
-                          address: _addressController.text,
-                        ),
-                      );
-                    }
+                // Validate inputs
+                if (_passwordController.text != _confirmPasswordController.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Passwords do not match!')));
+                  return;
+                }
 
-                  },
+                final fullName = _fullNameController.text.trim().split(' ');
+                String firstName = fullName.isNotEmpty ? fullName[0] : '';
+                String lastName = fullName.length > 1 ? fullName.sublist(1).join(' ') : '';
+
+                if (_fullNameController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Full Name')));
+                } else if (_emailController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Email')));
+                } else if (_passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Password')));
+                } else if (_confirmPasswordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Confirm Password')));
+                } else if (_selectedRole.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select Role')));
+                } else if (_addressController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Address')));
+                } else {
+                  // Dispatch the registration event with the profile image URL
+                  context.read<AuthBloc>().add(
+                    RegisterSubmitted(
+                      profileImage: imageUrl,
+                      firstName: firstName,
+                      lastName: lastName,
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                      role: _selectedRole,
+                      address: _addressController.text,
+                    ),
+                  );
+                }
+              } catch (error) {
+                // Handle any errors that occur during image upload or registration
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${error.toString()}')));
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
@@ -400,22 +373,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             child: state is AuthLoading
                 ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2.5,
-                    ),
-                  )
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2.5,
+              ),
+            )
                 : Text(
-                    'Register',
-                    style: GoogleFonts.inter(
-                      fontSize: 18.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      height: 1.5,
-                    ),
-                  ),
+              'Register',
+              style: GoogleFonts.inter(
+                fontSize: 18.0,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         );
       },

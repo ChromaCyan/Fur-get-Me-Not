@@ -32,16 +32,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       RegisterSubmitted event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
+      // Log the received profile image URL for debugging purposes
+      print('Received Profile Image URL: ${event.profileImage}');
+
+      // Call the register method in AuthRepository
       await authRepository.register(
+        profileImage: event.profileImage,
         firstName: event.firstName,
         lastName: event.lastName,
         email: event.email,
         password: event.password,
         role: event.role,
-        sex: event.sex,
-        age: event.age,
         address: event.address,
       );
+
       emit(AuthRegisterSuccess());
     } catch (error) {
       emit(AuthFailure(error: error.toString()));

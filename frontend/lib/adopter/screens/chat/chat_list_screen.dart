@@ -8,6 +8,7 @@ import 'package:fur_get_me_not/widgets/cards/chat_list_card.dart';
 class ChatListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Fetch chats when the screen builds
     context.read<ChatListBloc>().add(FetchChats());
 
     return Scaffold(
@@ -19,6 +20,15 @@ class ChatListScreen extends StatelessWidget {
             return Center(child: Text('Error: ${state.message}'));
           } else if (state is ChatLoaded) {
             final chats = state.chats;
+            // Check if there are any chats
+            if (chats.isEmpty) {
+              return Center(
+                child: Text(
+                  'No chats found.',
+                  style: TextStyle(),
+                ),
+              );
+            }
             return ListView.builder(
               itemCount: chats.length,
               itemBuilder: (context, index) {
@@ -26,7 +36,8 @@ class ChatListScreen extends StatelessWidget {
               },
             );
           }
-          return const Center(child: Text('No chats available.'));
+          // This state should not occur in practice
+          return const Center(child: Text('Error: Unknown state'));
         },
       ),
     );

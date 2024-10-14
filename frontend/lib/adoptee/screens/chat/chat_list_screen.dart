@@ -19,6 +19,15 @@ class ChatListScreen extends StatelessWidget {
             return Center(child: Text('Error: ${state.message}'));
           } else if (state is ChatListLoaded) {
             final chats = state.chats;
+            // Check if there are any chats
+            if (chats.isEmpty) {
+              return Center(
+                child: Text(
+                  'No chats found.',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              );
+            }
             return ListView.builder(
               itemCount: chats.length,
               itemBuilder: (context, index) {
@@ -26,7 +35,7 @@ class ChatListScreen extends StatelessWidget {
               },
             );
           }
-          return const Center(child: Text('No chats available.'));
+          return const Center(child: Text('Error: Unknown state'));
         },
       ),
     );

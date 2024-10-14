@@ -26,11 +26,14 @@ const userSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String, 
+    default: null, 
     },
     address: {
         type: String, 
+        default: null, // Default value if no image is uploaded
     },
 }, { timestamps: true });
+
 
 
 // Hash password before saving
