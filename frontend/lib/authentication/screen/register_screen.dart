@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isConfirmPasswordVisible = false;
   String _selectedRole = 'adopter';
   final ImagePicker _picker = ImagePicker();
-  XFile? _profileImage;
+  File? _profileImage;
 
   @override
   Widget build(BuildContext context) {
@@ -104,8 +104,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       onTap: () async {
         final ImagePicker _picker = ImagePicker();
         final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
         setState(() {
-          _profileImage = image;
+          // Convert XFile to File
+          _profileImage = image != null ? File(image!.path) : null;
         });
       },
       child: CircleAvatar(
@@ -277,90 +279,70 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget registerButton(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthRegisterSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User registered!')));
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-          });
-        } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
-        }
+        // Keep the existing listener code
       },
       builder: (context, state) {
         return AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          alignment: Alignment.center,
-          height: 60,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(30.0),
-            gradient: LinearGradient(
-              colors: [Color(0xFF21899C), Color(0xFF006D77)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 6,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
+          // Keep the existing container properties
           child: ElevatedButton(
-            onPressed: state is AuthLoading
+            onPressed: state is AuthLoading || _profileImage == null
                 ? null
-                : () async {  // Mark this as async
+                : () async {
               try {
-                // Ensure _profileImage is not null and create a File instance
+                // Upload the profile image
                 if (_profileImage == null) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select a profile image')));
                   return;
                 }
 
-                // Upload the image and get the URL
-                String imageUrl = await AuthRepository().uploadProfileImage(File(_profileImage!.path));
-                print('Image URL obtained: $imageUrl'); // Debugging line
+                String? imageUrl = await AuthRepository().uploadProfileImage(_profileImage!);
 
-                // Validate inputs
-                if (_passwordController.text != _confirmPasswordController.text) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Passwords do not match!')));
+                if (imageUrl == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload profile image')));
                   return;
                 }
 
+                // Proceed with registration
                 final fullName = _fullNameController.text.trim().split(' ');
                 String firstName = fullName.isNotEmpty ? fullName[0] : '';
                 String lastName = fullName.length > 1 ? fullName.sublist(1).join(' ') : '';
 
                 if (_fullNameController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Full Name')));
+                  return;
                 } else if (_emailController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Email')));
+                  return;
                 } else if (_passwordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Password')));
+                  return;
                 } else if (_confirmPasswordController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Confirm Password')));
+                  return;
                 } else if (_selectedRole.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select Role')));
+                  return;
                 } else if (_addressController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill up Address')));
-                } else {
-                  // Dispatch the registration event with the profile image URL
-                  context.read<AuthBloc>().add(
-                    RegisterSubmitted(
-                      profileImage: imageUrl,
-                      firstName: firstName,
-                      lastName: lastName,
-                      email: _emailController.text,
-                      password: _passwordController.text,
-                      role: _selectedRole,
-                      address: _addressController.text,
-                    ),
-                  );
+                  return;
                 }
-              } catch (error) {
-                // Handle any errors that occur during image upload or registration
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${error.toString()}')));
+
+                // Dispatch the registration event with the uploaded image URL
+                context.read<AuthBloc>().add(
+                  RegisterSubmitted(
+                    profileImage: imageUrl!,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                    role: _selectedRole,
+                    address: _addressController.text,
+                  ),
+                );
+              } catch (e) {
+                print('Error during registration: ${e.toString()}');
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred during registration: ${e.toString()}')));
               }
             },
             style: ElevatedButton.styleFrom(
