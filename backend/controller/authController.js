@@ -30,9 +30,27 @@ exports.getUserById = async (req, res) => {
     }
 };
 
+// Upload a profile image for a user
+exports.uploadProfileImage = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        // Construct the image URL
+        const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+
+        // Respond with the image URL
+        res.status(200).json({ imageUrl: filePath });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error uploading image', error });
+    }
+};
+
 // CREATE USER
 exports.createUser = async (req, res) => {
-    const { firstName, lastName, email, password, address, role } = req.body;
+    const { firstName, lastName, email, password, address, role, profileImageUrl } = req.body;
 
     try {
         // Check if the user already exists
@@ -41,17 +59,14 @@ exports.createUser = async (req, res) => {
             return res.status(400).json({ message: "User already exists" });
         }
 
-        // Get profile image path if uploaded
-        const profileImageUrl = req.file ? req.file.path : null; // Save the image path
-
         const newUser = new User({
             firstName,
             lastName,
             email,
             password,
             role,
-            profileImageUrl,
-            address, 
+            profileImageUrl, 
+            address,
         });
 
         await newUser.save();
@@ -66,13 +81,9 @@ exports.createUser = async (req, res) => {
 };
 
 
-
 // LOGIN USER
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
-
-    console.log("Incoming email:", email);
-    console.log("Incoming password:", password);
 
     try {
         const user = await User.findOne({ email });
@@ -80,21 +91,14 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Log the stored hashed password
-        console.log("Stored hashed password:", user.password); 
-
         // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log("Password match result:", isMatch); // Log the result
-        
-
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         // Generate JWT
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
-        console.log("Generated JWT Token:", token);
         res.status(200).json({ token, userId: user._id, role: user.role });
 
     } catch (error) {
@@ -102,6 +106,7 @@ exports.loginUser = async (req, res) => {
     }
 };
 
+// UPDATE USER
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, email, address } = req.body;
@@ -109,10 +114,10 @@ exports.updateUser = async (req, res) => {
     try {
         const profileImageUrl = req.file ? req.file.path : null;
 
-        const updateFields = { firstName, lastName, email, address };
+        const updateFields = { firstName, lastName, email, address }; 
 
         if (profileImageUrl) {
-            updateFields.profileImageUrl = profileImageUrl;
+            updateFields.profileImageUrl = profileImageUrl; 
         }
 
         const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
@@ -126,7 +131,6 @@ exports.updateUser = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
 
 // DELETE USER
 exports.deleteUser = async (req, res) => {

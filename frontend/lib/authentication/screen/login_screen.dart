@@ -19,8 +19,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  // Track the visibility of the password field
   bool _isPasswordVisible = false;
 
   @override
@@ -28,31 +26,48 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: BlocProvider(
-          create: (context) => AuthBloc(authRepository: AuthRepository()),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  logo(size.height / 8),
-                  SizedBox(height: size.height * 0.03),
-                  richText(24),
-                  SizedBox(height: size.height * 0.03),
-                  emailTextField(),
-                  SizedBox(height: size.height * 0.02),
-                  passwordTextField(),
-                  SizedBox(height: size.height * 0.03),
-                  signInButton(context),
-                  SizedBox(height: size.height * 0.02),
-                  signInWithText(),
-                  SizedBox(height: size.height * 0.02),
-                  footerText(context),
-                ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF21899C), Color(0xFFFE9879)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: BlocProvider(
+            create: (context) => AuthBloc(authRepository: AuthRepository()),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  color: Colors.white.withOpacity(0.9),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        logo(size.height / 10), // Adjusted logo height
+                        SizedBox(height: size.height * 0.02),
+                        richText(24),
+                        SizedBox(height: size.height * 0.02),
+                        emailTextField(),
+                        SizedBox(height: size.height * 0.02),
+                        passwordTextField(),
+                        SizedBox(height: size.height * 0.03),
+                        signInButton(context),
+                        SizedBox(height: size.height * 0.02),
+                        signInWithText(),
+                        SizedBox(height: size.height * 0.02),
+                        footerText(context),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -103,13 +118,13 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextField(
         controller: _emailController,
         style:
-            GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+        GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
         maxLines: 1,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
           labelText: 'Email',
           labelStyle:
-              GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
           border: InputBorder.none,
         ),
       ),
@@ -128,14 +143,14 @@ class _LoginScreenState extends State<LoginScreen> {
       child: TextField(
         controller: _passwordController,
         style:
-            GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
+        GoogleFonts.inter(fontSize: 16.0, color: const Color(0xFF15224F)),
         maxLines: 1,
-        obscureText: !_isPasswordVisible, // Toggle visibility
+        obscureText: !_isPasswordVisible,
         cursorColor: const Color(0xFF15224F),
         decoration: InputDecoration(
           labelText: 'Password',
           labelStyle:
-              GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
           border: InputBorder.none,
           suffixIcon: IconButton(
             icon: Icon(
@@ -224,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           'Or Sign in with',
           style:
-              GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
+          GoogleFonts.inter(fontSize: 12.0, color: const Color(0xFF969AA8)),
         ),
         const SizedBox(width: 16),
         const Expanded(child: Divider()),

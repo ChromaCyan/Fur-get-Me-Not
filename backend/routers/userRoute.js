@@ -8,6 +8,9 @@ const { uploadProfileImage } = require('../middleware/uploadMiddleware');
 router.post("/register", uploadProfileImage, authController.createUser);
 router.post("/login", authController.loginUser);
 
+// Route for uploading profile image
+router.post("/upload", uploadProfileImage, authController.uploadProfileImage);
+
 // Protected routes that require token verification
 router.get("/", verifyToken, authController.getUser);
 router.get("/profile/:id", verifyToken, authController.getUserById);

@@ -16,7 +16,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final result = await authRepository.login(email: event.email, password: event.password);
       if (result['success']) {
-        emit(AuthLoginSuccess(result['userId'],result['token'], result['role']));
+        emit(AuthLoginSuccess(result['userId'], result['token'], result['role']));
       } else {
         emit(AuthFailure(error: 'Invalid email or password'));
       }
@@ -28,16 +28,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onRegisterSubmitted(RegisterSubmitted event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
+      // Log the received profile image URL for debugging purposes
+      print('Received Profile Image URL: ${event.profileImage}');
+
+      // Call the register method in AuthRepository
       await authRepository.register(
+        profileImage: event.profileImage,
         firstName: event.firstName,
         lastName: event.lastName,
         email: event.email,
         password: event.password,
         role: event.role,
-        sex: event.sex,
-        age: event.age,
         address: event.address,
       );
+
       emit(AuthRegisterSuccess());
     } catch (error) {
       emit(AuthFailure(error: error.toString()));
