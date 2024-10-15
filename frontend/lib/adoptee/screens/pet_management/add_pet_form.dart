@@ -533,6 +533,7 @@ class _AddPetFormState extends State<AddPetForm> {
                     ),
                   ],
                 ),
+                SizedBox(height: 20),
               ],
             ),
           ),

@@ -143,7 +143,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                                               widget.pet.medicalHistory),
                               const SizedBox(height: 20),
                               adoptMeButton(context),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 50),
                             ],
                           ),
                         ),
