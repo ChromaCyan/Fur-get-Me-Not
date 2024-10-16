@@ -7,6 +7,7 @@ import 'package:fur_get_me_not/adoptee/screens/pet_management/edit_pet_form.dart
 import 'package:fur_get_me_not/adoptee/screens/pet_management/pet_details_screen.dart';
 import 'package:fur_get_me_not/widgets/cards/admin_pet_card.dart';
 import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
+import 'package:fur_get_me_not/adoptee/screens/adoptee_profile/adoptee_profile.dart'; // Import ProfilePage
 import 'add_pet_form.dart';
 
 class PetManagementScreen extends StatefulWidget {
@@ -33,6 +34,27 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
         child: Column(
           children: [
             const SizedBox(height: 20),
+            // Profile IconButton added above the header widgets
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.account_circle, size: 30),
+                    onPressed: () {
+                      // Navigate to ProfilePage when the icon is tapped
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePage(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
             // Placeholder for carousel or other header widgets if needed
             const SizedBox(height: 20),
             Expanded(
