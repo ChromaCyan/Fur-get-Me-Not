@@ -36,15 +36,24 @@ class _PetListScreenState extends State<PetListScreen> {
               if (state.pets.isEmpty) {
                 return Center(
                   child: Text(
-                    'You have no adopted pets, Try to adopt one first!',
+                    'You have no adopted pets, try to adopt one first!',
                     style: TextStyle(),
                   ),
                 );
               }
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(state.pets.length, (index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: state.pets.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemBuilder: (context, index) {
                     final adoptedPet = state.pets[index];
                     return AdoptedPetCard(
                       adoptedPet: adoptedPet,
@@ -58,7 +67,7 @@ class _PetListScreenState extends State<PetListScreen> {
                         );
                       },
                     );
-                  }),
+                  },
                 ),
               );
             } else if (state is PetListError) {
