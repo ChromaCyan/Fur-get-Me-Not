@@ -1,5 +1,3 @@
-// BANNER CARD BACKUP CODE
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fur_get_me_not/adopter/models/widget/carousel.dart';

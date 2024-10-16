@@ -29,6 +29,14 @@ class MedicalHistoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
+            Text(
+              'Medical History',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
             _buildInfoContainer('Condition', medicalHistory.condition),
             _buildInfoContainer(
               'Diagnosis Date',

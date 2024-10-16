@@ -87,13 +87,6 @@ class AdoptedPetCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          '${adoptedPet.breed}, ${adoptedPet.gender}, ${adoptedPet.age} years',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                          ),
-                        ),
                       ],
                     ),
                   ),
