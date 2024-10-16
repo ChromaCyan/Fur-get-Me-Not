@@ -29,6 +29,14 @@ class VaccineHistoryWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
+            Text(
+              'Vaccine History',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
             _buildInfoContainer('Vaccine Name', vaccineHistory.vaccineName),
             _buildInfoContainer(
               'Vaccination Date',
