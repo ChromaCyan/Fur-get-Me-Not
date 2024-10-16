@@ -101,8 +101,6 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 20),
         buildUserDetailRow('Email:', user.email),
         const SizedBox(height: 20),
-        buildUserDetailRow('Sex:', user.sex),
-        const SizedBox(height: 20),
         buildUserDetailRow('Address:', user.address),
       ],
     ),

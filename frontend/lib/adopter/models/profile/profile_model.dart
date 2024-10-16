@@ -4,7 +4,6 @@ class User {
   final String role;
   final String bio;
   final String email;
-  final String sex;
   final String address;
   
   // final bool isDarkMode;
@@ -15,7 +14,6 @@ class User {
     required this.role,
     required this.bio,
     required this.email,
-    required this.sex,
     required this.address,
     // required this.isDarkMode,
   });
@@ -28,7 +26,6 @@ class UserPreferences {
     role: 'Adopter',
     bio: 'Live to protect wild life.',
     email: "bugartdaexplorer@gmail.com",
-    sex: "Male",
     address: "Davao City, Davao del Sur",
   );
 }
