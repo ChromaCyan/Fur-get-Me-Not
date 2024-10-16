@@ -17,30 +17,29 @@ class PetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = size.width;
     double cardWidth = (screenWidth / 2) - 16;
-    double cardHeight = cardWidth * 1.50;
+    double cardHeight = cardWidth * 1.00; // Adjusted height similar to first design
 
     return Padding(
-      padding: const EdgeInsets.only(left: 10),
+      padding: const EdgeInsets.only(left: 20), // Matching padding
       child: GestureDetector(
         onTap: onTap,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15), // Rounded corners
           child: Container(
             width: cardWidth,
             height: cardHeight,
             decoration: BoxDecoration(
-              color: const Color(0xFF21899C),
+              color: const Color(0xFFF5E6CA), // Light cream color
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
-                // BoxShadow(
-                //   color: Colors.black.withOpacity(0.3),
-                //   blurRadius: 4,
-                //   offset: Offset(0, 4),
-                // ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1), // Light shadow
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
               ],
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
                   flex: 2,
@@ -49,7 +48,6 @@ class PetCard extends StatelessWidget {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
                     ),
-                    // Displaying of image
                     child: Hero(
                       tag: pet.id ?? '',
                       child: Image.network(
@@ -66,28 +64,29 @@ class PetCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           pet.name,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 18,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Description here",
-                          maxLines: 1,
+                          pet.description,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             color: Colors.black,
                           ),
                         ),
-                        const Spacer(),
-                        // Removed Edit and Delete buttons
                       ],
                     ),
                   ),

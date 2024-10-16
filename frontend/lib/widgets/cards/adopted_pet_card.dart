@@ -17,40 +17,39 @@ class AdoptedPetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = size.width;
     double cardWidth = (screenWidth / 2) - 16;
-    double cardHeight = cardWidth * 1.25;
+    double cardHeight = cardWidth * 1.00; // Adjusted to match the first design
 
     return Padding(
-      padding: const EdgeInsets.only(left: 20),
+      padding: const EdgeInsets.only(left: 20), // Matching padding
       child: GestureDetector(
         onTap: onTap,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15), // Rounded corners
           child: Container(
             width: cardWidth,
             height: cardHeight,
             decoration: BoxDecoration(
-              color: Color(0xFF21899C),
+              color: const Color(0xFFF5E6CA), // Light cream color
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
-                // BoxShadow(
-                //   color: Colors.black.withOpacity(0.3),
-                //   blurRadius: 4,
-                //   offset: Offset(0, 4),
-                // ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1), // Light shadow
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
               ],
             ),
             // Image area
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
                   flex: 2,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
                     ),
-                    // Displaying of image
+                    // Displaying the pet image
                     child: Image.network(
                       adoptedPet.petImageUrl,
                       width: double.infinity,
@@ -64,30 +63,33 @@ class AdoptedPetCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           adoptedPet.name,
-                          style: TextStyle(
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 18,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           adoptedPet.description,
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12,
                             color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          '${adoptedPet.breed}, ${adoptedPet.gender}, ${adoptedPet.age} years', // Added breed, gender, and age
-                          style: TextStyle(
+                          '${adoptedPet.breed}, ${adoptedPet.gender}, ${adoptedPet.age} years',
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Colors.black54,
                           ),
