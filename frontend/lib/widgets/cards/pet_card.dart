@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
-//
+
 class PetCard extends StatelessWidget {
   final Pet pet;
   final Size size;
@@ -17,7 +17,7 @@ class PetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = size.width;
     double cardWidth = (screenWidth / 2) - 16;
-    double cardHeight = cardWidth * 1.25;
+    double cardHeight = cardWidth * 1.00;
 
     return Padding(
       padding: const EdgeInsets.only(left: 20),
@@ -29,19 +29,18 @@ class PetCard extends StatelessWidget {
             width: cardWidth,
             height: cardHeight,
             decoration: BoxDecoration(
-              color: Color(0xFF21899C),
+              color: const Color(0xFFF5E6CA),
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
-                // BoxShadow(
-                //   color: Colors.black.withOpacity(0.3),
-                //   blurRadius: 4,
-                //   offset: Offset(0, 4),
-                // ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
+                ),
               ],
             ),
             // Image area
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
                   flex: 2,
@@ -50,7 +49,7 @@ class PetCard extends StatelessWidget {
                       topLeft: Radius.circular(15),
                       topRight: Radius.circular(15),
                     ),
-                    // Displaying of image
+                    // Displaying image
                     child: Image.network(
                       pet.petImageUrl,
                       width: double.infinity,
@@ -64,23 +63,26 @@ class PetCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           pet.name,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 18,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(height: 4),
                         Text(
-                          "Description here",
-                          maxLines: 1,
+                          pet.description,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             color: Colors.black,
                           ),
                         ),
