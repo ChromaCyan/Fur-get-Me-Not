@@ -3,10 +3,16 @@ const router = express.Router();
 const authController = require('../controller/authController');
 const { verifyToken } = require('../middleware/authMiddleware');
 const { uploadProfileImage } = require('../middleware/uploadMiddleware'); 
+const nodemailer = require('nodemailer');
+const crypto = require('crypto'); 
 
 // Routes that do not require token verification
 router.post("/register", uploadProfileImage, authController.createUser);
 router.post("/login", authController.loginUser);
+
+// Route for OTP
+router.post("/send-otp", authController.sendOTP);
+router.post("/verify-otp", authController.verifyOTP);
 
 // Route for uploading profile image
 router.post("/upload", uploadProfileImage, authController.uploadProfileImage);

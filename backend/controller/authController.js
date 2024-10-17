@@ -1,9 +1,127 @@
 const User = require('../model/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto'); 
+const dotenv = require("dotenv");
 
 // JWT Secret key
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key'; 
+
+// Temporary storage for OTPs
+const otps = {};
+
+// Helper function to generate OTP
+const generateOTP = () => {
+    return crypto.randomInt(100000, 999999).toString();
+};
+
+// Controller to handle OTP request
+exports.sendOTP = async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+    }
+
+    try {
+        // Generate OTP
+        const otp = generateOTP();
+        otps[email] = { otp, expires: Date.now() + 300000 };
+
+        // Send OTP email
+        await sendEmail(email, otp); // Use the email provided by the user
+
+        res.status(200).json({ message: "OTP sent to email" });
+    } catch (error) {
+        res.status(500).json({ message: "Error sending OTP", error: error.message });
+    }
+};
+
+// Function to send email
+const sendEmail = async (email, otp) => {
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL, 
+                pass: process.env.EMAIL_PASSWORD 
+            }
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL, 
+            to: email, 
+            subject: 'Your OTP Code',
+            text: `Your OTP code is ${otp}. It expires in 5 minutes.`
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw new Error('Error sending email');
+    }
+};
+
+
+// OTP verification logic
+exports.verifyOTP = (email, otp) => {
+    const storedOTP = otps[email];
+    if (!storedOTP) {
+        return { success: false, message: 'No OTP found for this email' };
+    }
+    if (storedOTP.expires < Date.now()) {
+        delete otps[email]; // Remove expired OTP
+        return { success: false, message: 'OTP has expired' };
+    }
+    if (storedOTP.otp !== otp) {
+        return { success: false, message: 'Invalid OTP' };
+    }
+    
+    delete otps[email];
+    
+    return { success: true, message: 'OTP verified' };
+};
+
+
+// CREATE USER with OTP verification
+exports.createUser = async (req, res) => {
+    const { firstName, lastName, email, password, address, role, profileImageUrl, otp } = req.body;
+
+    try {
+        // Verify the OTP before creating a user
+        const otpVerification = exports.verifyOTP(email, otp);
+        if (!otpVerification.success) {
+            return res.status(400).json({ message: otpVerification.message });
+        }
+
+        // Check if the user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        const newUser = new User({
+            firstName,
+            lastName,
+            email,
+            password,
+            role,
+            profileImageUrl,
+            address,
+        });
+
+        await newUser.save();
+
+        // Generate JWT for the newly created user
+        const token = jwt.sign({ id: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
+
+        res.status(201).json({ message: "User created successfully", userId: newUser._id, token });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
 
 // GET ALL USERS
 exports.getUser = async (req, res) => {
@@ -47,39 +165,6 @@ exports.uploadProfileImage = async (req, res) => {
         res.status(500).json({ message: 'Error uploading image', error });
     }
 };
-
-// CREATE USER
-exports.createUser = async (req, res) => {
-    const { firstName, lastName, email, password, address, role, profileImageUrl } = req.body;
-
-    try {
-        // Check if the user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
-        }
-
-        const newUser = new User({
-            firstName,
-            lastName,
-            email,
-            password,
-            role,
-            profileImageUrl, 
-            address,
-        });
-
-        await newUser.save();
-
-        // Generate JWT for the newly created user
-        const token = jwt.sign({ id: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
-
-        res.status(201).json({ message: "User created successfully", userId: newUser._id, token });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
 
 // LOGIN USER
 exports.loginUser = async (req, res) => {
