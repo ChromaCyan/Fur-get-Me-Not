@@ -261,10 +261,10 @@ class _AddPetFormState extends State<AddPetForm> {
 
                       CustomTextFormField(
                         controller: breedController,
-                        labelText: 'Breed',
+                        labelText: 'Type (ex: Cat, Dog)',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter the breed';
+                            return 'Please enter the type';
                           }
                           return null;
                         },
@@ -372,12 +372,6 @@ class _AddPetFormState extends State<AddPetForm> {
                           child: CustomTextFormField(
                             controller: diagnosisDateController,
                             labelText: 'Diagnosis Date',
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please select a diagnosis date';
-                              }
-                              return null;
-                            },
                           ),
                         ),
                       ),
@@ -421,12 +415,6 @@ class _AddPetFormState extends State<AddPetForm> {
                           setState(() {
                             selectedRecoveryStatus = newValue;
                           });
-                        },
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Please select a recovery status';
-                          }
-                          return null;
                         },
                       ),
 

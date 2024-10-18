@@ -48,6 +48,7 @@ class _EditPetFormState extends State<EditPetForm> {
   final TextEditingController nextDueDateController = TextEditingController();
 
   String? selectedGender;
+  String? selectedCategory;
   bool _isLoading = false;
   String? selectedRecoveryStatus;
 
@@ -168,7 +169,7 @@ class _EditPetFormState extends State<EditPetForm> {
 
         // Create a new pet object
         final updatedPet = AdminPet(
-          id: widget.pet.id, // Ensure to keep the existing pet ID
+          id: widget.pet.id,
           name: petNameController.text,
           breed: breedController.text,
           gender: selectedGender!,
@@ -181,7 +182,8 @@ class _EditPetFormState extends State<EditPetForm> {
           adoptee: widget.pet.adoptee, // Assuming this is not editable
           medicalHistory: medicalHistory,
           vaccineHistory: vaccineHistory,
-          status: widget.pet.status, // Keep existing status
+          status: widget.pet.status,
+
         );
 
         // Dispatch the UpdatePetEvent to the BLoC
@@ -321,10 +323,10 @@ class _EditPetFormState extends State<EditPetForm> {
 
                       CustomTextFormField(
                         controller: breedController,
-                        labelText: 'Breed',
+                        labelText: 'Type (ex: Cat, Dog)',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter the breed';
+                            return 'Please enter the type';
                           }
                           return null;
                         },
