@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 class AuthRepository {
-  final String baseUrl = 'http://localhost:5000/users';
+  final String baseUrl = 'http://192.168.18.239:5000/users';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<Map<String, dynamic>> login({
@@ -118,44 +119,41 @@ class AuthRepository {
     }
   }
 
-  // Function to upload profile image
   Future<String> uploadProfileImage(File? profileImage) async {
+    print('Uploading profile image to: $baseUrl/upload');
+
+    final token = await storage.read(key: 'jwt');
+
     if (profileImage == null) {
       throw Exception('Profile image is null. Please select an image.');
     }
 
     try {
-      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/upload'));
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/upload'),
+      );
 
-      // Add the file to the request
+      // Add the profile image file to the request
       request.files.add(await http.MultipartFile.fromPath(
         'profileImage',
         profileImage.path,
+        filename: basename(profileImage.path),
       ));
+      request.headers['Authorization'] = 'Bearer $token';
 
-      // Retrieve the JWT token
-      final token = await storage.read(key: 'jwt');
-      if (token != null) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-
-      // Send the request
       final response = await request.send();
-      final responseData = await http.Response.fromStream(response);
 
-      if (response.statusCode != 200) {
-        print(
-            'Image upload failed: ${response.statusCode}, ${responseData.body}');
-        throw Exception('Failed to upload profile image: ${responseData.body}');
+      if (response.statusCode == 200) {
+        final responseData = await response.stream.toBytes();
+        final result = String.fromCharCodes(responseData);
+        final imageUrl = json.decode(result)['imageUrl'];
+        return imageUrl;
+      } else {
+        throw Exception('Profile image upload failed: ${response.reasonPhrase}');
       }
-
-      // Assuming the server responds with the image URL in the response body
-      final Map<String, dynamic> responseBody = jsonDecode(responseData.body);
-      return responseBody[
-          'imageUrl']; // Replace 'imageUrl' with your actual key
     } catch (e) {
-      print('Profile image upload error: ${e.toString()}');
-      throw Exception('Failed to upload profile image: ${e.toString()}');
+      throw Exception('Failed to upload profile image: $e');
     }
   }
 
@@ -163,31 +161,28 @@ class AuthRepository {
     required String userId,
     required String firstName,
     required String lastName,
-    required String email,
     required String address,
-    File? profileImage,
+    final String? profileImage,
   }) async {
     try {
       // Create a multipart request for user profile update
-      var request =
-          http.MultipartRequest('PUT', Uri.parse('$baseUrl/profile/$userId'));
+      var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/profile/$userId'));
 
       // Add the fields
       request.fields['firstName'] = firstName;
       request.fields['lastName'] = lastName;
-      request.fields['email'] = email;
       request.fields['address'] = address;
+
+      // If there's a profile image URL, include it in the request
+      if (profileImage != null) {
+        request.fields['profileImageUrl'] = profileImage;
+      }
 
       // Retrieve the JWT token
       final token = await storage.read(key: 'jwt');
 
       // Add the token to the headers
       request.headers['Authorization'] = 'Bearer $token';
-
-      // If there's a profile image, upload it separately
-      if (profileImage != null) {
-        await uploadProfileImage(profileImage);
-      }
 
       // Send the request
       final response = await request.send();

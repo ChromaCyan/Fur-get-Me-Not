@@ -7,7 +7,6 @@ import 'package:fur_get_me_not/adopter/screens/adoption_list/pet_details_screen.
 import 'package:fur_get_me_not/widgets/cards/pet_card.dart';
 import 'package:fur_get_me_not/widgets/headers/banner_card.dart';
 import 'package:fur_get_me_not/adopter/models/widget/carousel.dart';
-import 'package:fur_get_me_not/adopter/screens/adopter_profile/adopter_profile.dart'; // Import the profile page
 
 class AdoptionScreen extends StatefulWidget {
   const AdoptionScreen({super.key});
@@ -32,32 +31,9 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 20),
-              // Add a Row to contain the profile icon and any other widgets
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Empty Container for spacing, you can customize this
-                    const SizedBox.shrink(),
-                    // Profile Icon Button
-                    IconButton(
-                      icon: const Icon(Icons.account_circle, size: 28),
-                      onPressed: () {
-                        // Navigate to ProfilePage when the icon is clicked
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => ProfilePage()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 10),
               ReusableCarousel(items: carouselData),
               const SizedBox(height: 20),
-              // Add the text label for Adoption Listing
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
@@ -65,7 +41,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black, // You can change the color as needed
+                    color: Colors.black,
                   ),
                 ),
               ),

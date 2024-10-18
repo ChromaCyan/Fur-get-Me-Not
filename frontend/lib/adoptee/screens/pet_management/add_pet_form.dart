@@ -73,7 +73,7 @@ class _AddPetFormState extends State<AddPetForm> {
     );
     if (picked != null) {
       controller.text =
-          '${picked.toLocal()}'.split(' ')[0]; // Format date to YYYY-MM-DD
+          '${picked.toLocal()}'.split(' ')[0];
     }
   }
 
@@ -87,7 +87,7 @@ class _AddPetFormState extends State<AddPetForm> {
         // Upload the image and get the URL
         String imageUrl =
             await AdminPetRepository().uploadImage(_selectedPetImage!);
-        print('Image URL obtained: $imageUrl'); // Debugging line
+        print('Image URL obtained: $imageUrl');
 
         // Create a new MedicalHistory instance
         final medicalHistory = MedicalHistory(
