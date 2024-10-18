@@ -10,6 +10,7 @@ import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart'
 import 'package:fur_get_me_not/authentication/screen/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'otp_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -26,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   String _selectedRole = 'adopter';
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker();
   File? _profileImage;
 
   @override
@@ -63,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(height: size.height * 0.02),
                         richText(24),
                         SizedBox(height: size.height * 0.02),
-                        profilePictureWidget(),
+                        // profilePictureWidget(),
                         SizedBox(height: size.height * 0.03),
                         fullNameTextField(),
                         SizedBox(height: size.height * 0.02),
@@ -99,29 +100,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget profilePictureWidget() {
-    return GestureDetector(
-      onTap: () async {
-        final ImagePicker _picker = ImagePicker();
-        final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-        setState(() {
-          // Convert XFile to File
-          _profileImage = image != null ? File(image!.path) : null;
-        });
-      },
-      child: CircleAvatar(
-        radius: 50,
-        backgroundColor: Colors.grey[300],
-        backgroundImage: _profileImage != null
-            ? FileImage(File(_profileImage!.path))
-            : null,
-        child: _profileImage == null
-            ? Icon(Icons.camera_alt, color: Colors.white)
-            : null,
-      ),
-    );
-  }
+  // Widget profilePictureWidget() {
+  //   return GestureDetector(
+  //     onTap: () async {
+  //       final ImagePicker _picker = ImagePicker();
+  //       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //
+  //       setState(() {
+  //         // Convert XFile to File
+  //         _profileImage = image != null ? File(image!.path) : null;
+  //       });
+  //     },
+  //     child: CircleAvatar(
+  //       radius: 50,
+  //       backgroundColor: Colors.grey[300],
+  //       backgroundImage: _profileImage != null
+  //           ? FileImage(File(_profileImage!.path))
+  //           : null,
+  //       child: _profileImage == null
+  //           ? Icon(Icons.camera_alt, color: Colors.white)
+  //           : null,
+  //     ),
+  //   );
+  // }
 
   Widget richText(double fontSize) {
     return Text.rich(
@@ -279,36 +280,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget registerButton(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthRegisterSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User registered!')));
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-          });
+        if (state is AuthOtpSent) {
+          // Display success message for registration
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('🐾 User registered! OTP has been sent. 🐶')),
+          );
+
+          // Navigate to the OTP screen; OTP has already been sent in the registration logic
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => OtpScreen(email: state.email)),
+          );
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+          SnackBar(content: Text('🐾 Having Problems creating your account. 🐶'));
         }
       },
-      builder: (context, state) {
+  builder: (context, state) {
         return AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          // Keep the existing container properties
           child: ElevatedButton(
-            onPressed: state is AuthLoading || _profileImage == null
+            onPressed: state is AuthLoading
+                // s
                 ? null
                 : () async {
-              try {
-                // Upload the profile image
-                if (_profileImage == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select a profile image')));
-                  return;
-                }
-
-                String? imageUrl = await AuthRepository().uploadProfileImage(_profileImage!);
-
-                if (imageUrl == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload profile image')));
-                  return;
-                }
+              // try {
+              //   // Upload the profile image
+              //   if (_profileImage == null) {
+              //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please select a profile image')));
+              //     return;
+              //   }
+              //
+              //   String? imageUrl = await AuthRepository().uploadProfileImage(_profileImage!);
+              //
+              //   if (imageUrl == null) {
+              //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to upload profile image')));
+              //     return;
+              //   }
 
                 // Proceed with registration
                 final fullName = _fullNameController.text.trim().split(' ');
@@ -335,10 +342,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   return;
                 }
 
-                // Dispatch the registration event with the uploaded image URL
                 context.read<AuthBloc>().add(
                   RegisterSubmitted(
-                    profileImage: imageUrl!,
+                    // profileImage: imageUrl!,
+                    context: context,
                     firstName: firstName,
                     lastName: lastName,
                     email: _emailController.text,
@@ -347,10 +354,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     address: _addressController.text,
                   ),
                 );
-              } catch (e) {
-                print('Error during registration: ${e.toString()}');
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred during registration: ${e.toString()}')));
-              }
+              // } catch (e) {
+              //   print('Error during registration: ${e.toString()}');
+              //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred during registration: ${e.toString()}')));
+              // }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
@@ -373,7 +380,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               'Register',
               style: GoogleFonts.inter(
                 fontSize: 18.0,
-                color: Colors.white,
+                color: Colors.green,
                 fontWeight: FontWeight.w600,
               ),
             ),

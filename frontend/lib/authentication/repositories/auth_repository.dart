@@ -2,6 +2,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:fur_get_me_not/authentication/screen/otp_screen.dart';
 
 class AuthRepository {
   final String baseUrl = 'http://localhost:5000/users';
@@ -23,7 +25,7 @@ class AuthRepository {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        await storage.write(key: 'jwt', value: data['token']); // Save the token
+        await storage.write(key: 'jwt', value: data['token']);
         return {
           'success': true,
           'userId': data['userId'],
@@ -40,7 +42,37 @@ class AuthRepository {
     }
   }
 
+  Future<Map<String, dynamic>> verifyOtp({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/verify-otp'),
+        body: jsonEncode({
+          'email': email,
+          'otp': otp,
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {
+          'success': true,
+        };
+      } else {
+        return {'success': false, 'message': response.body};
+      }
+    } catch (e) {
+      print('OTP verification error: ${e.toString()}');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+
   Future<void> register({
+    required BuildContext context,
     required String? profileImage,
     required String firstName,
     required String lastName,
@@ -53,10 +85,9 @@ class AuthRepository {
 
     try {
       // Create a multipart request
-      var request =
-          http.MultipartRequest('POST', Uri.parse('$baseUrl/register'));
+      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/register'));
 
-      // Add the fields
+      // Add the fields to the request
       request.fields['firstName'] = firstName;
       request.fields['lastName'] = lastName;
       request.fields['email'] = email;
@@ -65,29 +96,22 @@ class AuthRepository {
       request.fields['address'] = address;
 
       // Add the file if it exists
-      // If there's a profile image URL, you can set it directly
       if (profileImage != null) {
-        imageUrl = profileImage; // Now it's just a URL
+        request.files.add(await http.MultipartFile.fromPath('profileImage', profileImage));
       }
 
-      // Send user data to register
-      final response = await http.post(
-        Uri.parse('$baseUrl/register'),
-        body: jsonEncode({
-          'firstName': firstName,
-          'lastName': lastName,
-          'email': email,
-          'password': password,
-          'role': role,
-          'address': address,
-          'profileImage': imageUrl,
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
+      // Send the request
+      final response = await request.send();
 
-      if (response.statusCode != 201) {
-        print('Registration failed: ${response.statusCode}, ${response.body}');
-        throw Exception('Failed to register user: ${response.body}');
+      // Get the response from the server
+      final responseData = await http.Response.fromStream(response);
+
+      // Check the status code
+      if (responseData.statusCode == 200 || responseData.statusCode == 201) {
+        return;
+      } else {
+        print('Registration failed: ${responseData.statusCode}, ${responseData.body}');
+        throw Exception('Failed to register user: ${responseData.body}');
       }
     } catch (e) {
       print('Registration error: ${e.toString()}');

@@ -7,12 +7,26 @@ class AuthLoading extends AuthState {}
 class AuthLoginSuccess extends AuthState {
   final String userId;
   final String token;
-  final String role; // Capture the role
+  final String role;
 
   AuthLoginSuccess(this.userId, this.token, this.role);
 }
 
-class AuthRegisterSuccess extends AuthState {}
+class AuthOtpSent extends AuthState {
+  final String email;
+
+  AuthOtpSent(this.email);
+}
+
+class AuthOtpVerificationSuccess extends AuthState {
+  AuthOtpVerificationSuccess();
+}
+
+class AuthOtpVerificationFailure extends AuthState {
+  final String error;
+
+  AuthOtpVerificationFailure({required this.error});
+}
 
 class AuthFailure extends AuthState {
   final String error;
