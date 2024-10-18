@@ -168,66 +168,61 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget signInButton(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) async {
-        if (state is AuthLoginSuccess) {
-          final storage = FlutterSecureStorage();
-          // Store JWT token
-          await storage.write(key: 'jwt', value: state.token);
-          print('Stored JWT: ${state.token}');
+Widget signInButton(BuildContext context) {
+  return BlocConsumer<AuthBloc, AuthState>(
+    listener: (context, state) async {
+      if (state is AuthLoginSuccess) {
+        final storage = FlutterSecureStorage();
+        // Store JWT token
+        await storage.write(key: 'jwt', value: state.token);
+        print('Stored JWT: ${state.token}');
 
-          // Store user ID
-          await storage.write(key: 'userId', value: state.userId);
-          print('Stored User ID: ${state.userId}');
+        // Store user ID
+        await storage.write(key: 'userId', value: state.userId);
+        print('Stored User ID: ${state.userId}');
 
-          // Navigate based on role
-          if (state.role == "adopter") {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => AdopterHomeScreen()));
-          } else {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => AdopteeHomeScreen()));
-          }
-        } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.error)));
+        // Navigate based on role
+        if (state.role == "adopter") {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => AdopterHomeScreen()));
+        } else {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => AdopteeHomeScreen()));
         }
-      },
-      builder: (context, state) {
-        if (state is AuthLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      } else if (state is AuthFailure) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(state.error)));
+      }
+    },
+    builder: (context, state) {
+      if (state is AuthLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-        return Container(
+      return GestureDetector(
+        onTap: () {
+          final email = _emailController.text;
+          final password = _passwordController.text;
+
+          context
+              .read<AuthBloc>()
+              .add(LoginSubmitted(email: email, password: password));
+        },
+        child: Container(
           alignment: Alignment.center,
           height: 60,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50.0),
             color: const Color(0xFF21899C),
           ),
-          child: ElevatedButton(
-            onPressed: () {
-              final email = _emailController.text;
-              final password = _passwordController.text;
-
-              context
-                  .read<AuthBloc>()
-                  .add(LoginSubmitted(email: email, password: password));
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
-            ),
-            child: Text(
-              'Sign In',
-              style: GoogleFonts.inter(
-                  fontSize: 16.0,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  height: 1.5),
+          child: Text(
+            'Sign In',
+            style: GoogleFonts.inter(
+                fontSize: 16.0,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                height: 1.5
+              ),
               textAlign: TextAlign.center,
             ),
           ),
