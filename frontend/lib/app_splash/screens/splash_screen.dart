@@ -28,8 +28,8 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
           // Full-screen background image
           Positioned.fill(
             child: Image.asset(
-              "images/splash_screen_wp.jpg",  // Add your background image asset here
-              fit: BoxFit.fill,        // Ensures the image covers the full screen
+              "images/wallpaper_2.jpg",  // Add your background image asset here
+              fit: BoxFit.cover        // Ensures the image covers the full screen
             ),
           ),
           // Onboarding content
