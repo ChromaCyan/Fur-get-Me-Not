@@ -16,28 +16,6 @@ const generateOTP = () => {
     return crypto.randomInt(100000, 999999).toString();
 };
 
-// Controller to handle OTP request
-exports.sendOTP = async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).json({ message: "Email is required" });
-    }
-
-    try {
-        // Generate OTP
-        const otp = generateOTP();
-        otps[email] = { otp, expires: Date.now() + 300000 };
-
-        // Send OTP email
-        await sendEmail(email, otp); // Use the email provided by the user
-
-        res.status(200).json({ message: "OTP sent to email" });
-    } catch (error) {
-        res.status(500).json({ message: "Error sending OTP", error: error.message });
-    }
-};
-
 // Function to send email
 const sendEmail = async (email, otp) => {
     try {
@@ -66,36 +44,36 @@ const sendEmail = async (email, otp) => {
 
 
 // OTP verification logic
-exports.verifyOTP = (email, otp) => {
+exports.verifyOTP = async (req, res) => {
+    const { email, otp } = req.body; 
     const storedOTP = otps[email];
+    console.log('Verifying OTP for:', email);
+    console.log('Current stored OTPs:', otps);
+
+
     if (!storedOTP) {
-        return { success: false, message: 'No OTP found for this email' };
+        return res.status(404).json({ success: false, message: 'No OTP found for this email' });
     }
+    
     if (storedOTP.expires < Date.now()) {
         delete otps[email]; // Remove expired OTP
-        return { success: false, message: 'OTP has expired' };
+        return res.status(400).json({ success: false, message: 'OTP has expired' });
     }
+    
     if (storedOTP.otp !== otp) {
-        return { success: false, message: 'Invalid OTP' };
+        return res.status(400).json({ success: false, message: 'Invalid OTP' });
     }
-    
-    delete otps[email];
-    
-    return { success: true, message: 'OTP verified' };
+
+    delete otps[email]; 
+    return res.status(200).json({ success: true, message: 'OTP verified' });
 };
 
 
 // CREATE USER with OTP verification
 exports.createUser = async (req, res) => {
-    const { firstName, lastName, email, password, address, role, profileImageUrl, otp } = req.body;
+    const { firstName, lastName, email, password, address, role, profileImageUrl } = req.body;
 
     try {
-        // Verify the OTP before creating a user
-        const otpVerification = exports.verifyOTP(email, otp);
-        if (!otpVerification.success) {
-            return res.status(400).json({ message: otpVerification.message });
-        }
-
         // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -114,14 +92,21 @@ exports.createUser = async (req, res) => {
 
         await newUser.save();
 
+        // Generate and send OTP
+        const otp = generateOTP();
+        otps[email] = { otp, expires: Date.now() + 300000 };
+        await sendEmail(email, otp);
+        console.log('Stored OTPs:', otps); 
+
         // Generate JWT for the newly created user
         const token = jwt.sign({ id: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
 
-        res.status(201).json({ message: "User created successfully", userId: newUser._id, token });
+        res.status(201).json({ message: "User created successfully, OTP sent", userId: newUser._id, token });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
+
 
 // GET ALL USERS
 exports.getUser = async (req, res) => {

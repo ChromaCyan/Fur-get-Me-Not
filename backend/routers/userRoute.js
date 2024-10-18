@@ -11,7 +11,6 @@ router.post("/register", uploadProfileImage, authController.createUser);
 router.post("/login", authController.loginUser);
 
 // Route for OTP
-router.post("/send-otp", authController.sendOTP);
 router.post("/verify-otp", authController.verifyOTP);
 
 // Route for uploading profile image
