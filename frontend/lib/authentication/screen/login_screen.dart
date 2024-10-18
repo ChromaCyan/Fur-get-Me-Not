@@ -170,12 +170,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget signInButton(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is AuthLoginSuccess) {
           final storage = FlutterSecureStorage();
-          storage.write(key: 'jwt', value: state.token);
+          // Store JWT token
+          await storage.write(key: 'jwt', value: state.token);
           print('Stored JWT: ${state.token}');
 
+          // Store user ID
+          await storage.write(key: 'userId', value: state.userId);
+          print('Stored User ID: ${state.userId}');
+
+          // Navigate based on role
           if (state.role == "adopter") {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => AdopterHomeScreen()));
@@ -229,6 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
+
 
   Widget signInWithText() {
     return Row(

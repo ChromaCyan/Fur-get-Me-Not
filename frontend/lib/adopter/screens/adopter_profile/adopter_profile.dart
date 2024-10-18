@@ -1,84 +1,125 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/adopter/models/profile/profile_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fur_get_me_not/authentication/models/user.dart';
+import 'package:fur_get_me_not/shared/blocs/profile_bloc.dart';
 import 'package:fur_get_me_not/widgets/headers/app_bar.dart';
-import 'package:fur_get_me_not/adopter/screens/adopter_profile/profile_widget.dart';
 import 'package:fur_get_me_not/widgets/buttons/edit_profile_btn.dart';
 
 class ProfilePage extends StatefulWidget {
+  final String userId; // userId parameter
+
+  ProfilePage({required this.userId});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
-  Widget build(BuildContext context) {
-    final user = UserPreferences.myUser;
+  void initState() {
+    super.initState();
+    context.read<ProfileBloc>().add(FetchProfile(widget.userId));
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Your Profile",),
-      body: Container(
-        color: Colors.white,
-        // decoration: BoxDecoration(
-        //   gradient: LinearGradient(
-        //     begin: Alignment.topCenter,
-        //     end: Alignment.bottomCenter,
-        //     colors: [
-        //       Colors.blue.shade500,
-        //       Colors.orange.shade500,
-        //     ],
-        //   ),
-        // ),
-        child: ListView(
-          physics: BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          children: [
-            const SizedBox(height: 24),
-            buildProfileSection(user),
-            const SizedBox(height: 24),
-            buildName(user),
-            const SizedBox(height: 32),
-            buildUserInfoCard(user),
-            const SizedBox(height: 32),
-          ],
-        ),
+      appBar: CustomAppBar(
+        title: "Your Profile",
+      ),
+      body: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          if (state is ProfileLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is ProfileLoaded) {
+            final profile = state.profileData;
+            return ListView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: [
+                const SizedBox(height: 24),
+                buildProfileSection(profile),
+                const SizedBox(height: 24),
+                buildName(profile),
+                const SizedBox(height: 32),
+                buildUserInfoCard(profile),
+                const SizedBox(height: 32),
+              ],
+            );
+          } else if (state is ProfileError) {
+            return Center(child: Text('Failed to load profile: ${state.message}'));
+          }
+          return const SizedBox();
+        },
       ),
     );
   }
 
-  // Profile Section with Edit Button below the profile image
-  Widget buildProfileSection(User user) => Column(
-        children: [
-          ProfileWidget(
-            imagePath: user.imagePath,
-            onClicked: () async {},
-            imageSize: 150,
+  // Profile section with image handling
+  Widget buildProfileSection(Map<String, dynamic> profile) => Column(
+    children: [
+      Container(
+        width: 150,
+        height: 150,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey[300],
+          image: DecorationImage(
+            image: profile['profileImage'] != null && profile['profileImage'].isNotEmpty
+                ? NetworkImage(profile['profileImage'])
+                : const AssetImage('assets/default_profile.png') as ImageProvider,
+            fit: BoxFit.cover,
           ),
-          const SizedBox(height: 16), // Space between profile image and button
-          EditButton(
-            onClicked: () {
-              // Action when edit button is clicked
-              print("Edit button clicked");
-            },
-          ),
-        ],
-      );
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            profile['profileImage'] == null || profile['profileImage'].isEmpty
+                ? Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey[300],
+              ),
+            )
+                : Container(),
+            profile['profileImage'] == null || profile['profileImage'].isEmpty
+                ? const Center(
+              child: Text(
+                'No Profile Image Added',
+                style: TextStyle(color: Colors.black54),
+                textAlign: TextAlign.center, // Center align the text
+              ),
+            )
+                : Container(), // Empty container if image is present
+          ],
+        ),
+      ),
+      const SizedBox(height: 16),
+      EditButton(
+        onClicked: () {
+          // Navigate to profile edit screen
+          Navigator.pushNamed(context, '/editProfile', arguments: widget.userId);
+        },
+      ),
+    ],
+  );
 
-  Widget buildName(User user) => Column(
-        children: [
-          Text(
-            user.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 28,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      );
+  Widget buildName(Map<String, dynamic> profile) => Column(
+    children: [
+      Text(
+        '${profile['firstName']} ${profile['lastName']}',
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 28,
+          color: Colors.black,
+        ),
+      ),
+    ],
+  );
 
-  Widget buildUserInfoCard(User user) => Container(
+  Widget buildUserInfoCard(Map<String, dynamic> profile) => Container(
     width: double.infinity,
-    margin: const EdgeInsets.symmetric(horizontal: 16.0), // Adjust the margin as needed
+    margin: const EdgeInsets.symmetric(horizontal: 16.0),
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     decoration: BoxDecoration(
       color: Colors.white,
@@ -95,34 +136,32 @@ class _ProfilePageState extends State<ProfilePage> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildUserDetailRow('Role:', user.role),
+        buildUserDetailRow('Role:', profile['role'] == 'adopter' ? 'Adopter' : 'Adoptee'),
         const SizedBox(height: 20),
-        buildUserDetailRow('Bio:', user.bio),
+        buildUserDetailRow('Email:', profile['email']),
         const SizedBox(height: 20),
-        buildUserDetailRow('Email:', user.email),
-        const SizedBox(height: 20),
-        buildUserDetailRow('Address:', user.address),
+        buildUserDetailRow('Address:', profile['address']),
       ],
     ),
   );
 
   Widget buildUserDetailRow(String label, String value) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        ],
-      );
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+      ),
+      const SizedBox(width: 8),
+      Expanded(
+        child: Text(
+          value,
+          style: const TextStyle(fontSize: 18),
+        ),
+      ),
+    ],
+  );
 }

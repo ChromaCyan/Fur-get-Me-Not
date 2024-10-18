@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/authentication/screen/otp_screen.dart';
 
 class AuthRepository {
   final String baseUrl = 'http://localhost:5000/users';
@@ -201,6 +200,39 @@ class AuthRepository {
     } catch (e) {
       print('Update profile error: ${e.toString()}');
       throw Exception('Failed to update profile: ${e.toString()}');
+    }
+  }
+
+  Future<Map<String, dynamic>> getProfileById(String userId) async {
+    try {
+      final token = await storage.read(key: 'jwt');
+      final response = await http.get(
+        Uri.parse('$baseUrl/profile/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {
+          'success': true,
+          'profile': data,
+        };
+      } else {
+        print('Failed to fetch profile: ${response.statusCode}, ${response.body}');
+        return {
+          'success': false,
+          'message': response.body,
+        };
+      }
+    } catch (e) {
+      print('Get profile error: ${e.toString()}');
+      return {
+        'success': false,
+        'message': e.toString(),
+      };
     }
   }
 }
