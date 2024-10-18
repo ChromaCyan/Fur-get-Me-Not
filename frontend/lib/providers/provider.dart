@@ -27,12 +27,14 @@ import 'package:fur_get_me_not/adoptee/bloc/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/chat/chat_bloc.dart';
 import 'package:fur_get_me_not/adopter/repositories/pet_list/adopted_pet_repository.dart';
 import 'package:fur_get_me_not/adopter/bloc/adopted_pet_details/adopted_pet_details_bloc.dart';
+import 'package:fur_get_me_not/shared/blocs/profile_bloc.dart';
 
 
 class AppProviders {
   static List<BlocProvider> getProviders() {
     final PetRepository petRepository = PetRepository();
     final AuthRepository loginRepository = AuthRepository();
+    final AuthRepository profileRepository = AuthRepository();
     final AdoptedPetRepository adoptedPetRepository = AdoptedPetRepository();
     final AdoptionFormRepository adoptionFormRepository = AdoptionFormRepository();
 
@@ -53,6 +55,9 @@ class AppProviders {
       ),
       BlocProvider<BottomNavCubit>(
         create: (context) => BottomNavCubit(),
+      ),
+      BlocProvider<ProfileBloc>(
+        create: (context) => ProfileBloc(authRepository: profileRepository),
       ),
 
       //Adoption Process

@@ -27,3 +27,22 @@ class ChatMessageError extends ChatMessageState {
   @override
   List<Object> get props => [message];
 }
+
+class ChatMessageSent extends ChatMessageState {
+  final String chatId;
+  final List<AdopterChatMessage> messages;
+
+  ChatMessageSent(this.chatId, this.messages);
+
+  @override
+  List<Object> get props => [chatId, messages];
+}
+
+class NewChatCreated extends ChatMessageState {
+  final String chatId;
+
+  NewChatCreated(this.chatId);
+
+  @override
+  List<Object> get props => [chatId];
+}

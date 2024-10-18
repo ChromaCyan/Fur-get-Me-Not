@@ -34,8 +34,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch messages when the screen is loaded
-    context.read<ChatBloc>().add(FetchMessages(widget.chatId));
+    if (widget.chatId.isNotEmpty) {
+      context.read<ChatBloc>().add(FetchMessages(widget.chatId));
+    }
   }
 
   @override

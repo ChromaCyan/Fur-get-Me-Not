@@ -92,6 +92,7 @@ class AdopterChatRepository {
         }),
       );
 
+
       if (response.statusCode != 200) {
         throw Exception('Failed to send message: ${response.reasonPhrase}');
       }

@@ -12,23 +12,46 @@ class ChatBloc extends Bloc<ChatMessageEvent, ChatMessageState> {
     on<FetchMessages>((event, emit) async {
       emit(ChatMessageLoading());
       try {
-        final messages = await chatRepository.fetchMessagesForUser(event.otherUserId);
+        final messages = await chatRepository.fetchMessagesForUser(
+            event.otherUserId);
         emit(ChatMessageLoaded(messages));
       } catch (e) {
         emit(ChatMessageError('Failed to load messages: $e'));
       }
     });
 
-    // Send message event
-    on<SendMessage>((event, emit) async {
-      emit(ChatMessageLoading());
+    on<SendMessage>((event, emit) async* {
       try {
-        await chatRepository.sendMessage(event.content, event.otherUserId);
-        // Optionally, fetch messages again after sending a message
+        emit(ChatMessageLoading());
+
+        // First, attempt to send message using existing chat
+        final chatId = await chatRepository.sendMessage(
+            event.content,
+            event.otherUserId
+        );
+
+        // If successful, fetch messages and emit loaded state
         final messages = await chatRepository.fetchMessagesForUser(event.otherUserId);
         emit(ChatMessageLoaded(messages));
+
       } catch (e) {
-        emit(ChatMessageError('Failed to send message: $e'));
+        print('Failed to send message, creating new chat...');
+        try {
+          final newChatId = await chatRepository.sendMessage(
+              event.content,
+              event.otherUserId
+          );
+
+          // Fetch messages after sending new chat
+          final messages = await chatRepository.fetchMessagesForUser(event.otherUserId);
+
+          // Emit sent state with new chat ID
+          emit(ChatMessageSent(newChatId, messages));
+
+        } catch (newChatError) {
+          print('Failed to create new chat: $newChatError');
+          emit(ChatMessageError('Failed to send message and create new chat'));
+        }
       }
     });
   }

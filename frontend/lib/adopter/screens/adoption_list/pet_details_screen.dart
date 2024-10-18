@@ -32,7 +32,7 @@ class PetDetailsPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is PetDetailsLoaded) {
             final pet = state.pet;
-            return _PetDetailsView(pet: pet); // Custom view widget
+            return _PetDetailsView(pet: pet);
           } else if (state is PetDetailsError) {
             return Center(child: Text('Error: ${state.message}'));
           }
