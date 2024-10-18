@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     },
     address: {
         type: String, 
-        default: null, // Default value if no image is uploaded
+        default: null,
     },
 }, { timestamps: true });
 

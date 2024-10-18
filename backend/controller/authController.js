@@ -179,12 +179,12 @@ exports.loginUser = async (req, res) => {
 // UPDATE USER
 exports.updateUser = async (req, res) => {
     const { id } = req.params;
-    const { firstName, lastName, email, address } = req.body;
+    const { firstName, lastName, address } = req.body;
 
     try {
         const profileImageUrl = req.file ? req.file.path : null;
 
-        const updateFields = { firstName, lastName, email, address }; 
+        const updateFields = { firstName, lastName, address }; 
 
         if (profileImageUrl) {
             updateFields.profileImageUrl = profileImageUrl; 
@@ -196,6 +196,9 @@ exports.updateUser = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        console.log(req.body); 
+        console.log(req.file); 
+        
         res.status(200).json(updatedUser);
     } catch (error) {
         res.status(400).json({ message: error.message });
