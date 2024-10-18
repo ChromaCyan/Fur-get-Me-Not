@@ -1,35 +1,124 @@
+// import 'package:flutter/material.dart';
+
+// import 'package:fur_get_me_not/config/colors.dart';
+
+// class SearchField extends StatelessWidget {
+//   const SearchField({
+//     super.key,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 16.0),
+//       child: Container(
+//         decoration: const BoxDecoration(
+//             color: kGreyColor,
+//             borderRadius: BorderRadius.all(Radius.circular(50.0))),
+//         child: Padding(
+//           padding: const EdgeInsets.all(16.0),
+//           child: Row(
+//             children: [
+//               const Icon(
+//                 Icons.search_outlined,
+//                 color: kOnGreyColor,
+//               ),
+//               const SizedBox(width: 8.0),
+//               Text(
+//                 "Search",
+//                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
+//                       color: kOnGreyColor,
+//                     ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 import 'package:flutter/material.dart';
 
-import 'package:fur_get_me_not/config/colors.dart';
+class CustomSearchBar extends StatefulWidget {
+  final String hintText;
+  final TextEditingController searchController;
+  final Function(String) onChanged;
+  final Function() onClear;
+  final Function() onSearch;
 
-class SearchField extends StatelessWidget {
-  const SearchField({
-    super.key,
-  });
+  const CustomSearchBar({
+    Key? key,
+    required this.hintText,
+    required this.searchController,
+    required this.onChanged,
+    required this.onClear,
+    required this.onSearch,
+  }) : super(key: key);
+
+  @override
+  _CustomSearchBarState createState() => _CustomSearchBarState();
+}
+
+class _CustomSearchBarState extends State<CustomSearchBar> {
+  final FocusNode _focusNode = FocusNode(); // FocusNode to manage focus
+  bool _isSearching = false; // Flag to show the back button
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      setState(() {
+        _isSearching = _focusNode.hasFocus; // Toggle based on focus
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Container(
-        decoration: const BoxDecoration(
-            color: kGreyColor,
-            borderRadius: BorderRadius.all(Radius.circular(50.0))),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        controller: widget.searchController,
+        focusNode: _focusNode,
+        onChanged: widget.onChanged,
+        decoration: InputDecoration(
+          hintText: widget.hintText,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          // Back button when search is active
+          prefixIcon: _isSearching
+              ? IconButton(
+                  icon: Icon(Icons.arrow_back_ios_new_rounded),
+                  onPressed: () {
+                    FocusScope.of(context).unfocus(); // Dismiss keyboard
+                    setState(() {
+                      _isSearching = false; // Exit search mode
+                    });
+                  },
+                )
+              : null,
+          // Search and clear buttons
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.search_outlined,
-                color: kOnGreyColor,
+              IconButton(
+                icon: Icon(Icons.search),
+                onPressed: widget.onSearch, // Handle search icon click
               ),
-              const SizedBox(width: 8.0),
-              Text(
-                "Search",
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: kOnGreyColor,
-                    ),
-              ),
+              widget.searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: widget.onClear, // Clear text action
+                    )
+                  : Container(), // Empty when no text is entered
             ],
           ),
         ),

@@ -109,6 +109,13 @@ flutter:
     - images/logo.svg
     - images/cat.svg
     - images/splash_screen_wp.jpg
+    - images/banner_image1_option1.jpg
+    - images/banner_image1_option2.jpg
+    - images/banner_image2_option2.jpg
+    - images/banner_image2.jpg
+    - images/banner_image3.jpg
+    - images/banner_image3_option2.jpg
+    - images/wallpaper_2.jpg
 
   fonts:
     - family: Circular
