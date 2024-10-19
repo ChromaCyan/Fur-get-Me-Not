@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_form.dar
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AdoptionRequestRepository {
-  final String baseUrl = 'http://localhost:5000/adoption';
+  final String baseUrl = 'http://192.168.115.106:5000/adoption';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {

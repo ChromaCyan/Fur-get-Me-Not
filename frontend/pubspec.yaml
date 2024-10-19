@@ -115,8 +115,7 @@ flutter:
     - images/banner_image2.jpg
     - images/banner_image3.jpg
     - images/banner_image3_option2.jpg
-    - images/wallpaper_2.jpg
-
+    
   fonts:
     - family: Circular
       fonts:

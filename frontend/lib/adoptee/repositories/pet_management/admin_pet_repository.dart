@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path/path.dart';
 
 class AdminPetRepository {
-  final String baseUrl = 'http://localhost:5000/pets';
+  final String baseUrl = 'http://192.168.115.106:5000/pets';
 
   final FlutterSecureStorage storage = FlutterSecureStorage();
 

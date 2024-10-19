@@ -23,4 +23,3 @@ class SendMessage extends ChatMessageEvent {
   @override
   List<Object> get props => [content, otherUserId];
 }
-

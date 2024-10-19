@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/adopter/models/chat/chat.dart';
 import 'package:fur_get_me_not/adopter/models/chat/chat_list.dart';
 
 class AdopterChatRepository {
-  final String baseUrl = 'http://localhost:5000';
+  final String baseUrl = 'http://192.168.115.106:5000';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -91,7 +91,6 @@ class AdopterChatRepository {
           'otherUserId': otherUserId,
         }),
       );
-
 
       if (response.statusCode != 200) {
         throw Exception('Failed to send message: ${response.reasonPhrase}');

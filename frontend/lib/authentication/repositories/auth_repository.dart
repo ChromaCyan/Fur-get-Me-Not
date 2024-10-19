@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class AuthRepository {
-  final String baseUrl = 'http://192.168.18.239:5000/users';
+  final String baseUrl = 'http://192.168.115.106:5000/users';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<Map<String, dynamic>> login({
@@ -70,7 +70,6 @@ class AuthRepository {
     }
   }
 
-
   Future<void> register({
     required BuildContext context,
     required String? profileImage,
@@ -85,7 +84,8 @@ class AuthRepository {
 
     try {
       // Create a multipart request
-      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/register'));
+      var request =
+          http.MultipartRequest('POST', Uri.parse('$baseUrl/register'));
 
       // Add the fields to the request
       request.fields['firstName'] = firstName;
@@ -97,7 +97,8 @@ class AuthRepository {
 
       // Add the file if it exists
       if (profileImage != null) {
-        request.files.add(await http.MultipartFile.fromPath('profileImage', profileImage));
+        request.files.add(
+            await http.MultipartFile.fromPath('profileImage', profileImage));
       }
 
       // Send the request
@@ -110,7 +111,8 @@ class AuthRepository {
       if (responseData.statusCode == 200 || responseData.statusCode == 201) {
         return;
       } else {
-        print('Registration failed: ${responseData.statusCode}, ${responseData.body}');
+        print(
+            'Registration failed: ${responseData.statusCode}, ${responseData.body}');
         throw Exception('Failed to register user: ${responseData.body}');
       }
     } catch (e) {
@@ -150,7 +152,8 @@ class AuthRepository {
         final imageUrl = json.decode(result)['imageUrl'];
         return imageUrl;
       } else {
-        throw Exception('Profile image upload failed: ${response.reasonPhrase}');
+        throw Exception(
+            'Profile image upload failed: ${response.reasonPhrase}');
       }
     } catch (e) {
       throw Exception('Failed to upload profile image: $e');
@@ -166,7 +169,8 @@ class AuthRepository {
   }) async {
     try {
       // Create a multipart request for user profile update
-      var request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/profile/$userId'));
+      var request =
+          http.MultipartRequest('PUT', Uri.parse('$baseUrl/profile/$userId'));
 
       // Add the fields
       request.fields['firstName'] = firstName;
@@ -216,7 +220,8 @@ class AuthRepository {
           'profile': data,
         };
       } else {
-        print('Failed to fetch profile: ${response.statusCode}, ${response.body}');
+        print(
+            'Failed to fetch profile: ${response.statusCode}, ${response.body}');
         return {
           'success': false,
           'message': response.body,
