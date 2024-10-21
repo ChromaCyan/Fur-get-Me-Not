@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fur_get_me_not/adopter/models/adoption_list/adoption_form.dart';
 
 class AdoptionFormRepository {
-  final String baseUrl = 'http://192.168.115.106:5000/adoption';
+  final String baseUrl = 'http://192.168.244.245:5000/adoption';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<bool> submitAdoptionForm(AdoptionFormModel adoptionForm) async {

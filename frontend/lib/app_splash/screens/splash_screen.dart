@@ -25,14 +25,6 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Full-screen background image
-          Positioned.fill(
-            child: Image.asset(
-              "images/wallpaper_2.jpg",  // Add your background image asset here
-              fit: BoxFit.cover        // Ensures the image covers the full screen
-            ),
-          ),
-          // Onboarding content
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -55,7 +47,8 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                 onTap: () async {
                   if (currentPage == onBoardData.length - 1) {
                     final storage = FlutterSecureStorage();
-                    await storage.write(key: 'onboarding_completed', value: 'true');
+                    await storage.write(
+                        key: 'onboarding_completed', value: 'true');
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
@@ -121,108 +114,105 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
   }
 
   Column onBoardingItems(Size size, int index) {
-  return Column(
-    children: [
-      Container(
-        height: size.height * 0.4,
-        width: size.width * 0.9,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              bottom: 0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: Container(
-                  height: 240,
-                  width: size.width * 0.9,
-                  color: orangeContainer,
+    return Column(
+      children: [
+        Container(
+          height: size.height * 0.4,
+          width: size.width * 0.9,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                bottom: 0,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Container(
+                    height: 240,
+                    width: size.width * 0.9,
+                    color: orangeContainer,
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 120,
-              child: SizedBox(
-                height: size.height * 0.3,
-                width: size.width * 0.5,
-                child: Image.asset(
-                  onBoardData[index].image,
-                  fit: BoxFit.contain,
+              Positioned(
+                bottom: 0,
+                right: 120,
+                child: SizedBox(
+                  height: size.height * 0.3,
+                  width: size.width * 0.5,
+                  child: Image.asset(
+                    onBoardData[index].image,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(height: 30),
-
-      // Conditionally display different text spans based on the index (page)
-      if (index == 0)
-        const Text.rich(
-          TextSpan(
-            style: TextStyle(
-              fontSize: 35,
-              color: black,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-            ),
-            children: [
-              TextSpan(text: "Fur-get-Me-Not"),
-
             ],
           ),
-          textAlign: TextAlign.center,
-        )
-      else if (index == 1)
-        const Text.rich(
-          TextSpan(
-            style: TextStyle(
-              fontSize: 35,
-              color: black,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-            ),
-            children: [
-              TextSpan(
-                text: "Adopter or Adoptee", 
+        ),
+        const SizedBox(height: 30),
+
+        // Conditionally display different text spans based on the index (page)
+        if (index == 0)
+          const Text.rich(
+            TextSpan(
+              style: TextStyle(
+                fontSize: 35,
+                color: black,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
               ),
-
-            ],
-          ),
-          textAlign: TextAlign.center,
-        )
-      else if (index == 2)
-        const Text.rich(
-          TextSpan(
-            style: TextStyle(
-              fontSize: 35,
-              color: black,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
+              children: [
+                TextSpan(text: "Fur-get-Me-Not"),
+              ],
             ),
-            children: [
-              TextSpan(
-                text: "Chat Sytem", 
+            textAlign: TextAlign.center,
+          )
+        else if (index == 1)
+          const Text.rich(
+            TextSpan(
+              style: TextStyle(
+                fontSize: 35,
+                color: black,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
               ),
-            ],
+              children: [
+                TextSpan(
+                  text: "Adopter or Adoptee",
+                ),
+              ],
+            ),
+            textAlign: TextAlign.center,
+          )
+        else if (index == 2)
+          const Text.rich(
+            TextSpan(
+              style: TextStyle(
+                fontSize: 35,
+                color: black,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+              ),
+              children: [
+                TextSpan(
+                  text: "Chat Sytem",
+                ),
+              ],
+            ),
+            textAlign: TextAlign.center,
           ),
+
+        const SizedBox(height: 10),
+        Text(
+          onBoardData[index].text,
           textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 15.5,
+            color: Colors.black,
+          ),
         ),
-
-      const SizedBox(height: 10),
-      Text(
-        onBoardData[index].text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 15.5,
-          color: Colors.black,
-        ),
-      ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 }

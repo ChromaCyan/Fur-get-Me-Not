@@ -1,17 +1,54 @@
 import 'dart:convert';
-import 'dart:io'; // Add this import for File handling
+import 'package:dio/dio.dart';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 
 class AdminPetRepository {
-  final String baseUrl = 'http://192.168.115.106:5000/pets';
+  final String baseUrl = 'http://192.168.244.245:5000/pets';
 
   final FlutterSecureStorage storage = FlutterSecureStorage();
+  final Dio _dio = Dio();
 
   Future<String?> getToken() async {
     return await storage.read(key: 'jwt');
+  }
+
+// Method to download the Excel file
+  Future<void> downloadExcel() async {
+    try {
+      final token = await getToken();
+      final response = await _dio.get(
+        '$baseUrl/export-excel', // Ensure this URL points to your export route
+        options: Options(
+          responseType: ResponseType.bytes,
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        // Get the downloads directory
+        final Directory downloadsDirectory =
+            Directory('C:\\Users\\Joaquin\\Downloads');
+        final String filePath = '${downloadsDirectory.path}\\pet_table.xlsx';
+
+        // Save the file
+        final File file = File(filePath);
+        await file.writeAsBytes(response.data);
+
+        print('Excel file downloaded at: $filePath');
+      } else {
+        throw Exception(
+            'Failed to download Excel file: ${response.statusMessage}');
+      }
+    } catch (e) {
+      throw Exception('Failed to download Excel file: $e');
+    }
   }
 
   // Upload pet image

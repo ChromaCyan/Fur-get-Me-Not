@@ -7,6 +7,8 @@ const { uploadPetImage } = require('../middleware/uploadMiddleware');
 // Use middleware to verify JWT for all pet routes
 router.use(verifyToken);
 
+router.get('/export-excel', petController.exportPets);
+
 // Route for Adoptees to create a pet listing (Create)
 router.post("/add-pet", isAdoptee, petController.createPet);
 

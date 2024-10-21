@@ -60,7 +60,7 @@ mongoose
   .catch((error) => console.log("MongoDB connection error: ", error));
 
 app.listen(port, () => {
-  console.log(`Server is running on port http://localhost:${port}`);
+  console.log(`Server is running on port http://192.168.244.245:${port}`);
 });
 
 // Export upload for use in other modules
