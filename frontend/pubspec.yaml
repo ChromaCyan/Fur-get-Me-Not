@@ -118,6 +118,10 @@ flutter:
     - images/banner_image2.jpg
     - images/banner_image3.jpg
     - images/banner_image3_option2.jpg
+    - images/wallpaper_2.jpg
+    - images/chat_splash.png
+    - images/adopter_adoptee.png
+    - images/fur_get_me_not_color_only.png
 
   fonts:
     - family: Circular
