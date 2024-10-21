@@ -133,17 +133,17 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
           ),
           child: Stack(
             children: [
-              Positioned(
-                bottom: 0,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(50),
-                  child: Container(
-                    height: 240,
-                    width: size.width * 0.9,
-                    // color: black,
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   bottom: 0,
+              //   child: ClipRRect(
+              //     borderRadius: BorderRadius.circular(50),
+              //     child: Container(
+              //       height: 240,
+              //       width: size.width * 0.9,
+              //       // color: black,
+              //     ),
+              //   ),
+              // ),
               Positioned(
                 top: 55,
                 bottom: 0,
