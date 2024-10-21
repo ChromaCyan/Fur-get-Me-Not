@@ -25,6 +25,14 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
     return Scaffold(
       body: Stack(
         children: [
+          // Full-screen background image
+          Positioned.fill(
+            child: Image.asset(
+              "images/wallpaper_2.jpg",  // Add your background image asset here
+              fit: BoxFit.cover,        // Ensures the image covers the full screen
+            ),
+          ),
+
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -67,7 +75,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                   height: 70,
                   width: size.width * 0.6,
                   decoration: BoxDecoration(
-                    color: buttonColor,
+                    color: orangeContainer,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Center(
@@ -76,8 +84,9 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                           ? "Get Started!"
                           : "Continue",
                       style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -131,15 +140,16 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
                   child: Container(
                     height: 240,
                     width: size.width * 0.9,
-                    color: orangeContainer,
+                    // color: black,
                   ),
                 ),
               ),
               Positioned(
+                top: 55,
                 bottom: 0,
-                right: 120,
+                right: 100,
                 child: SizedBox(
-                  height: size.height * 0.3,
+                  height: size.height * 0.5,
                   width: size.width * 0.5,
                   child: Image.asset(
                     onBoardData[index].image,
@@ -179,7 +189,7 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
               ),
               children: [
                 TextSpan(
-                  text: "Adopter or Adoptee",
+                  text: "Adopter & Adoptee",
                 ),
               ],
             ),
