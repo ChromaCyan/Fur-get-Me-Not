@@ -9,12 +9,14 @@ class ChatScreen extends StatefulWidget {
   final String userName;
   final String profileImageUrl;
   final String chatId;
+  final String otherUserId;
 
   const ChatScreen({
     Key? key,
     required this.userName,
     required this.profileImageUrl,
     required this.chatId,
+    required this.otherUserId,
   }) : super(key: key);
 
   @override
@@ -34,8 +36,16 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch messages when the screen is loaded
-    context.read<ChatBloc>().add(FetchMessages(widget.chatId));
+    _fetchMessages(); // Fetch messages when the screen is initialized
+  }
+
+  // Fetch messages based on current chatId or otherUserId
+  void _fetchMessages() {
+    if (widget.chatId.isNotEmpty) {
+      context.read<ChatBloc>().add(FetchMessages(widget.chatId));
+    } else {
+      context.read<ChatBloc>().add(FetchMessages(widget.otherUserId));
+    }
   }
 
   @override
@@ -46,8 +56,19 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  void didUpdateWidget(ChatScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Check if the user has switched to a different otherUserId
+    if (oldWidget.otherUserId != widget.otherUserId) {
+      // Fetch messages for the new user
+      _fetchMessages();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: ChatAppBar(
         userName: widget.userName,
         profileImageUrl: widget.profileImageUrl,
@@ -58,7 +79,6 @@ class _ChatScreenState extends State<ChatScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ChatMessageLoaded) {
             _scrollToBottom();
-
             return Column(
               children: [
                 Expanded(
@@ -89,29 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                   ),
                 ),
-                // Message input field
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          onSubmitted: (text) {
-                            if (text.isNotEmpty) {
-                              context.read<ChatBloc>().add(SendMessage(text, widget.chatId)); // Use chatId here
-                              _messageController.clear();
-                            }
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Type a message',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildMessageInput(),
               ],
             );
           } else if (state is ChatMessageError) {
@@ -128,15 +126,65 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<ChatBloc>().add(FetchMessages(widget.chatId)); // Retry fetching messages
+                    context.read<ChatBloc>().add(FetchMessages(widget.chatId.isNotEmpty ? widget.chatId : widget.otherUserId)); // Retry fetching messages
                   },
                   child: const Text('Retry'),
                 ),
               ],
             );
           }
-          return Container(); // Fallback case
+          return Column(
+            children: [
+              Expanded(child: Container()),
+              _buildMessageInput(),
+            ],
+          );
         },
+      ),
+    );
+  }
+
+  Widget _buildMessageInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              onSubmitted: (text) {
+                if (text.isNotEmpty) {
+                  context.read<ChatBloc>().add(
+                    SendMessage(
+                      text,
+                      widget.chatId.isNotEmpty ? widget.chatId : widget.otherUserId,
+                    ),
+                  );
+                  _messageController.clear();
+                }
+              },
+              decoration: const InputDecoration(
+                labelText: 'Type a message',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send),
+            onPressed: () {
+              final text = _messageController.text;
+              if (text.isNotEmpty) {
+                context.read<ChatBloc>().add(
+                  SendMessage(
+                    text,
+                    widget.chatId.isNotEmpty ? widget.chatId : widget.otherUserId,
+                  ),
+                );
+                _messageController.clear();
+              }
+            },
+          ),
+        ],
       ),
     );
   }

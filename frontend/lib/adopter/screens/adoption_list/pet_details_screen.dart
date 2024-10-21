@@ -4,7 +4,6 @@ import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_event.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_details/pet_details_state.dart';
-import 'package:fur_get_me_not/config/const.dart';
 import 'package:fur_get_me_not/widgets/buttons/back_button.dart';
 import 'package:fur_get_me_not/widgets/pet_details/medical_card.dart';
 import 'package:fur_get_me_not/widgets/pet_details/vaccine_card.dart';

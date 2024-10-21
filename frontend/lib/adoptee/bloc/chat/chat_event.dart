@@ -23,9 +23,3 @@ class SendMessage extends ChatMessageEvent {
   @override
   List<Object> get props => [content, otherUserId];
 }
-
-class FetchMessagesByChatId extends ChatMessageEvent {
-  final String chatId;
-
-  FetchMessagesByChatId(this.chatId);
-}

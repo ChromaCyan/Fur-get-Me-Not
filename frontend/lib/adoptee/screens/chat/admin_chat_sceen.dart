@@ -10,12 +10,14 @@ class ChatScreen extends StatefulWidget {
   final String userName;
   final String profileImageUrl;
   final String chatId;
+  final String otherUserId;
 
   const ChatScreen({
     Key? key,
     required this.userName,
     required this.profileImageUrl,
     required this.chatId,
+    required this.otherUserId,
   }) : super(key: key);
 
   @override
@@ -24,7 +26,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
-  final TextEditingController _messageController = TextEditingController(); // Controller for text field
+  final TextEditingController _messageController = TextEditingController();
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -35,7 +37,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch messages when the screen is initialized
     BlocProvider.of<AdminChatBloc>(context).add(FetchMessages(widget.chatId));
   }
 
@@ -58,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
           if (state is ChatMessageLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ChatMessageLoaded) {
-            _scrollToBottom(); // Scroll to the bottom when messages are loaded
+            _scrollToBottom();
 
             return Column(
               children: [
@@ -100,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           controller: _messageController,
                           onSubmitted: (text) {
                             if (text.isNotEmpty) {
-                              context.read<AdminChatBloc>().add(SendMessage(text, widget.userName));
+                              context.read<AdminChatBloc>().add(SendMessage(text, widget.otherUserId));
                               _messageController.clear();
                             }
                           },
@@ -129,14 +130,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<AdminChatBloc>().add(FetchMessages(widget.chatId));
+                    context.read<AdminChatBloc>().add(FetchMessages(widget.otherUserId));
                   },
                   child: const Text('Retry'),
                 ),
               ],
             );
           }
-          return Container(); // Fallback case
+          return Container();
         },
       ),
     );

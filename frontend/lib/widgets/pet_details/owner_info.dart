@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/adopter/screens/chat/chat_screen.dart';
 import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.dart';
-import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
 
 class OwnerInfo extends StatelessWidget {
   final String firstName;
@@ -46,42 +45,21 @@ class OwnerInfo extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () async {
-            final repository = AdopterChatRepository();
-
-            if (chatId != null) {
-              // Load existing chat
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(
-                    chatId: chatId!,
-                    userName: '$firstName $lastName',
-                    profileImageUrl: profileImageUrl,
-                  ),
+          onTap: () {
+            print('Navigating to ChatScreen with:');
+            print('chatId: ${chatId ?? 'No chatId available'}');
+            print('otherUserId: $otherUserId');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  chatId: chatId ?? '',
+                  userName: '$firstName $lastName',
+                  profileImageUrl: profileImageUrl,
+                  otherUserId: otherUserId,
                 ),
-              );
-            } else {
-              try {
-                final newChatId = await repository.sendMessage(
-                    'Hi! Let\'s chat!', otherUserId);
-
-                // Navigate to the new chat screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatScreen(
-                      chatId: newChatId,
-                      userName: '$firstName $lastName',
-                      profileImageUrl: profileImageUrl,
-                    ),
-                  ),
-                );
-              } catch (error) {
-                // Handle error gracefully
-                print('Error creating new chat: $error');
-              }
-            }
+              ),
+            );
           },
           child: Container(
             padding: const EdgeInsets.all(10),

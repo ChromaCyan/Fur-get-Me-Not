@@ -45,6 +45,7 @@ class AdminChatCard extends StatelessWidget {
                 userName: chat.otherUserName,
                 profileImageUrl: 'images/image1.png',
                 chatId: chat.otherUserId,
+                otherUserId: chat.otherUserId,
               ),
             ),
           );

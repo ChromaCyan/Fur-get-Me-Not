@@ -24,7 +24,6 @@ class ChatBloc extends Bloc<ChatMessageEvent, ChatMessageState> {
       emit(ChatMessageLoading());
       try {
         await chatRepository.sendMessage(event.content, event.otherUserId);
-        // Optionally, fetch messages again after sending a message
         final messages = await chatRepository.fetchMessagesForUser(event.otherUserId);
         emit(ChatMessageLoaded(messages));
       } catch (e) {

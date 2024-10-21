@@ -4,7 +4,7 @@ import 'package:fur_get_me_not/adopter/models/adoption_list/pet.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class PetRepository {
-  final String baseUrl = 'http://192.168.244.245:5000/pets';
+  final String baseUrl = 'http://localhost:5000/pets';
 
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
