@@ -96,7 +96,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           // Back button when search is active
           prefixIcon: _isSearching
               ? IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new_rounded),
+                  icon: Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFFFE9879),),
                   onPressed: () {
                     FocusScope.of(context).unfocus(); // Dismiss keyboard
                     setState(() {
@@ -110,12 +110,12 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: Icon(Icons.search),
-                onPressed: widget.onSearch, // Handle search icon click
+                icon: Icon(Icons.search, color: Color.fromARGB(255, 171, 171, 171),),
+                onPressed: null, // Handle search icon click
               ),
               widget.searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: Icon(Icons.clear),
+                      icon: Icon(Icons.clear, color: Color(0xFFFE9879),),
                       onPressed: widget.onClear, // Clear text action
                     )
                   : Container(), // Empty when no text is entered

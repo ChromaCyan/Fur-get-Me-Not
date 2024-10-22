@@ -122,6 +122,7 @@ flutter:
     - images/chat_splash.png
     - images/adopter_adoptee.png
     - images/fur_get_me_not_color_only.png
+    - images/loading_screen.gif
 
   fonts:
     - family: Circular

@@ -10,7 +10,7 @@ List<OnBoards> onBoardData = [
     image: "images/fur_get_me_not_color_only.png",
   ),
   OnBoards(
-    text: "Become an Adopter and look for your first or next\nfurry companion, listed for adoption by an adoptee.\n\nOr become an Adoptee and list your\nfurbaby for adoption to be adopted by adopters",
+    text: "Become an Adopter\nand look for your first or next furry\nfriend, listed for adoption by an adoptee.\n\nOr become an Adoptee and list your furbaby\nfor adoption to be adopted by adopters.",
     image: "images/adopter_adoptee.png",
   ),
   OnBoards(
