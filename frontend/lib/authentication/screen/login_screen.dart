@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Card(
                   elevation: 8,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(40),
                   ),
                   color: Colors.white.withOpacity(0.9),
                   child: Padding(
@@ -210,15 +210,16 @@ Widget signInButton(BuildContext context) {
         },
         child: Container(
           alignment: Alignment.center,
+          width: 235,
           height: 60,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50.0),
+            borderRadius: BorderRadius.circular(25.0),
             color: const Color(0xFF21899C),
           ),
           child: Text(
             'Sign In',
             style: GoogleFonts.inter(
-                fontSize: 16.0,
+                fontSize: 20.0,
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
                 height: 1.5

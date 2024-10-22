@@ -140,17 +140,17 @@ class _PetsOnBoardingScreenState extends State<PetsOnBoardingScreen> {
               //     child: Container(
               //       height: 240,
               //       width: size.width * 0.9,
-              //       // color: black,
+              //       color: black,
               //     ),
               //   ),
               // ),
               Positioned(
-                top: 55,
+                top: 75,
                 bottom: 0,
-                right: 100,
+                right: 0,
                 child: SizedBox(
-                  height: size.height * 0.5,
-                  width: size.width * 0.5,
+                  height: size.height * 0.9,
+                  width: size.width * 0.9,
                   child: Image.asset(
                     onBoardData[index].image,
                     fit: BoxFit.contain,

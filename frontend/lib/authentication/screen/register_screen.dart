@@ -52,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Card(
                   elevation: 8,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: BorderRadius.circular(40),
                   ),
                   color: Colors.white.withOpacity(0.9),
                   child: Padding(
@@ -359,30 +359,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
               //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred during registration: ${e.toString()}')));
               // }
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
+             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
               shadowColor: Colors.transparent,
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+              padding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(25),
               ),
+              fixedSize: Size(240, 60),
             ),
-            child: state is AuthLoading
-                ? SizedBox(
+            child: state is AuthLoading ? SizedBox(
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
                 color: Colors.white,
                 strokeWidth: 2.5,
               ),
-            )
-                : Text(
+            ) : Text(
               'Register',
               style: GoogleFonts.inter(
-                fontSize: 18.0,
-                color: Colors.green,
-                fontWeight: FontWeight.w600,
+                fontSize: 20.0,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                height: 1.5,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         );
