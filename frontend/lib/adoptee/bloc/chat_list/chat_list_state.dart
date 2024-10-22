@@ -12,12 +12,14 @@ class ChatListLoading extends ChatListState {}
 
 class ChatListLoaded extends ChatListState {
   final List<AdminChatList> chats;
+  final int unreadCount;
 
-  ChatListLoaded(this.chats);
+  ChatListLoaded(this.chats, this.unreadCount);
 
   @override
-  List<Object> get props => [chats];
+  List<Object> get props => [chats, unreadCount];
 }
+
 
 class ChatListError extends ChatListState {
   final String message;

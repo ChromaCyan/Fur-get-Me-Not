@@ -14,12 +14,14 @@ class AdoptionRequestLoading extends AdoptionRequestState {}
 
 class AdoptionRequestLoaded extends AdoptionRequestState {
   final List<AdoptionRequest> requests;
+  final int unreadCount;
 
-  const AdoptionRequestLoaded({required this.requests});
+  const AdoptionRequestLoaded({required this.requests, required this.unreadCount});
 
   @override
-  List<Object> get props => [requests];
+  List<Object> get props => [requests, unreadCount];
 }
+
 
 class AdoptionRequestError extends AdoptionRequestState {
   final String message;

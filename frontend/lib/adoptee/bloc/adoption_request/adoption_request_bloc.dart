@@ -8,13 +8,15 @@ import 'adoption_request_state.dart';
 
 class AdoptionRequestBloc extends Bloc<AdoptionRequestEvent, AdoptionRequestState> {
   final AdoptionRequestRepository repository;
+  int unreadRequestCount = 0; // Track the unread request count
 
   AdoptionRequestBloc({required this.repository}) : super(AdoptionRequestInitial()) {
     on<LoadAdoptionRequests>((event, emit) async {
       emit(AdoptionRequestLoading());
       try {
-        final requests = await repository.fetchAdoptionRequests(); // Changed to fetchAdoptionRequests
-        emit(AdoptionRequestLoaded(requests: requests));
+        final requests = await repository.fetchAdoptionRequests();
+        unreadRequestCount = requests.where((request) => request.requestStatus != 'Adoption Completed').length;
+        emit(AdoptionRequestLoaded(requests: requests, unreadCount: unreadRequestCount));
       } catch (e) {
         emit(AdoptionRequestError(message: 'Failed to load adoption requests'));
       }
@@ -25,15 +27,14 @@ class AdoptionRequestBloc extends Bloc<AdoptionRequestEvent, AdoptionRequestStat
         final currentState = state as AdoptionRequestLoaded;
         final updatedRequests = List<AdoptionRequest>.from(currentState.requests);
 
-        // Call the repository to update the status using the requestId
         await repository.updateAdoptionRequestStatus(event.requestId, updatedRequests[event.index], event.newStatus);
-
-        // Update the request status locally
         updatedRequests[event.index].requestStatus = event.newStatus;
 
-        emit(AdoptionRequestLoaded(requests: updatedRequests));
+        unreadRequestCount = updatedRequests.where((request) => request.requestStatus != 'Adoption Completed').length;
+
+        emit(AdoptionRequestLoaded(requests: updatedRequests, unreadCount: unreadRequestCount));
       }
     });
-
   }
 }
+

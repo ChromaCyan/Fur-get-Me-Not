@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/adoptee/repositories/chat/admin_chat_list_repository.dart';
+import 'package:fur_get_me_not/adoptee/models/chat/admin_chat.dart';
 import 'package:fur_get_me_not/adoptee/bloc/chat/chat_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/chat/chat_event.dart';
 import 'package:fur_get_me_not/adoptee/bloc/chat/chat_state.dart';
@@ -27,6 +28,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  bool _hasViewedChat = false; // Track if the chat has been viewed
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -34,17 +36,18 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void _markMessagesAsRead(List<AdminChatMessage> messages) {
+    for (var message in messages) {
+      if (message.senderId != widget.otherUserId) {
+        message.isUnread = false;
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     BlocProvider.of<AdminChatBloc>(context).add(FetchMessages(widget.chatId));
-  }
-
-  @override
-  void dispose() {
-    _messageController.dispose();
-    _scrollController.dispose();
-    super.dispose();
   }
 
   @override
@@ -59,6 +62,10 @@ class _ChatScreenState extends State<ChatScreen> {
           if (state is ChatMessageLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ChatMessageLoaded) {
+            if (!_hasViewedChat) {
+              _markMessagesAsRead(state.messages);
+              _hasViewedChat = true;
+            }
             _scrollToBottom();
 
             return Column(
@@ -142,4 +149,12 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
 }
+

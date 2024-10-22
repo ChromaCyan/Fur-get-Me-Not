@@ -8,14 +8,14 @@ abstract class AdoptionRequestEvent extends Equatable {
 class LoadAdoptionRequests extends AdoptionRequestEvent {}
 
 class UpdateAdoptionRequestStatus extends AdoptionRequestEvent {
-  final String requestId; // The requestId of the adoption request
-  final String newStatus;  // The new status for the request
-  final int index;         // The index of the request in the list
+  final String requestId;
+  final String newStatus;
+  final int index;
 
   UpdateAdoptionRequestStatus({
     required this.requestId,
     required this.newStatus,
-    required this.index,  // Include the index in the constructor
+    required this.index,
   });
 
   @override

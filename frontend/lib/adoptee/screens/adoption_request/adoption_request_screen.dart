@@ -4,9 +4,17 @@ import 'package:fur_get_me_not/adoptee/bloc/adoption_request/adoption_request_bl
 import 'package:fur_get_me_not/adoptee/bloc/adoption_request/adoption_request_event.dart';
 import 'package:fur_get_me_not/adoptee/bloc/adoption_request/adoption_request_state.dart';
 import 'package:fur_get_me_not/adoptee/repositories/adoption_request/adoption_request_repository.dart';
+import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.dart';
 import 'package:fur_get_me_not/widgets/cards/adoption_request_card.dart';
 
 class AdoptionRequestListScreen extends StatelessWidget {
+  final Function(int, List<String>) onRequestCountUpdated;
+
+  const AdoptionRequestListScreen({
+    Key? key,
+    required this.onRequestCountUpdated,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -19,9 +27,21 @@ class AdoptionRequestListScreen extends StatelessWidget {
             if (state is AdoptionRequestLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is AdoptionRequestLoaded) {
+              // Defer the count update to after the frame
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                // Track unread requests using your criteria
+                List<String> unreadRequestIds = state.requests
+                    .where((request) => isUnread(request)) // Check if request is unread
+                    .map((request) => request.requestId)
+                    .toList();
+
+                onRequestCountUpdated(state.requests.length, unreadRequestIds);
+              });
+
               if (state.requests.isEmpty) {
                 return Center(child: Text('No adoption requests found.'));
               }
+
               return ListView.builder(
                 itemCount: state.requests.length,
                 itemBuilder: (context, index) {
@@ -49,4 +69,9 @@ class AdoptionRequestListScreen extends StatelessWidget {
       ),
     );
   }
+
+  bool isUnread(AdoptionRequest request) {
+    return request.requestStatus == "pending";
+  }
 }
+

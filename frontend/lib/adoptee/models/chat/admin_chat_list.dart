@@ -4,6 +4,7 @@ class AdminChatList {
   final DateTime updatedAt;
   final String otherUserId; // Added to store user ID
   final String otherUserName; // Keep full name as before
+  final bool isRead;
 
   AdminChatList({
     required this.chatId,
@@ -11,6 +12,7 @@ class AdminChatList {
     required this.updatedAt,
     required this.otherUserId,
     required this.otherUserName,
+    this.isRead = false,
   });
 
   factory AdminChatList.fromJson(Map<String, dynamic> json) {

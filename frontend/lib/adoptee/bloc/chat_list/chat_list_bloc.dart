@@ -8,10 +8,14 @@ class AdminChatListBloc extends Bloc<ChatEvent, ChatListState> {
 
   AdminChatListBloc(this.adminChatRepository) : super(ChatListInitial()) {
     on<FetchChats>((event, emit) async {
-      emit(ChatListLoading()); // Emit the loading state
+      emit(ChatListLoading()); // Emit loading state
       try {
         final chats = await adminChatRepository.fetchAdminChatList();
-        emit(ChatListLoaded(chats)); // Emit the loaded state with chats
+
+        // Calculate unread messages count
+        int unreadCount = chats.where((chat) => !chat.isRead).length;
+
+        emit(ChatListLoaded(chats, unreadCount));
       } catch (e) {
         emit(ChatListError('Failed to load chats: $e'));
       }

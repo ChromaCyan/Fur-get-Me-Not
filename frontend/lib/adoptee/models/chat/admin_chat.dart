@@ -5,6 +5,7 @@ class AdminChatMessage {
   final String senderName;
   final String recipientName;
   final DateTime timestamp;
+  bool isUnread;
 
   AdminChatMessage({
     required this.chatId,
@@ -13,6 +14,7 @@ class AdminChatMessage {
     required this.senderName,
     required this.recipientName,
     required this.timestamp,
+    this.isUnread = true,
   });
 
   factory AdminChatMessage.fromJson(Map<String, dynamic> json) {
@@ -23,8 +25,8 @@ class AdminChatMessage {
       content: json['content'] as String,
       senderName: json['senderName'] as String,
       recipientName: json['recipientName'] as String,
-      // Ensure the timestamp is parsed correctly as a string
       timestamp: DateTime.parse(json['timestamp'] as String),
+      isUnread: true,
     );
   }
 }
