@@ -45,23 +45,23 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
     return BlocProvider(
       create: (context) => BottomNavCubit(),
       child: Scaffold(
-        // appBar: AppBar(
-        //   elevation: 0,
-        //   backgroundColor: Colors.transparent,
-        //   title: AnimatedSwitcher(
-        //     duration: const Duration(milliseconds: 300),
-        //     child: Text(
-        //       _getDynamicTitle(context),
-        //       key: ValueKey<int>(_selectedIndex),
-        //       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-        //         fontWeight: FontWeight.bold,
-        //         color: Colors.black54,
-        //       ),
-        //       textAlign: TextAlign.center,
-        //     ),
-        //   ),
-        // ),
-        // drawer: AppDrawer(),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: Text(
+              _getDynamicTitle(context),
+              key: ValueKey<int>(_selectedIndex),
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        drawer: AppDrawer(),
         body: SafeArea(
           child: PageView(
             controller: _pageController,

@@ -15,19 +15,19 @@ class ReusableCarousel extends StatelessWidget {
         autoPlay: true,
         viewportFraction: 1.0, // Fill the entire width
         autoPlayInterval: const Duration(seconds: 5),
-        autoPlayAnimationDuration: const Duration(milliseconds: 1000),
+        autoPlayAnimationDuration: const Duration(milliseconds: 1600),
         autoPlayCurve: Curves.fastOutSlowIn,
       ),
       items: items.map((item) {
         return Container(
           decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade900,
-                blurRadius: 14,
-                offset: const Offset(2, 3),
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.grey.shade900,
+            //     blurRadius: 14,
+            //     offset: const Offset(2, 3),
+            //   ),
+            // ],
             borderRadius: BorderRadius.circular(0), // No rounded corners
             color: const Color(0xFFFE9879),
           ),
