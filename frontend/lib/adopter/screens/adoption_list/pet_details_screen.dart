@@ -19,9 +19,7 @@ class PetDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use the bloc
     final petDetailsBloc = BlocProvider.of<PetDetailsBloc>(context);
-    // Dispatch an event to load pet details
     petDetailsBloc.add(LoadPetDetailsEvent(petId: petId));
 
     return Scaffold(
@@ -55,8 +53,6 @@ class _PetDetailsView extends StatefulWidget {
 }
 
 class _PetDetailsViewState extends State<_PetDetailsView> {
-  bool showPetInfo = true;
-  bool showVaccineHistory = false;
   late ScrollController _scrollController;
   double _offset = 0;
 
@@ -85,21 +81,19 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
       height: size.height,
       child: Stack(
         children: [
-          // BG with parallax effect
           itemsImageAndBackground(size),
-
-          // Content with scrolling
           Positioned(
             bottom: 0,
             child: SizedBox(
               height: size.height,
               width: size.width,
               child: CustomScrollView(
+                physics: const NeverScrollableScrollPhysics(),
                 controller: _scrollController,
                 slivers: [
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: size.height * 0.5, // Image height
+                      height: size.height * 0.5,
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -107,14 +101,21 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       height: size.height * 0.52,
                       width: size.width,
                       decoration: const BoxDecoration(
+                        // gradient: LinearGradient(
+                        //   colors: [Color(0xFFFE9879), Color(0xFF21899C)],
+                        //   begin: Alignment.topLeft,
+                        //   end: Alignment.bottomRight,
+                        // ),
+
                         color: Colors.white,
                         borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(30),
+                          top: Radius.circular(0),
                         ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
                           child: Column(
                             children: [
                               const SizedBox(height: 20),
@@ -129,17 +130,22 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                                 otherUserId: widget.pet.adoptee.id,
                               ),
                               const SizedBox(height: 20),
-                              buildToggleButtons(),
+
+                              // Pet Info TextButton
+                              const Text(
+                                'Pet Info',
+                                style: TextStyle(
+                                  fontSize: 20, 
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 20),
-                              showPetInfo
-                                  ? PetInfoWidget(pet: widget.pet)
-                                  : showVaccineHistory
-                                      ? VaccineHistoryWidget(
-                                          vaccineHistory:
-                                              widget.pet.vaccineHistory)
-                                      : MedicalHistoryWidget(
-                                          medicalHistory:
-                                              widget.pet.medicalHistory),
+
+                              // PetInfoWidget displayed by default
+                              PetInfoWidget(pet: widget.pet),
+                              const SizedBox(height: 20),
+                              
+                              buildToggleButtons(),
                               const SizedBox(height: 20),
                               adoptMeButton(context),
                               const SizedBox(height: 50),
@@ -148,21 +154,20 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                         ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
-
           // Positioned BackButtonWidget
           Positioned(
             top: 40,
             left: 15,
             child: Container(
-              padding: const EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(3.0),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: BorderRadius.circular(17.0),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -175,8 +180,8 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               child: BackButtonWidget(
                 onPressed: () =>
                     Navigator.of(context).pop(), // Ensures navigation back
-                color: Colors.black,
-                iconSize: 24.0,
+                // color: Colors.black,
+                iconSize: 30.0,
               ),
             ),
           ),
@@ -200,10 +205,6 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
               widget.pet.breed,
               style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
             ),
-            // const Text(
-            //   "Address or location",
-            //   style: TextStyle(fontSize: 16, color: Colors.grey),
-            // ),
           ],
         ),
       ],
@@ -214,35 +215,93 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        ToggleButton(
-          label: 'Pet Info',
-          isSelected: showPetInfo,
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // Adjust radius
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16), // Adjust size
+            backgroundColor: Color(0xFF21899C), // Change color
+            elevation: 5,
+          ).copyWith(
+            overlayColor: MaterialStateProperty.all(Color(0xFFFE9879)),
+          ),
           onPressed: () {
-            setState(() {
-              showPetInfo = true;
-              showVaccineHistory = false;
-            });
+            showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // Use min size for dialog
+                      children: [
+                        VaccineHistoryWidget(vaccineHistory: widget.pet.vaccineHistory),
+                        const SizedBox(height: 20), // Spacing before the button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: Text('Close', style: TextStyle(color: Colors.red)), // Customize text style if needed
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
           },
+          child: const Text('Vaccine History', style: TextStyle(color: Colors.white)),
         ),
-        ToggleButton(
-          label: 'Vaccine History',
-          isSelected: showVaccineHistory,
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15), // Adjust radius
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16), // Adjust size
+            backgroundColor: Color(0xFF21899C), // Change color
+            elevation: 5,
+          ).copyWith(
+            overlayColor: MaterialStateProperty.all(Color(0xFFFE9879)),
+          ),
           onPressed: () {
-            setState(() {
-              showPetInfo = false;
-              showVaccineHistory = true;
-            });
+            showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min, // Use min size for dialog
+                      children: [
+                        MedicalHistoryWidget(medicalHistory: widget.pet.medicalHistory),
+                        const SizedBox(height: 20), // Spacing before the button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: Text('Close', style: TextStyle(color: Colors.red)), // Customize text style if needed
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
           },
-        ),
-        ToggleButton(
-          label: 'Medical History',
-          isSelected: !showPetInfo && !showVaccineHistory,
-          onPressed: () {
-            setState(() {
-              showPetInfo = false;
-              showVaccineHistory = false;
-            });
-          },
+          child: const Text('Medical History', style: TextStyle(color: Colors.white)),
         ),
       ],
     );
@@ -269,7 +328,6 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
   Widget adoptMeButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the AdoptionForm with the petId
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -277,82 +335,25 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
           ),
         );
       },
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Colors.green,
-        ),
-        child: const Center(
-          child: Text(
-            'Adopt Me',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            ),
+      child: Center(
+        child: Container(
+          height: 60,
+          width: 285,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.green,
           ),
-        ),
-      ),
-    );
-  }
-
-  ClipRRect moreInfo(
-      Color pawColor, Color backgroundColor, String title, String value) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: -20,
-            right: -20,
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: backgroundColor,
+          child: const Center(
+            child: Text(
+              'Adopt Me',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
-          Container(
-            height: 60,
-            width: 100,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

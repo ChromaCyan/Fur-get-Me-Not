@@ -12,9 +12,10 @@ class PetInfoWidget extends StatelessWidget {
 
     return Container(
       width: screenWidth * 0.85, // 85% of the screen width
+      constraints: BoxConstraints(minHeight: 250), // Fixed maximum height
       decoration: BoxDecoration(
         color: Colors.white, // Background color
-        borderRadius: BorderRadius.circular(12), // Rounded corners
+        borderRadius: BorderRadius.circular(25), // Rounded corners
         boxShadow: [
           BoxShadow(
             color: Colors.black26, // Shadow color
@@ -28,92 +29,15 @@ class PetInfoWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min, // Allow height to adjust based on content
           children: [
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(4.0),
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Age",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "${pet.age} years",
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFE9879)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(4.0),
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Height",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "${pet.height} cm",
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFE9879)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(4.0),
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Weight",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "${pet.weight} kg",
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFE9879)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildInfoBox("Age", "${pet.age} years"),
+                _buildInfoBox("Height", "${pet.height} cm"),
+                _buildInfoBox("Weight", "${pet.weight} kg"),
               ],
             ),
             const SizedBox(height: 8),
@@ -137,6 +61,35 @@ class PetInfoWidget extends StatelessWidget {
                   fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoBox(String title, String value) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Ensure it adjusts height based on content
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFE9879)),
+            ),
           ],
         ),
       ),

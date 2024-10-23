@@ -11,9 +11,10 @@ class VaccineHistoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.85, // 85% of screen width
+      height: 350, // Fixed height for the container
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -36,24 +37,34 @@ class VaccineHistoryWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            _buildInfoContainer('Vaccine Name', vaccineHistory.vaccineName),
-            _buildInfoContainer(
-              'Vaccination Date',
-              vaccineHistory.vaccinationDate.toLocal().toString().split(' ')[0],
-            ),
-            if (vaccineHistory.nextDueDate != null)
-              _buildInfoContainer(
-                'Next Due Date',
-                vaccineHistory.nextDueDate!.toLocal().toString().split(' ')[0],
+            Expanded(
+              child: SingleChildScrollView( // Allow scrolling for overflowing content
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildInfoContainer('Vaccine Name', vaccineHistory.vaccineName),
+                    _buildInfoContainer(
+                      'Vaccination Date',
+                      vaccineHistory.vaccinationDate.toLocal().toString().split(' ')[0],
+                    ),
+                    if (vaccineHistory.nextDueDate != null)
+                      _buildInfoContainer(
+                        'Next Due Date',
+                        vaccineHistory.nextDueDate!.toLocal().toString().split(' ')[0],
+                      ),
+                    if (vaccineHistory.veterinarianName != null)
+                      _buildInfoContainer(
+                          'Veterinarian', vaccineHistory.veterinarianName!),
+                    if (vaccineHistory.clinicName != null)
+                      _buildInfoContainer('Clinic', vaccineHistory.clinicName!),
+                    if (vaccineHistory.notes != null)
+                      _buildInfoContainer('Notes', vaccineHistory.notes!),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
-            if (vaccineHistory.veterinarianName != null)
-              _buildInfoContainer(
-                  'Veterinarian', vaccineHistory.veterinarianName!),
-            if (vaccineHistory.clinicName != null)
-              _buildInfoContainer('Clinic', vaccineHistory.clinicName!),
-            if (vaccineHistory.notes != null)
-              _buildInfoContainer('Notes', vaccineHistory.notes!),
-            const SizedBox(height: 8),
+            ),
           ],
         ),
       ),
@@ -67,24 +78,29 @@ class VaccineHistoryWidget extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.grey[200], // Light background color
-        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+        borderRadius: BorderRadius.circular(25), // Rounded corners
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w900,
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFE9879),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end, // Align text to the right
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFE9879),
+              ),
             ),
           ),
         ],

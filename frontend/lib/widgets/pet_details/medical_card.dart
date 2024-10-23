@@ -11,9 +11,10 @@ class MedicalHistoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.85, // 85% of screen width
+      height: 350, // Fixed height
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
             color: Colors.black26,
@@ -28,7 +29,6 @@ class MedicalHistoryWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
             Text(
               'Medical History',
               style: const TextStyle(
@@ -37,30 +37,40 @@ class MedicalHistoryWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            _buildInfoContainer('Condition', medicalHistory.condition),
-            _buildInfoContainer(
-              'Diagnosis Date',
-              medicalHistory.diagnosisDate.toLocal().toString().split(' ')[0],
-            ),
-            _buildInfoContainer('Treatment', medicalHistory.treatment),
-            if (medicalHistory.veterinarianName != null)
-              _buildInfoContainer(
-                  'Veterinarian', medicalHistory.veterinarianName!),
-            if (medicalHistory.clinicName != null)
-              _buildInfoContainer('Clinic', medicalHistory.clinicName!),
-            if (medicalHistory.treatmentDate != null)
-              _buildInfoContainer(
-                'Treatment Date',
-                medicalHistory.treatmentDate!
-                    .toLocal()
-                    .toString()
-                    .split(' ')[0],
+            Expanded(
+              child: SingleChildScrollView( // Allow scrolling for overflowing content
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildInfoContainer('Condition', medicalHistory.condition),
+                    _buildInfoContainer(
+                      'Diagnosis Date',
+                      medicalHistory.diagnosisDate.toLocal().toString().split(' ')[0],
+                    ),
+                    _buildInfoContainer('Treatment', medicalHistory.treatment),
+                    if (medicalHistory.veterinarianName != null)
+                      _buildInfoContainer(
+                          'Veterinarian', medicalHistory.veterinarianName!),
+                    if (medicalHistory.clinicName != null)
+                      _buildInfoContainer('Clinic', medicalHistory.clinicName!),
+                    if (medicalHistory.treatmentDate != null)
+                      _buildInfoContainer(
+                        'Treatment Date',
+                        medicalHistory.treatmentDate!
+                            .toLocal()
+                            .toString()
+                            .split(' ')[0],
+                      ),
+                    _buildInfoContainer(
+                        'Recovery Status', medicalHistory.recoveryStatus),
+                    if (medicalHistory.notes != null)
+                      _buildInfoContainer('Notes', medicalHistory.notes!),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
-            _buildInfoContainer(
-                'Recovery Status', medicalHistory.recoveryStatus),
-            if (medicalHistory.notes != null)
-              _buildInfoContainer('Notes', medicalHistory.notes!),
-            const SizedBox(height: 8),
+            ),
           ],
         ),
       ),
@@ -74,24 +84,29 @@ class MedicalHistoryWidget extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.grey[200], // Light background for separation
-        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+        borderRadius: BorderRadius.circular(25), // Rounded corners
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w900,
+          Expanded( // Allow label to take available space
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFE9879),
+          Expanded( // Allow value to take available space
+            child: Text(
+              value,
+              textAlign: TextAlign.end, // Align text to the right
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFE9879),
+              ),
             ),
           ),
         ],
