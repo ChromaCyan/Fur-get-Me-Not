@@ -123,6 +123,7 @@ flutter:
     - images/adopter_adoptee.png
     - images/fur_get_me_not_color_only.png
     - images/loading_screen.gif
+    - images/Fur-get Me Not logo.png
 
   fonts:
     - family: Circular

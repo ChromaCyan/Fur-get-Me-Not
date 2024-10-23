@@ -45,42 +45,39 @@ class AdopteeDrawer extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            SizedBox(height: 45),
-            // const DrawerHeader(
-            //   decoration: BoxDecoration(
-            //     color: Colors.transparent,
-            //   ),
-            //   child: Text(
-            //     'Fur Get Me Not',
-            //     style: TextStyle(
-            //       color: Colors.white,
-            //       fontSize: 24,
-            //     ),
-            //   ),
-            // ),
+            const SizedBox(height: 45),
             FutureBuilder<String?>(
               future: _getUserId(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const CircularProgressIndicator();
                 }
+
                 final userId = snapshot.data;
                 if (userId != null) {
+                  // Dispatch FetchProfile event for the user
+                  context.read<ProfileBloc>().add(FetchProfile(userId));
+
                   return BlocBuilder<ProfileBloc, ProfileState>(
                     builder: (context, state) {
                       if (state is ProfileLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state is ProfileLoaded) {
-                        final profile = state.profileData;
-                        return _buildProfileSection(profile);
-                      } else {
-                        return const Center(
-                          child: Text('Unable to load profile.'),
+                        return _buildProfileSection(state.profileData);
+                      } else if (state is ProfileError) {
+                        return Center(
+                          child: Text(
+                            'Error: ${state.message}',
+                            style: const TextStyle(color: Colors.red),
+                          ),
                         );
+                      } else {
+                        return _buildPlaceholderProfileSection();
                       }
                     },
                   );
                 }
+
                 return const Center(
                   child: Text('User not found. Please log in again.'),
                 );
@@ -153,6 +150,35 @@ class AdopteeDrawer extends StatelessWidget {
         ),
         const Divider(
             color: Colors.white70, thickness: 1, indent: 16, endIndent: 16),
+      ],
+    );
+  }
+
+  Widget _buildPlaceholderProfileSection() {
+    return const Column(
+      children: [
+        CircleAvatar(
+          radius: 50,
+          backgroundColor: Colors.white24, // Blank circle
+        ),
+        SizedBox(height: 8),
+        Text(
+          'User Name',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          'Adoptee',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 14,
+          ),
+        ),
+        Divider(color: Colors.white70, thickness: 1, indent: 16, endIndent: 16),
       ],
     );
   }

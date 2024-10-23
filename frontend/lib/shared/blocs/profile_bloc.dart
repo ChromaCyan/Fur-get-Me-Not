@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart';
 import 'package:fur_get_me_not/authentication/models/user.dart';
 import 'package:equatable/equatable.dart';
-import 'dart:io';
 
 // Events
 abstract class ProfileEvent extends Equatable {
@@ -38,13 +37,16 @@ class UpdateProfile extends ProfileEvent {
 
   @override
   List<Object> get props => [
-    userId,
-    firstName,
-    lastName,
-    address,
-    profileImage ?? '',
-  ];
+        userId,
+        firstName,
+        lastName,
+        address,
+        profileImage ?? '',
+      ];
 }
+
+// New Event for Logout
+class ClearProfileEvent extends ProfileEvent {}
 
 // States
 abstract class ProfileState extends Equatable {
@@ -98,7 +100,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateProfile>((event, emit) async {
       emit(ProfileLoading());
       try {
-        // Update the profile with the provided data
         await authRepository.updateProfile(
           userId: event.userId,
           firstName: event.firstName,
@@ -107,12 +108,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           profileImage: event.profileImage,
         );
 
-        // Fetch the updated profile to confirm changes
         final profile = await authRepository.getProfileById(event.userId);
         emit(ProfileLoaded(profile['profile']));
       } catch (e) {
         emit(ProfileError(e.toString()));
       }
+    });
+
+    // Handle logout by resetting the state
+    on<ClearProfileEvent>((event, emit) {
+      emit(ProfileInitial()); // Reset the state to initial
     });
   }
 }

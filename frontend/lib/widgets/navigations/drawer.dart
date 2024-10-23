@@ -26,19 +26,6 @@ class AppDrawer extends StatelessWidget {
     return await _storage.read(key: 'userId');
   }
 
-  // Future<void> _downloadExcel(BuildContext context) async {
-  //   try {
-  //     await _petRepository.downloadExcel();
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Pet table downloaded successfully!')),
-  //     );
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to download pet table: $e')),
-  //     );
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -48,18 +35,6 @@ class AppDrawer extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             SizedBox(height: 45),
-            // const DrawerHeader(
-            //   decoration: BoxDecoration(
-            //     color: Colors.transparent,
-            //   ),
-            //   child: Text(
-            //     'Fur Get Me Not',
-            //     style: TextStyle(
-            //       color: Colors.white,
-            //       fontSize: 24,
-            //     ),
-            //   ),
-            // ),
             FutureBuilder<String?>(
               future: _getUserId(),
               builder: (context, snapshot) {
@@ -68,6 +43,9 @@ class AppDrawer extends StatelessWidget {
                 }
                 final userId = snapshot.data;
                 if (userId != null) {
+                  // Dispatch FetchProfile event for the user
+                  context.read<ProfileBloc>().add(FetchProfile(userId));
+
                   return BlocBuilder<ProfileBloc, ProfileState>(
                     builder: (context, state) {
                       if (state is ProfileLoading) {
@@ -75,10 +53,16 @@ class AppDrawer extends StatelessWidget {
                       } else if (state is ProfileLoaded) {
                         final profile = state.profileData;
                         return _buildProfileSection(profile);
-                      } else {
-                        return const Center(
-                          child: Text('Unable to load profile.'),
+                      } else if (state is ProfileError) {
+                        return Center(
+                          child: Text(
+                            'Error: ${state.message}',
+                            style: const TextStyle(color: Colors.red),
+                          ),
                         );
+                      } else {
+                        return _buildProfileSection(
+                            {}); // Use empty map as fallback
                       }
                     },
                   );
@@ -103,16 +87,12 @@ class AppDrawer extends StatelessWidget {
                   // Handle case where userId is null, e.g., show an error message
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content: Text('User not found. Please log in again.')),
+                      content: Text('User not found. Please log in again.'),
+                    ),
                   );
                 }
               },
             ),
-            // _buildListTile(
-            //   icon: Icons.download,
-            //   text: 'Download Pet Table',
-            //   onTap: () => _downloadExcel(context),
-            // ),
             _buildListTile(
               icon: Icons.logout,
               text: 'Logout',
@@ -127,18 +107,21 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget _buildProfileSection(Map<String, dynamic> profile) {
+    final String firstName = profile['firstName'] ?? 'User';
+    final String lastName = profile['lastName'] ?? 'Name';
+    final String? profileImage = profile['profileImage'];
+
     return Column(
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundImage: profile['profileImage'] != null &&
-                  profile['profileImage'].isNotEmpty
-              ? NetworkImage(profile['profileImage']) as ImageProvider
+          backgroundImage: profileImage != null && profileImage.isNotEmpty
+              ? NetworkImage(profileImage) as ImageProvider
               : const AssetImage('assets/default_profile.png'),
         ),
         const SizedBox(height: 8),
         Text(
-          '${profile['firstName']} ${profile['lastName']}',
+          '$firstName $lastName',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -147,7 +130,7 @@ class AppDrawer extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         const Text(
-          'Adoptee',
+          'Adopter',
           style: TextStyle(
             color: Colors.white70,
             fontSize: 14,
