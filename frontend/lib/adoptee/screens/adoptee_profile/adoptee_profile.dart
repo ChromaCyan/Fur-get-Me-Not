@@ -121,8 +121,10 @@ class _AdopteeProfilePageState extends State<AdopteeProfilePage> {
                 if (_isEditing)
                   ElevatedButton(
                     onPressed: () async {
-                      // Upload image and get the URL
-                      String? imageUrl = await _uploadImage();
+                      File? profileImageFile;
+                      if (_imageFile != null) {
+                        profileImageFile = File(_imageFile!.path);
+                      }
 
                       // Update profile
                       context.read<ProfileBloc>().add(UpdateProfile(
@@ -132,7 +134,7 @@ class _AdopteeProfilePageState extends State<AdopteeProfilePage> {
                             ? _nameController.text.split(' ').sublist(1).join(' ')
                             : '',
                         address: _addressController.text,
-                        profileImage: imageUrl ?? profile['profileImage'],
+                        profileImage: profileImageFile,
                       ));
 
                       // Reset editing state
