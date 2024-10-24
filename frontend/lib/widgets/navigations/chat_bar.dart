@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
-  final String profileImageUrl; // Path to the asset image
+  final String profileImage; // Path to the asset image
 
   const ChatAppBar({
     Key? key,
     required this.userName,
-    required this.profileImageUrl,
+    required this.profileImage,
   }) : super(key: key);
 
   @override
@@ -16,7 +16,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: AssetImage(profileImageUrl), // Use AssetImage here
+            backgroundImage: AssetImage(profileImage), // Use AssetImage here
           ),
           SizedBox(width: 10),
           Text(userName),

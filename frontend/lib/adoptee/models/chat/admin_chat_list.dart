@@ -34,4 +34,6 @@ class AdminChatList {
       profileImage: profileImage,
     );
   }
+
+  get currentUserId => null;
 }

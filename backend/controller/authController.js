@@ -71,7 +71,7 @@ exports.verifyOTP = async (req, res) => {
 
 // CREATE USER with OTP verification
 exports.createUser = async (req, res) => {
-    const { firstName, lastName, email, password, address, role, profileImageUrl } = req.body;
+    const { firstName, lastName, email, password, address, role, profileImage } = req.body;
 
     try {
         // Check if the user already exists
@@ -86,7 +86,7 @@ exports.createUser = async (req, res) => {
             email,
             password,
             role,
-            profileImageUrl,
+            profileImage,
             address,
         });
 

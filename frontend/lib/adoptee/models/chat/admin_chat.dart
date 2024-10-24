@@ -22,7 +22,9 @@ class AdminChatMessage {
   factory AdminChatMessage.fromJson(Map<String, dynamic> json) {
     return AdminChatMessage(
       chatId: json['chatId'] as String,
-      senderId: (json['senderId'] is Map) ? json['senderId']['_id'] as String : json['senderId'] as String,
+      senderId: (json['senderId'] is Map)
+          ? json['senderId']['_id'] as String
+          : json['senderId'] as String,
       content: json['content'] as String,
       senderName: json['senderName'] as String,
       recipientName: json['recipientName'] as String,

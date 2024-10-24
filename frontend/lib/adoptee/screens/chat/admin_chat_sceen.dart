@@ -6,19 +6,23 @@ import 'package:fur_get_me_not/adoptee/bloc/chat/chat_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/chat/chat_event.dart';
 import 'package:fur_get_me_not/adoptee/bloc/chat/chat_state.dart';
 import 'package:fur_get_me_not/widgets/navigations/chat_bar.dart';
+import 'package:fur_get_me_not/widgets/cards/chat_currentUser_card.dart';
+import 'package:fur_get_me_not/widgets/cards/chat_otherUser_card.dart';
 
 class ChatScreen extends StatefulWidget {
   final String userName;
   final String profileImage;
   final String chatId;
-  final String otherUserId;
+  final String otherUserId; // User you’re talking to
+  final String currentUserId; // Your user ID
 
   const ChatScreen({
     Key? key,
     required this.userName,
-    required this.profileImage,
     required this.chatId,
     required this.otherUserId,
+    required this.currentUserId,
+    required this.profileImage,
   }) : super(key: key);
 
   @override
@@ -47,7 +51,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<AdminChatBloc>(context).add(FetchMessages(widget.chatId));
+    BlocProvider.of<AdminChatBloc>(context)
+        .add(FetchMessages(widget.otherUserId));
   }
 
   @override
@@ -71,81 +76,107 @@ class _ChatScreenState extends State<ChatScreen> {
             return Column(
               children: [
                 Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    reverse: true,
-                    itemCount: state.messages.length,
-                    itemBuilder: (context, index) {
-                      final message = state.messages[state.messages.length - 1 - index];
-                      return ListTile(
-                        title: Text(
-                          message.senderName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
-                          ),
-                        ),
-                        subtitle: Text(
-                          message.content,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        trailing: Text(
-                          "${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}",
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                      );
-                    },
-                  ),
-                ),
-                // Message input field
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _messageController,
-                          onSubmitted: (text) {
-                            if (text.isNotEmpty) {
-                              context.read<AdminChatBloc>().add(SendMessage(text, widget.otherUserId));
-                              _messageController.clear();
-                            }
+                  child: state.messages.isEmpty
+                      ? const Center(child: Text('No messages yet'))
+                      : ListView.builder(
+                          controller: _scrollController,
+                          reverse: true,
+                          itemCount: state.messages.length,
+                          itemBuilder: (context, index) {
+                            final message = state
+                                .messages[state.messages.length - 1 - index];
+                            final isCurrentUser =
+                                message.senderId == widget.currentUserId;
+
+                            // Print statement to debug
+                            print(
+                                'Message from: ${message.senderId}, Current User: ${widget.currentUserId}');
+
+                            return isCurrentUser
+                                ? ChatCurrentUserCard(message: message)
+                                : ChatOtherUserCard(message: message);
                           },
-                          decoration: const InputDecoration(
-                            labelText: 'Type a message',
-                            border: OutlineInputBorder(),
-                          ),
                         ),
-                      ),
-                    ],
-                  ),
                 ),
+                _buildMessageInput(),
               ],
             );
           } else if (state is ChatMessageError) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                const SizedBox(height: 10),
-                Text(
-                  'Oops! Something went wrong: ${state.message}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16, color: Colors.red),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<AdminChatBloc>().add(FetchMessages(widget.otherUserId));
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Oops! Something went wrong: ${state.message}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16, color: Colors.red),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      context
+                          .read<AdminChatBloc>()
+                          .add(FetchMessages(widget.chatId));
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
             );
           }
-          return Container();
+          return const Center(child: Text('No messages loaded.'));
         },
+      ),
+    );
+  }
+
+  Widget _buildMessageInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              onSubmitted: (text) {
+                if (text.isNotEmpty) {
+                  context.read<AdminChatBloc>().add(
+                        SendMessage(
+                          text,
+                          widget.otherUserId,
+                          widget.currentUserId,
+                          widget.userName, // Include sender's name
+                        ),
+                      );
+                  _messageController.clear();
+                }
+              },
+              decoration: const InputDecoration(
+                labelText: 'Type a message',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send, color: Colors.blue),
+            onPressed: () {
+              final text = _messageController.text;
+              if (text.isNotEmpty) {
+                context.read<AdminChatBloc>().add(
+                      SendMessage(
+                        text,
+                        widget.otherUserId,
+                        widget.currentUserId,
+                        widget.userName, // Include sender's name
+                      ),
+                    );
+                _messageController.clear();
+              }
+            },
+          ),
+        ],
       ),
     );
   }

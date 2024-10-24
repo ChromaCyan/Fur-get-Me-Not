@@ -9,16 +9,18 @@ const AdoptedPet = require('../model/adopted_petsModel');
 // Function to submit an adoption form and create an adoption request
 exports.submitAdoptionForm = async (req, res) => {
   try {
-    const {
-      petId, fullName, email, phone, address, city, zipCode, residenceType,
-      ownRent, landlordAllowsPets, ownedPetsBefore, petTypesOwned, petPreference,
-      preferredSize, agePreference, hoursAlone, activityLevel, childrenAges,
-      carePlan, whatIfNoLongerKeep, longTermCommitment
-    } = req.body;
+    // const {
+    //   petId, fullName, email, phone, address, city, zipCode, residenceType,
+    //   ownRent, landlordAllowsPets, ownedPetsBefore, petTypesOwned, petPreference,
+    //   preferredSize, agePreference, hoursAlone, activityLevel, childrenAges,
+    //   carePlan, whatIfNoLongerKeep, longTermCommitment
+    // } = req.body;
+
+    const params = req.body
 
     // Create new AdoptionForm
     const adoptionForm = new AdoptionForm({
-      adopterId: req.user.id,
+      adopterId: params.user.id,
       petId,
       fullName,
       email,
