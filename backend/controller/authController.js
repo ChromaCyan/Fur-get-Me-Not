@@ -133,22 +133,22 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-// Upload a profile image for a user
+// Upload a profile image for a user (modified to follow the petController logic)
 exports.uploadProfileImage = async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'No file uploaded' });
-        }
-
-        // Construct the image URL
-        const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-
-        // Respond with the image URL
-        res.status(200).json({ imageUrl: filePath });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error uploading image', error });
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
     }
+
+    // Construct the image URL similar to petController
+    const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+
+    // Respond with the image URL
+    res.status(200).json({ imageUrl: filePath });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error uploading image', error });
+  }
 };
 
 // LOGIN USER
@@ -178,32 +178,57 @@ exports.loginUser = async (req, res) => {
 
 // UPDATE USER
 exports.updateUser = async (req, res) => {
-    const { id } = req.params;
-    const { firstName, lastName, address } = req.body;
+  const { id } = req.params;
+  const { firstName, lastName, address } = req.body;
 
-    try {
-        const profileImageUrl = req.file ? req.file.path : null;
+  try {
+    // Debugging logs to check the request body and file
+    console.log('Request Body:', req.body);
+    console.log('Uploaded File:', req.file);
 
-        const updateFields = { firstName, lastName, address }; 
-
-        if (profileImageUrl) {
-            updateFields.profileImageUrl = profileImageUrl; 
-        }
-
-        const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        console.log(req.body); 
-        console.log(req.file); 
-        
-        res.status(200).json(updatedUser);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    // Find the existing user first
+    const existingUser = await User.findById(id);
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    // Prepare updated data
+    const updatedData = {
+      ...existingUser.toObject(),  
+      ...req.body,               
+    };
+
+    if (req.file) {
+      const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+      
+      updatedData.profileImage = filePath;
+      
+      console.log('New Profile Image URL:', filePath);
+    }
+
+    // Log the fields that are being updated
+    console.log('Update Fields:', updatedData);
+
+    // Update the user in the database
+    const updatedUser = await User.findByIdAndUpdate(id, updatedData, { new: true });
+
+    // Log the updated user object
+    console.log('Updated User:', updatedUser);
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Respond with the updated user object
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    // Log the error for debugging
+    console.error('Error updating user:', error);
+    res.status(400).json({ message: error.message });
+  }
 };
+
+
 
 // DELETE USER
 exports.deleteUser = async (req, res) => {
