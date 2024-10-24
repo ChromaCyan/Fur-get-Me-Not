@@ -25,7 +25,7 @@ class Pet {
     required this.petImageUrl,
     required this.description,
     required this.specialCareInstructions,
-    required this.adoptee, // Update to Adoptee class
+    required this.adoptee,
     required this.medicalHistory,
     required this.vaccineHistory,
     required this.status,
@@ -83,16 +83,18 @@ class Pet {
 }
 
 class Adoptee {
-  String id; 
+  String id;
   String firstName;
   String lastName;
-  String chatId; 
+  String chatId;
+  String? profileImage;
 
   Adoptee({
     required this.id,
     required this.firstName,
     required this.lastName,
     required this.chatId,
+    this.profileImage,
   });
 
   factory Adoptee.fromJson(Map<String, dynamic> json) {
@@ -101,6 +103,7 @@ class Adoptee {
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       chatId: json['chatId'] ?? '',
+      profileImage: json['profileImage'],
     );
   }
 
@@ -110,6 +113,7 @@ class Adoptee {
       'firstName': firstName,
       'lastName': lastName,
       'chatId': chatId,
+      'profileImage': profileImage,
     };
   }
 }

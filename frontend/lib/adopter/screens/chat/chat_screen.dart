@@ -7,14 +7,14 @@ import 'package:fur_get_me_not/widgets/navigations/chat_bar.dart';
 
 class ChatScreen extends StatefulWidget {
   final String userName;
-  final String profileImageUrl;
+  final String profileImage;
   final String chatId;
   final String otherUserId;
 
   const ChatScreen({
     Key? key,
     required this.userName,
-    required this.profileImageUrl,
+    required this.profileImage,
     required this.chatId,
     required this.otherUserId,
   }) : super(key: key);
@@ -71,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
       resizeToAvoidBottomInset: true,
       appBar: ChatAppBar(
         userName: widget.userName,
-        profileImageUrl: widget.profileImageUrl,
+        profileImage: widget.profileImage,
       ),
       body: BlocBuilder<ChatBloc, ChatMessageState>(
         builder: (context, state) {

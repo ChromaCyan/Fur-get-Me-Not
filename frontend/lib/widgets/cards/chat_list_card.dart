@@ -18,22 +18,25 @@ class ChatCard extends StatelessWidget {
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: AssetImage('assets/images/placeholder.png'), // Change this to an actual profile picture if available
+          // Use the profileImage URL or a placeholder if null
+          backgroundImage: chat.profileImage != null && chat.profileImage!.isNotEmpty
+              ? NetworkImage(chat.profileImage!)
+              : AssetImage('assets/images/placeholder.png') as ImageProvider,
         ),
         title: Text(
           chat.otherUserName,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white, // White text for contrast
+            color: Colors.white,
           ),
         ),
         subtitle: Text(
           chat.lastMessage,
-          style: const TextStyle(color: Colors.white70), // Light grey for the subtitle
+          style: const TextStyle(color: Colors.white70),
         ),
         trailing: Text(
           _formatTimestamp(chat.updatedAt),
-          style: const TextStyle(color: Colors.white70), // Light grey for the timestamp
+          style: const TextStyle(color: Colors.white70),
         ),
         onTap: () {
           Navigator.push(
@@ -41,7 +44,7 @@ class ChatCard extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => ChatScreen(
                 userName: chat.otherUserName,
-                profileImageUrl: 'images/image1.png',
+                profileImage: chat.profileImage ?? 'images/images2.png',
                 chatId: chat.otherUserId,
                 otherUserId: chat.otherUserId,
               ),

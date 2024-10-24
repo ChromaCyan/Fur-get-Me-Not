@@ -4,6 +4,7 @@ class AdminChatList {
   final DateTime updatedAt;
   final String otherUserId; // Added to store user ID
   final String otherUserName; // Keep full name as before
+  final String? profileImage; // Add this line
   final bool isRead;
 
   AdminChatList({
@@ -12,6 +13,7 @@ class AdminChatList {
     required this.updatedAt,
     required this.otherUserId,
     required this.otherUserName,
+    this.profileImage,
     this.isRead = false,
   });
 
@@ -21,6 +23,7 @@ class AdminChatList {
     final fullName = otherUser != null
         ? otherUser['fullName'] ?? 'Unknown User' // Default if fullName is null
         : 'Unknown User'; // Default if otherUser is null
+    final profileImage = otherUser != null ? otherUser['profileImage'] : null;
 
     return AdminChatList(
       chatId: json['chatId'] as String,
@@ -28,6 +31,7 @@ class AdminChatList {
       updatedAt: DateTime.parse(json['updatedAt']),
       otherUserId: otherUser?['id'] ?? 'Unknown ID', // Default if ID is null
       otherUserName: fullName,
+      profileImage: profileImage,
     );
   }
 }

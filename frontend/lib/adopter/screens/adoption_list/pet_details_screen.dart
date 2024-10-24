@@ -125,7 +125,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                                 firstName: widget.pet.adoptee.firstName,
                                 lastName: widget.pet.adoptee.lastName,
                                 gender: widget.pet.gender,
-                                profileImageUrl: 'images/image2.png',
+                                profileImage: widget.pet.adoptee.profileImage ?? 'images/image2.png',
                                 chatId: widget.pet.adoptee.chatId,
                                 otherUserId: widget.pet.adoptee.id,
                               ),

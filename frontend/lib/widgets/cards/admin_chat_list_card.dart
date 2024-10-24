@@ -19,7 +19,9 @@ class AdminChatCard extends StatelessWidget {
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: AssetImage('assets/images/placeholder.png'), // Placeholder image for profile
+          backgroundImage: chat.profileImage != null && chat.profileImage!.isNotEmpty
+              ? NetworkImage(chat.profileImage!) // Use NetworkImage for a URL
+              : AssetImage('images/image2.png'), // Fallback to placeholder
         ),
         title: Text(
           chat.otherUserName,
@@ -43,7 +45,7 @@ class AdminChatCard extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => ChatScreen(
                 userName: chat.otherUserName,
-                profileImageUrl: 'images/image1.png',
+                profileImage: chat.profileImage ?? 'images/image1.png',
                 chatId: chat.otherUserId,
                 otherUserId: chat.otherUserId,
               ),

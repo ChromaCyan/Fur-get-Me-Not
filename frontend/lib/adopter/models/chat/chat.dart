@@ -5,6 +5,7 @@ class AdopterChatMessage {
   final String senderName;
   final String recipientName;
   final DateTime timestamp;
+  final String? profileImage; // Add profileImage field
 
   AdopterChatMessage({
     required this.chatId,
@@ -13,6 +14,7 @@ class AdopterChatMessage {
     required this.senderName,
     required this.recipientName,
     required this.timestamp,
+    this.profileImage, // Include it in the constructor
   });
 
   factory AdopterChatMessage.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class AdopterChatMessage {
       senderName: json['senderName'],
       recipientName: json['recipientName'],
       timestamp: DateTime.parse(json['timestamp']),
+      profileImage: json['profileImage'], // Extract profileImage from JSON
     );
   }
 }
