@@ -6,8 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class AuthRepository {
-  final String baseUrl = 'http://192.168.244.245:5000/users';
+  final String baseUrl = 'http://192.168.18.239:5000/users';
   final FlutterSecureStorage storage = FlutterSecureStorage();
+
+  Future<String?> getToken() async {
+    return await storage.read(key: 'jwt');
+  }
 
   Future<Map<String, dynamic>> login({
     required String email,
@@ -121,84 +125,81 @@ class AuthRepository {
     }
   }
 
-  Future<String> uploadProfileImage(File? profileImage) async {
-    print('Uploading profile image to: $baseUrl/upload');
-
-    final token = await storage.read(key: 'jwt');
-
-    if (profileImage == null) {
-      throw Exception('Profile image is null. Please select an image.');
-    }
-
+  // Upload profile image
+  Future<String> uploadProfileImage(File image) async {
+    print('Uploading profile image to: $baseUrl/upload-profile-image');
     try {
+      final token = await getToken(); // Get JWT token
       final request = http.MultipartRequest(
         'POST',
         Uri.parse('$baseUrl/upload'),
       );
 
-      // Add the profile image file to the request
+      // Add the image file to the request
       request.files.add(await http.MultipartFile.fromPath(
         'profileImage',
-        profileImage.path,
-        filename: basename(profileImage.path),
+        image.path,
+        filename: basename(image.path),
       ));
+
       request.headers['Authorization'] = 'Bearer $token';
 
       final response = await request.send();
-
       if (response.statusCode == 200) {
         final responseData = await response.stream.toBytes();
         final result = String.fromCharCodes(responseData);
         final imageUrl = json.decode(result)['imageUrl'];
         return imageUrl;
       } else {
-        throw Exception(
-            'Profile image upload failed: ${response.reasonPhrase}');
+        throw Exception('Profile image upload failed: ${response.reasonPhrase}');
       }
     } catch (e) {
       throw Exception('Failed to upload profile image: $e');
     }
   }
 
-  Future<void> updateProfile({
+  Future<void> updateUserProfile({
     required String userId,
     required String firstName,
     required String lastName,
     required String address,
-    final String? profileImage,
+    File? image,
   }) async {
     try {
-      // Create a multipart request for user profile update
-      var request =
-          http.MultipartRequest('PUT', Uri.parse('$baseUrl/profile/$userId'));
+      final token = await getToken();
 
-      // Add the fields
+      // Create a request
+      final request = http.MultipartRequest(
+        'PUT',
+        Uri.parse('$baseUrl/profile/$userId'),
+      );
+
+      // Add the authorization header
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Add text fields
       request.fields['firstName'] = firstName;
       request.fields['lastName'] = lastName;
       request.fields['address'] = address;
 
-      // If there's a profile image URL, include it in the request
-      if (profileImage != null) {
-        request.fields['profileImageUrl'] = profileImage;
+      // If an image is provided, add it to the request
+      if (image != null) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'profileImage', // This must match the field name in multer
+          image.path,
+          filename: basename(image.path),
+        ));
       }
-
-      // Retrieve the JWT token
-      final token = await storage.read(key: 'jwt');
-
-      // Add the token to the headers
-      request.headers['Authorization'] = 'Bearer $token';
 
       // Send the request
       final response = await request.send();
-      final responseData = await http.Response.fromStream(response);
 
       if (response.statusCode != 200) {
-        print('Update failed: ${response.statusCode}, ${responseData.body}');
-        throw Exception('Failed to update profile: ${responseData.body}');
+        final responseBody = await response.stream.bytesToString();
+        throw Exception('Failed to update profile: ${response.reasonPhrase} - $responseBody');
       }
     } catch (e) {
-      print('Update profile error: ${e.toString()}');
-      throw Exception('Failed to update profile: ${e.toString()}');
+      throw Exception('Failed to update profile: $e');
     }
   }
 

@@ -47,29 +47,11 @@ class _ProfilePageState extends State<ProfilePage> {
     if (pickedFile != null) {
       setState(() {
         _imageFile = pickedFile;
-        print('Debug: Picked image: ${_imageFile!.path}'); // Debugging the picked image
+        print('Debug: Picked image: ${_imageFile!.path}');
       });
     } else {
-      print('Debug: No image selected.'); // Debugging when no image is picked
+      print('Debug: No image selected.');
     }
-  }
-
-  Future<String?> _uploadImage() async {
-    if (_imageFile != null) {
-      print('Debug: Image file is available: ${_imageFile!.path}');
-      try {
-        // Use the repository to upload the image
-        String imageUrl = await AuthRepository().uploadProfileImage(File(_imageFile!.path));
-        print('Debug: Image uploaded successfully. URL: $imageUrl'); // Successful upload debug
-        return imageUrl;
-      } catch (e) {
-        print('Error uploading image: $e'); // Error log
-        return null;
-      }
-    } else {
-      print('Debug: No image file to upload.'); // Debugging if _imageFile is null
-    }
-    return null;
   }
 
   @override
@@ -85,6 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
           } else if (state is ProfileLoaded) {
             final profile = state.profileData;
 
+            // Set controllers with the profile data
             if (!_isEditing) {
               _nameController.text = '${profile['firstName']} ${profile['lastName']}';
               _addressController.text = profile['address'];
@@ -99,13 +82,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     buildProfileSection(profile),
                     const SizedBox(height: 16),
-                    buildName(profile),
+                    buildName(),
                     const SizedBox(height: 32),
                     _buildDetailContainer('Role:', profile['role'] == 'adopter' ? 'Adopter' : 'Adoptee'),
                     const SizedBox(height: 20),
-                    _buildDetailField('Email:', profile['email'], _isEditing, editable: false),
+                    _buildDetailField('Email:', profile['email'], false),
                     const SizedBox(height: 20),
-                    _buildDetailField('Address:', _addressController.text, _isEditing),
+                    buildAddress(),
                   ],
                 )),
                 const SizedBox(height: 32),
@@ -113,7 +96,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   onPressed: () {
                     setState(() {
                       _isEditing = !_isEditing;
-                      print('Debug: Edit profile state changed to $_isEditing');
                     });
                   },
                   child: Text(_isEditing ? "Cancel" : "Edit Profile"),
@@ -121,18 +103,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 20),
                 if (_isEditing)
                   ElevatedButton(
-                    onPressed: () async {
-                      // Upload image and get the URL
-                      String? imageUrl = await _uploadImage();
+                    onPressed: () {
+                      // Check if a new image was picked
+                      File? profileImageFile;
+                      if (_imageFile != null) {
+                        profileImageFile = File(_imageFile!.path);
+                      }
 
+                      // Update profile
                       context.read<ProfileBloc>().add(UpdateProfile(
                         userId: widget.userId,
                         firstName: _nameController.text.split(' ').first,
-                        lastName: _nameController.text.split(' ').last,
+                        lastName: _nameController.text.split(' ').length > 1
+                            ? _nameController.text.split(' ').sublist(1).join(' ')
+                            : '',
                         address: _addressController.text,
-                        profileImage: imageUrl ?? profile['profileImage'],
+                        profileImage: profileImageFile, // Pass the File directly
                       ));
 
+                      // Reset editing state
                       setState(() {
                         _isEditing = false;
                       });
@@ -150,33 +139,35 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildProfileSection(Map<String, dynamic> profile) => GestureDetector(
-    onTap: _isEditing ? _pickImage : null,
-    child: Container(
-      width: 150,
-      height: 150,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.grey[300],
-        image: DecorationImage(
-          image: _imageFile != null
-              ? FileImage(File(_imageFile!.path))
-              : (profile['profileImage'] != null && profile['profileImage'].isNotEmpty
-              ? NetworkImage(profile['profileImage'])
-              : const AssetImage('assets/default_profile.png') as ImageProvider),
-          fit: BoxFit.cover,
+  Widget buildProfileSection(Map<String, dynamic> profile) {
+    return GestureDetector(
+      onTap: _isEditing ? _pickImage : null,
+      child: Container(
+        width: 150,
+        height: 150,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey[300],
+          image: DecorationImage(
+            image: _imageFile != null
+                ? FileImage(File(_imageFile!.path)) // Display selected image
+                : (profile['profileImage'] != null && profile['profileImage'].isNotEmpty
+                ? NetworkImage(profile['profileImage']) // Existing profile image
+                : const AssetImage('assets/default_profile.png') as ImageProvider),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (_imageFile == null && profile['profileImage'] == null)
+              const Icon(Icons.camera_alt, color: Colors.white),
+            if (_isEditing) const Icon(Icons.edit, color: Colors.white),
+          ],
         ),
       ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          if (_imageFile == null && profile['profileImage'] == null)
-            const Icon(Icons.camera_alt, color: Colors.white),
-          if (_isEditing) const Icon(Icons.edit, color: Colors.white),
-        ],
-      ),
-    ),
-  );
+    );
+  }
 
   Widget _buildDetailContainer(String title, String value) {
     return Container(
@@ -204,7 +195,6 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(
             width: 200,
             child: TextField(
-              controller: title == 'Address' ? _addressController : null,
               enabled: isEditing,
               decoration: InputDecoration(
                 hintText: value,
@@ -218,7 +208,29 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildName(Map<String, dynamic> profile) {
+  Widget buildAddress() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text('Address:', style: TextStyle(fontWeight: FontWeight.bold)),
+        if (_isEditing)
+          SizedBox(
+            width: 200,
+            child: TextField(
+              controller: _addressController,
+              decoration: InputDecoration(
+                hintText: 'Enter address',
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          )
+        else
+          Text(_addressController.text.isNotEmpty ? _addressController.text : 'No address provided'), // Placeholder for empty address
+      ],
+    );
+  }
+
+  Widget buildName() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -235,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           )
         else
-          Text('${profile['firstName']} ${profile['lastName']}'),
+          Text('${_nameController.text}'),
       ],
     );
   }

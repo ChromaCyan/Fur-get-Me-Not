@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/authentication/repositories/auth_repository.dart';
 import 'package:fur_get_me_not/authentication/models/user.dart';
 import 'package:equatable/equatable.dart';
+import 'dart:io';
 
 // Events
 abstract class ProfileEvent extends Equatable {
@@ -25,24 +26,24 @@ class UpdateProfile extends ProfileEvent {
   final String firstName;
   final String lastName;
   final String address;
-  final String? profileImage;
+  final File? profileImage; // Keep this as File to upload
 
   const UpdateProfile({
     required this.userId,
     required this.firstName,
     required this.lastName,
     required this.address,
-    this.profileImage,
+    this.profileImage, // Use the File object
   });
 
   @override
   List<Object> get props => [
-        userId,
-        firstName,
-        lastName,
-        address,
-        profileImage ?? '',
-      ];
+    userId,
+    firstName,
+    lastName,
+    address,
+    profileImage?.path ?? '', // Update this to reflect the file path
+  ];
 }
 
 // New Event for Logout
@@ -83,6 +84,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final AuthRepository authRepository;
 
   ProfileBloc({required this.authRepository}) : super(ProfileInitial()) {
+    // Fetch Profile Event
     on<FetchProfile>((event, emit) async {
       emit(ProfileLoading());
       try {
@@ -97,27 +99,35 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     });
 
+    // Update Profile Event
     on<UpdateProfile>((event, emit) async {
       emit(ProfileLoading());
       try {
-        await authRepository.updateProfile(
+        // Directly call the updated method that handles image upload as well
+        await authRepository.updateUserProfile(
           userId: event.userId,
           firstName: event.firstName,
           lastName: event.lastName,
           address: event.address,
-          profileImage: event.profileImage,
+          image: event.profileImage,  // Pass the File object
         );
 
-        final profile = await authRepository.getProfileById(event.userId);
-        emit(ProfileLoaded(profile['profile']));
+        // Fetch updated profile
+        final updatedProfile = await authRepository.getProfileById(event.userId);
+        if (updatedProfile['success']) {
+          emit(ProfileLoaded(updatedProfile['profile']));
+        } else {
+          emit(ProfileError(updatedProfile['message']));
+        }
       } catch (e) {
+        print('Profile update error: $e');
         emit(ProfileError(e.toString()));
       }
     });
 
-    // Handle logout by resetting the state
+    // Clear Profile Event (logout)
     on<ClearProfileEvent>((event, emit) {
-      emit(ProfileInitial()); // Reset the state to initial
+      emit(ProfileInitial());
     });
   }
 }
