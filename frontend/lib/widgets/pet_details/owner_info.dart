@@ -6,7 +6,7 @@ class OwnerInfo extends StatelessWidget {
   final String firstName;
   final String lastName;
   final String gender;
-  final String profileImageUrl;
+  final String profileImage;
   final String? chatId;
   final String otherUserId;
 
@@ -15,7 +15,7 @@ class OwnerInfo extends StatelessWidget {
     required this.firstName,
     required this.lastName,
     required this.gender,
-    required this.profileImageUrl,
+    required this.profileImage,
     this.chatId,
     required this.otherUserId,
   }) : super(key: key);
@@ -27,7 +27,7 @@ class OwnerInfo extends StatelessWidget {
         CircleAvatar(
           radius: 30,
           backgroundColor: gender == 'Male' ? Colors.blue : Colors.pink,
-          backgroundImage: AssetImage(profileImageUrl),
+          backgroundImage: NetworkImage(profileImage),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -55,7 +55,7 @@ class OwnerInfo extends StatelessWidget {
                 builder: (context) => ChatScreen(
                   chatId: chatId ?? '',
                   userName: '$firstName $lastName',
-                  profileImageUrl: profileImageUrl,
+                  profileImage: profileImage,
                   otherUserId: otherUserId,
                 ),
               ),
