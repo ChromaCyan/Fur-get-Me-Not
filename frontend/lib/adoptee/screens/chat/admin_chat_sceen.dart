@@ -79,24 +79,24 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: state.messages.isEmpty
                       ? const Center(child: Text('No messages yet'))
                       : ListView.builder(
-                          controller: _scrollController,
-                          reverse: true,
-                          itemCount: state.messages.length,
-                          itemBuilder: (context, index) {
-                            final message = state
-                                .messages[state.messages.length - 1 - index];
-                            final isCurrentUser =
-                                message.senderId == widget.currentUserId;
+                    controller: _scrollController,
+                    reverse: true,
+                    itemCount: state.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = state
+                          .messages[state.messages.length - 1 - index];
+                      final isCurrentUser =
+                          message.senderId == widget.currentUserId;
 
-                            // Print statement to debug
-                            print(
-                                'Message from: ${message.senderId}, Current User: ${widget.currentUserId}');
+                      // Print statement to debug
+                      print(
+                          'Message from: ${message.senderId}, Current User: ${widget.currentUserId}');
 
-                            return isCurrentUser
-                                ? ChatCurrentUserCard(message: message)
-                                : ChatOtherUserCard(message: message);
-                          },
-                        ),
+                      return isCurrentUser
+                          ? ChatCurrentUserCard(message: message)
+                          : ChatOtherUserCard(message: message);
+                    },
+                  ),
                 ),
                 _buildMessageInput(),
               ],
@@ -143,13 +143,13 @@ class _ChatScreenState extends State<ChatScreen> {
               onSubmitted: (text) {
                 if (text.isNotEmpty) {
                   context.read<AdminChatBloc>().add(
-                        SendMessage(
-                          text,
-                          widget.otherUserId,
-                          widget.currentUserId,
-                          widget.userName, // Include sender's name
-                        ),
-                      );
+                    SendMessage(
+                      text,
+                      widget.otherUserId,
+                      widget.currentUserId,
+                      widget.userName, // Include sender's name
+                    ),
+                  );
                   _messageController.clear();
                 }
               },
@@ -165,13 +165,13 @@ class _ChatScreenState extends State<ChatScreen> {
               final text = _messageController.text;
               if (text.isNotEmpty) {
                 context.read<AdminChatBloc>().add(
-                      SendMessage(
-                        text,
-                        widget.otherUserId,
-                        widget.currentUserId,
-                        widget.userName, // Include sender's name
-                      ),
-                    );
+                  SendMessage(
+                    text,
+                    widget.otherUserId,
+                    widget.currentUserId,
+                    widget.userName, // Include sender's name
+                  ),
+                );
                 _messageController.clear();
               }
             },
