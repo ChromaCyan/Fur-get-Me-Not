@@ -55,7 +55,7 @@ class OwnerInfo extends StatelessWidget {
                 builder: (context) => ChatScreen(
                   chatId: chatId ?? '',
                   userName: '$firstName $lastName',
-                  profileImage: profileImage,
+                  profileImage: profileImage.isNotEmpty ? profileImage : 'images/image2.png',
                   otherUserId: otherUserId,
                 ),
               ),

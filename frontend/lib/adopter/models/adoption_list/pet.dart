@@ -74,7 +74,7 @@ class Pet {
       'petImageUrl': petImageUrl,
       'description': description,
       'specialCareInstructions': specialCareInstructions,
-      'adopteeId': adoptee.toJson(), // Update to serialize Adoptee
+      'adopteeId': adoptee.toJson(),
       'medicalHistory': medicalHistory.toJson(),
       'vaccineHistory': vaccineHistory.toJson(),
       'status': status,
@@ -103,7 +103,7 @@ class Adoptee {
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       chatId: json['chatId'] ?? '',
-      profileImage: json['profileImage'],
+      profileImage: json['profileImage'] ?? 'images/images2.png',
     );
   }
 
