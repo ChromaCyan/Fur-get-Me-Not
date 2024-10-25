@@ -29,6 +29,7 @@ class MedicalHistoryWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 10),
             Text(
               'Medical History',
               style: const TextStyle(
@@ -36,7 +37,7 @@ class MedicalHistoryWidget extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView( // Allow scrolling for overflowing content
                 physics: const BouncingScrollPhysics(),
@@ -84,7 +85,7 @@ class MedicalHistoryWidget extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.grey[200], // Light background for separation
-        borderRadius: BorderRadius.circular(25), // Rounded corners
+        borderRadius: BorderRadius.circular(13), // Rounded corners
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

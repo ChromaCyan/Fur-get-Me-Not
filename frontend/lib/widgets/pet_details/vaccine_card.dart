@@ -15,7 +15,7 @@ class VaccineHistoryWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 10.0,
@@ -29,14 +29,15 @@ class VaccineHistoryWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const SizedBox(height: 10),
+            const Text(
               'Vaccine History',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Expanded(
               child: SingleChildScrollView( // Allow scrolling for overflowing content
                 physics: const BouncingScrollPhysics(),
@@ -78,7 +79,7 @@ class VaccineHistoryWidget extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.grey[200], // Light background color
-        borderRadius: BorderRadius.circular(25), // Rounded corners
+        borderRadius: BorderRadius.circular(13), // Rounded corners
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

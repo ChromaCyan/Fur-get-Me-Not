@@ -199,12 +199,12 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
           children: [
             Text(
               widget.pet.name,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
             ),
-            Text(
-              widget.pet.breed,
-              style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
-            ),
+            // Text(
+            //   widget.pet.breed,
+            //   style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+            // ),
           ],
         ),
       ],
@@ -238,7 +238,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       mainAxisSize: MainAxisSize.min, // Use min size for dialog
                       children: [
                         VaccineHistoryWidget(vaccineHistory: widget.pet.vaccineHistory),
-                        const SizedBox(height: 20), // Spacing before the button
+                        const SizedBox(height: 10), // Spacing before the button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -282,7 +282,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                       mainAxisSize: MainAxisSize.min, // Use min size for dialog
                       children: [
                         MedicalHistoryWidget(medicalHistory: widget.pet.medicalHistory),
-                        const SizedBox(height: 20), // Spacing before the button
+                        const SizedBox(height: 10), // Spacing before the button
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
