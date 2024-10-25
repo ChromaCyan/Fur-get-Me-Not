@@ -79,27 +79,32 @@ class _ChatScreenState extends State<ChatScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ChatMessageLoaded) {
             _scrollToBottom();
-
             return Column(
               children: [
                 Expanded(
-                  child: state.messages.isEmpty
-                      ? Center(
-                    child: Text(
-                      'Start the conversation!',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  )
-                      : ListView.builder(
+                  child: ListView.builder(
                     controller: _scrollController,
                     reverse: true,
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
                       final message = state.messages[state.messages.length - 1 - index];
-                      return MessageCard(
-                        message: message,
-                        isSentByUser: message.senderId == widget.otherUserId,
-                        profileImage: widget.profileImage,
+                      return ListTile(
+                        title: Text(
+                          message.senderName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        subtitle: Text(
+                          message.content,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        trailing: Text(
+                          "${message.timestamp.hour}:${message.timestamp.minute.toString().padLeft(2, '0')}",
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
                       );
                     },
                   ),
@@ -108,15 +113,32 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             );
           } else if (state is ChatMessageError) {
-            return Center(
-              child: Text(
-                'Error: ${state.message}',
-                style: const TextStyle(color: Colors.red),
-              ),
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                const SizedBox(height: 10),
+                Text(
+                  'Oops! Something went wrong: ${state.message}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16, color: Colors.red),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<ChatBloc>().add(FetchMessages(widget.chatId.isNotEmpty ? widget.chatId : widget.otherUserId)); // Retry fetching messages
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
             );
           }
-
-          return Center(child: Text('No messages yet! Start chatting.'));
+          return Column(
+            children: [
+              Expanded(child: Container()),
+              _buildMessageInput(),
+            ],
+          );
         },
       ),
     );
@@ -160,46 +182,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
                 _messageController.clear();
               }
-
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class MessageCard extends StatelessWidget {
-  final message;
-  final bool isSentByUser;
-  final String profileImage;
-
-  const MessageCard({
-    required this.message,
-    required this.isSentByUser,
-    required this.profileImage,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Card(
-        color: isSentByUser ? Colors.blue[100] : Colors.grey[300],
-        child: ListTile(
-          leading: isSentByUser
-              ? null
-              : CircleAvatar(
-            backgroundImage: NetworkImage(profileImage),
-          ),
-          title: Text(message.senderName),
-          subtitle: Text(message.content),
-          trailing: isSentByUser
-              ? CircleAvatar(
-            backgroundImage: NetworkImage(profileImage),
-          )
-              : null,
-        ),
       ),
     );
   }
