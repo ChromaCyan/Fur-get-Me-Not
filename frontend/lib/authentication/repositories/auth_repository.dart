@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 
 class AuthRepository {
-  final String baseUrl = 'http://192.168.18.239:5000/users';
+  final String baseUrl = 'http://192.168.100.134:5000/users';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<String?> getToken() async {
@@ -151,7 +151,8 @@ class AuthRepository {
         final imageUrl = json.decode(result)['imageUrl'];
         return imageUrl;
       } else {
-        throw Exception('Profile image upload failed: ${response.reasonPhrase}');
+        throw Exception(
+            'Profile image upload failed: ${response.reasonPhrase}');
       }
     } catch (e) {
       throw Exception('Failed to upload profile image: $e');
@@ -196,7 +197,8 @@ class AuthRepository {
 
       if (response.statusCode != 200) {
         final responseBody = await response.stream.bytesToString();
-        throw Exception('Failed to update profile: ${response.reasonPhrase} - $responseBody');
+        throw Exception(
+            'Failed to update profile: ${response.reasonPhrase} - $responseBody');
       }
     } catch (e) {
       throw Exception('Failed to update profile: $e');

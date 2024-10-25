@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
-  final String profileImageUrl; // Path to the asset image
+  final String profileImage; // Path to the asset image
 
   const ChatAppBar({
     Key? key,
     required this.userName,
-    required this.profileImageUrl,
+    required this.profileImage,
   }) : super(key: key);
 
   @override
@@ -15,16 +15,18 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Row(
         children: [
-          // Using NetworkImage if the profileImageUrl is a URL
+          // Using NetworkImage if the profileImage is a URL
           CircleAvatar(
-            backgroundImage: profileImageUrl.isNotEmpty
-                ? (profileImageUrl.startsWith('http')
-                ? NetworkImage(profileImageUrl)
-                : AssetImage(profileImageUrl) as ImageProvider)
-                : const AssetImage('assets/default_avatar.png'), // Default avatar if URL is empty
+            backgroundImage: profileImage.isNotEmpty
+                ? (profileImage.startsWith('http')
+                    ? NetworkImage(profileImage)
+                    : AssetImage(profileImage) as ImageProvider)
+                : const AssetImage(
+                    'assets/default_avatar.png'), // Default avatar if URL is empty
           ),
           const SizedBox(width: 10),
-          Expanded( // Use Expanded to avoid overflow issues
+          Expanded(
+            // Use Expanded to avoid overflow issues
             child: Text(
               userName,
               overflow: TextOverflow.ellipsis, // Truncate if too long

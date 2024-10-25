@@ -71,7 +71,8 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                       child: GridView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
@@ -86,7 +87,8 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => PetDetailsPage(petId: pet.id),
+                                  builder: (context) =>
+                                      PetDetailsPage(petId: pet.id),
                                 ),
                               );
                             },

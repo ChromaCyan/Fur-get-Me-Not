@@ -12,7 +12,8 @@ class AdminChatBloc extends Bloc<ChatMessageEvent, ChatMessageState> {
     on<FetchMessages>((event, emit) async {
       emit(ChatMessageLoading());
       try {
-        final messages = await adminChatRepository.fetchMessagesForUser(event.otherUserId);
+        final messages =
+            await adminChatRepository.fetchMessagesForUser(event.otherUserId);
         emit(ChatMessageLoaded(messages));
       } catch (e) {
         emit(ChatMessageError('Failed to load messages: $e'));
@@ -24,7 +25,8 @@ class AdminChatBloc extends Bloc<ChatMessageEvent, ChatMessageState> {
       emit(ChatMessageLoading());
       try {
         await adminChatRepository.sendMessage(event.content, event.otherUserId);
-        final messages = await adminChatRepository.fetchMessagesForUser(event.otherUserId);
+        final messages =
+            await adminChatRepository.fetchMessagesForUser(event.otherUserId);
         emit(ChatMessageLoaded(messages));
       } catch (e) {
         emit(ChatMessageError('Failed to send message: $e'));

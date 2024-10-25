@@ -14,12 +14,17 @@ class FetchMessages extends ChatMessageEvent {
   List<Object> get props => [otherUserId];
 }
 
+// Update the SendMessage event
 class SendMessage extends ChatMessageEvent {
   final String content;
   final String otherUserId;
+  final String senderId;
+  final String senderName; // Add this line
 
-  SendMessage(this.content, this.otherUserId);
+  SendMessage(this.content, this.otherUserId, this.senderId,
+      this.senderName); // Update constructor
 
   @override
-  List<Object> get props => [content, otherUserId];
+  List<Object> get props =>
+      [content, otherUserId, senderId, senderName]; // Update props
 }
