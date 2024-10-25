@@ -1,5 +1,6 @@
 const Chat = require('../model/chat_list');
 const Message = require('../model/chatModel');
+const User = require('../model/userModel');
 
 // Get chat list for the logged-in user
 exports.getChatListForUser = async (req, res) => {
@@ -22,7 +23,8 @@ exports.getChatListForUser = async (req, res) => {
       // Safely access otherUser properties and handle null cases
       const firstName = otherUser ? otherUser.firstName : 'Unknown First Name';
       const lastName = otherUser ? otherUser.lastName : 'Unknown Last Name';
-      const fullName = `${firstName} ${lastName}`; // Safe concatenation
+      const fullName = `${firstName} ${lastName}`; 
+      const profileImage = otherUser ? otherUser.profileImage : null;
 
       return {
         chatId: chat._id,

@@ -91,7 +91,7 @@ exports.exportPets = async (req, res) => {
 exports.getPets = async (req, res) => {
   try {
     const pets = await Pet.find({ status: 'available' })
-      .populate('adopteeId', 'firstName lastName');
+      .populate('adopteeId', 'firstName lastName profileImage');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -103,7 +103,7 @@ exports.getPetsbyadoptee = async (req, res) => {
   try {
     const { id } = req.user;
     const pets = await Pet.find({ adopteeId: id, status: 'available' })
-      .populate('adopteeId', 'firstName lastName');
+      .populate('adopteeId', 'firstName lastName profileImage');
     res.status(200).json(pets);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -119,7 +119,7 @@ exports.getPetById = async (req, res) => {
     console.log('User ID:', req.user.id);
 
     // Fetch the pet using the id
-    const pet = await Pet.findById(id).populate('adopteeId', 'firstName lastName');
+    const pet = await Pet.findById(id).populate('adopteeId', 'firstName lastName profileImage');
     
     if (!pet || pet.status === 'adopted') { 
       return res.status(404).json({ message: 'Pet not found or has been adopted' });
