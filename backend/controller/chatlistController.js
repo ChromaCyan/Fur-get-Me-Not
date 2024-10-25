@@ -10,7 +10,7 @@ exports.getChatListForUser = async (req, res) => {
     const chats = await Chat.find({ participants: userId })
       .populate({
         path: 'participants',
-        select: 'firstName lastName',
+        select: 'firstName lastName profileImage',
         match: { _id: { $ne: userId } },
       })
       .select('lastMessage updatedAt participants');
@@ -29,6 +29,7 @@ exports.getChatListForUser = async (req, res) => {
         otherUser: {
           id: otherUser ? otherUser._id : null,
           fullName, 
+          profileImage,
         },
         lastMessage: chat.lastMessage,
         updatedAt: chat.updatedAt,

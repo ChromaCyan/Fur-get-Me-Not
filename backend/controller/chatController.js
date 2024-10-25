@@ -19,13 +19,13 @@ exports.getMessagesForUser = async (req, res) => {
 
     // Fetch the messages from the chat
     const messages = await Message.find({ chatId: chat._id })
-      .populate('senderId', 'firstName lastName')
+      .populate('senderId', 'firstName lastName profileImage')
       .sort('createdAt'); // Sort by creation date to display messages in order
 
     // Enrich messages with sender and recipient names
     const enrichedMessages = await Promise.all(messages.map(async (message) => {
-      const sender = await User.findById(message.senderId).select('firstName lastName');
-      const recipient = await User.findById(otherUserId).select('firstName lastName');
+      const sender = await User.findById(message.senderId).select('firstName lastName profileImage');
+      const recipient = await User.findById(otherUserId).select('firstName lastName profileImage');
 
       return {
         ...message.toObject(),
@@ -75,8 +75,8 @@ exports.sendMessage = async (req, res) => {
     await chat.save();
 
     // Fetch sender and recipient names
-    const sender = await User.findById(senderId).select('firstName lastName');
-    const recipient = await User.findById(otherUserId).select('firstName lastName');
+    const sender = await User.findById(senderId).select('firstName lastName profileImage');
+    const recipient = await User.findById(otherUserId).select('firstName lastName profileImage');
 
     // Return the response with message details and chatId
     res.status(200).json({
