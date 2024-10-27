@@ -61,15 +61,15 @@ class CustomSearchBar extends StatefulWidget {
 }
 
 class _CustomSearchBarState extends State<CustomSearchBar> {
-  final FocusNode _focusNode = FocusNode(); // FocusNode to manage focus
-  bool _isSearching = false; // Flag to show the back button
+  final FocusNode _focusNode = FocusNode();
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(() {
       setState(() {
-        _isSearching = _focusNode.hasFocus; // Toggle based on focus
+        _isSearching = _focusNode.hasFocus;
       });
     });
   }
@@ -93,19 +93,19 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          // Back button when search is active
+
           prefixIcon: _isSearching
               ? IconButton(
                   icon: Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFFFE9879),),
                   onPressed: () {
-                    FocusScope.of(context).unfocus(); // Dismiss keyboard
+                    FocusScope.of(context).unfocus();
                     setState(() {
-                      _isSearching = false; // Exit search mode
+                      _isSearching = false;
                     });
                   },
                 )
               : null,
-          // Search and clear buttons
+
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -116,9 +116,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               widget.searchController.text.isNotEmpty
                   ? IconButton(
                       icon: Icon(Icons.clear, color: Color(0xFFFE9879),),
-                      onPressed: widget.onClear, // Clear text action
+                      onPressed: widget.onClear,
                     )
-                  : Container(), // Empty when no text is entered
+                  : Container(),
             ],
           ),
         ),

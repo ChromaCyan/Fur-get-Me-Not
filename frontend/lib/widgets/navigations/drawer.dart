@@ -5,6 +5,7 @@ import 'package:fur_get_me_not/authentication/screen/login_screen.dart';
 import 'package:fur_get_me_not/adopter/screens/adopter_profile/adopter_profile.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/shared/blocs/profile_bloc.dart';
+import 'package:fur_get_me_not/shared/screens/adoption_history_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -13,8 +14,8 @@ class AppDrawer extends StatelessWidget {
   AppDrawer({Key? key}) : super(key: key);
 
   Future<void> _logout(BuildContext context) async {
-    await _storage.delete(key: 'jwt'); // Remove JWT token from secure storage
-    // Navigate to the LoginScreen after logout
+    await _storage.delete(key: 'jwt');
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -22,7 +23,6 @@ class AppDrawer extends StatelessWidget {
   }
 
   Future<String?> _getUserId() async {
-    // Retrieve the userId from secure storage
     return await _storage.read(key: 'userId');
   }
 
@@ -43,7 +43,6 @@ class AppDrawer extends StatelessWidget {
                 }
                 final userId = snapshot.data;
                 if (userId != null) {
-                  // Dispatch FetchProfile event for the user
                   context.read<ProfileBloc>().add(FetchProfile(userId));
 
                   return BlocBuilder<ProfileBloc, ProfileState>(
@@ -62,7 +61,7 @@ class AppDrawer extends StatelessWidget {
                         );
                       } else {
                         return _buildProfileSection(
-                            {}); // Use empty map as fallback
+                            {});
                       }
                     },
                   );
@@ -84,13 +83,23 @@ class AppDrawer extends StatelessWidget {
                     ),
                   );
                 } else {
-                  // Handle case where userId is null, e.g., show an error message
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('User not found. Please log in again.'),
                     ),
                   );
                 }
+              },
+            ),
+            _buildListTile(
+              icon: Icons.history,
+              text: 'Adoption History',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AdoptionHistoryScreen(),
+                  ),
+                );
               },
             ),
             _buildListTile(

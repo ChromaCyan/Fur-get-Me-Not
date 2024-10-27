@@ -5,6 +5,7 @@ import 'package:fur_get_me_not/adoptee/screens/adoptee_profile/adoptee_profile.d
 import 'package:fur_get_me_not/adoptee/repositories/pet_management/admin_pet_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fur_get_me_not/shared/blocs/profile_bloc.dart';
+import 'package:fur_get_me_not/shared/screens/adoption_history_screen.dart';
 
 class AdopteeDrawer extends StatelessWidget {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
@@ -101,6 +102,17 @@ class AdopteeDrawer extends StatelessWidget {
                     ),
                   );
                 }
+              },
+            ),
+            _buildListTile(
+              icon: Icons.history,
+              text: 'Adoption History',
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => AdoptionHistoryScreen(),
+                  ),
+                );
               },
             ),
             _buildListTile(

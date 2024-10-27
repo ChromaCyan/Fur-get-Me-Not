@@ -94,18 +94,18 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
                   .changeSelectedIndex(index);
             },
             children: [
-              AdoptionScreen(), // Screen to explore pets available for adoption
-              PetListScreen(), // Screen to view pets the user has adopted
-              ChatListScreen(), // Chat list screen for communication
-              AdoptionStatusScreen(), // Screen to check the status of adoption requests
+              AdoptionScreen(),
+              PetListScreen(),
+              ChatListScreen(),
+              AdoptionStatusScreen(),
             ],
           ),
         ),
 
         // Custom bottom navigation bar
         bottomNavigationBar: CustomBottomNavBar(
-          selectedIndex: _selectedIndex, // Track the current selected tab
-          onItemTapped: _onTabSelected, // Handle tab selection changes
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onTabSelected,
         ),
       ),
     );

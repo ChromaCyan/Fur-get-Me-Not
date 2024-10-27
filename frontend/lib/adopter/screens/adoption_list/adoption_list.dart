@@ -8,6 +8,7 @@ import 'package:fur_get_me_not/config/const.dart';
 import 'package:fur_get_me_not/widgets/cards/pet_card.dart';
 import 'package:fur_get_me_not/widgets/headers/banner_card.dart';
 import 'package:fur_get_me_not/adopter/models/widget/carousel.dart';
+import 'package:fur_get_me_not/widgets/headers/search.dart';
 
 class AdoptionScreen extends StatefulWidget {
   const AdoptionScreen({super.key});
@@ -17,6 +18,9 @@ class AdoptionScreen extends StatefulWidget {
 }
 
 class _AdoptionScreenState extends State<AdoptionScreen> {
+  TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -34,18 +38,10 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
             children: [
               Container(
                 width: size.width,
-                height: 284.0, // Adjust height based on carousel size
+                height: 284.0,
                 child: ReusableCarousel(items: carouselData),
                 decoration: const BoxDecoration(
                   color: Colors.transparent,
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: black,
-                  //     spreadRadius: 0,
-                  //     blurRadius: 90,
-                  //     offset: Offset(0, 1),
-                  //   ),
-                  // ],
                 ),
               ),
               const SizedBox(height: 20),
@@ -60,27 +56,54 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20), // Spacing between text and grid
+              const SizedBox(height: 20),
+              CustomSearchBar(
+                hintText: 'Search pets...',
+                searchController: searchController,
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                  });
+                },
+                onClear: () {
+                  setState(() {
+                    searchController.clear();
+                    searchQuery = '';
+                  });
+                },
+                onSearch: () {
+                },
+              ),
+              const SizedBox(height: 20), // Spacing after search bar
               BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
                 builder: (context, state) {
                   if (state is AdoptionBrowseLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is AdoptionBrowseLoaded) {
+                    // Filter pets based on search query
+                    final filteredPets = state.pets.where((pet) {
+                      return pet.name.toLowerCase().contains(searchQuery.toLowerCase());
+                    }).toList();
+
+                    if (filteredPets.isEmpty) {
+                      return Center(child: Text('No pets found for your search.'));
+                    }
+
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GridView.builder(
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
                           childAspectRatio: 0.75,
                         ),
-                        itemCount: state.pets.length,
+                        itemCount: filteredPets.length,
                         itemBuilder: (context, index) {
-                          final pet = state.pets[index];
+                          final pet = filteredPets[index];
                           return PetCard(
                             pet: pet,
                             size: size,

@@ -5,7 +5,7 @@ import 'package:fur_get_me_not/adopter/bloc/pet_list/pet_list_event.dart';
 import 'package:fur_get_me_not/adopter/screens/pet_list/pet_details_screen.dart';
 import 'package:fur_get_me_not/adopter/bloc/pet_list/pet_list_state.dart';
 import 'package:fur_get_me_not/widgets/cards/adopted_pet_card.dart';
-import 'package:fur_get_me_not/widgets/headers/search.dart'; // Import the custom search bar
+import 'package:fur_get_me_not/widgets/headers/search.dart';
 
 class PetListScreen extends StatefulWidget {
   const PetListScreen({super.key});

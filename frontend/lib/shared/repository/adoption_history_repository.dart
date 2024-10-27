@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:fur_get_me_not/adopter/models/adoption_status/adoption_status.dart';
+import 'package:fur_get_me_not/shared/models/adoption_history.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class AdoptionStatusRepository {
+class AdoptionHistoryRepository {
   final String baseUrl = 'http://192.168.18.235:5000/adoption';
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
@@ -11,39 +11,34 @@ class AdoptionStatusRepository {
     return await storage.read(key: 'jwt');
   }
 
-  Future<List<AdoptionStatus>> fetchAdoptions() async {
+  // Fetch adoption history for the logged-in user (adopter or adoptee)
+  Future<List<AdoptionHistory>> fetchAdoptionHistory() async {
     try {
       final token = await getToken();
       print('Token: $token');
 
-      // Ensure to handle the case where the token might be null
       if (token == null) {
         throw Exception('No token found');
       }
 
       final response = await http.get(
-        Uri.parse('$baseUrl/adoption-status'),
+        Uri.parse('$baseUrl/adoption-history'),
         headers: {
           'Authorization': 'Bearer $token',
         },
       );
 
-      // Move the status check inside the try block
       if (response.statusCode == 200) {
         final List<dynamic> jsonResponse = json.decode(response.body);
         return jsonResponse
-            .map((data) => AdoptionStatus.fromJson(data))
+            .map((data) => AdoptionHistory.fromJson(data))
             .toList();
       } else {
-        // Log the response body for debugging
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        throw Exception(
-            'Failed to load adoption statuses: ${response.reasonPhrase}');
+        throw Exception('Failed to load adoption history: ${response.reasonPhrase}');
       }
     } catch (error) {
-      print('Error fetching adoption statuses: $error');
-      throw Exception('Error fetching adoption statuses');
+      print('Error fetching adoption history: $error');
+      throw Exception('Error fetching adoption history');
     }
   }
 }
