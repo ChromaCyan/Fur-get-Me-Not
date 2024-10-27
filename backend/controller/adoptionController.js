@@ -108,11 +108,15 @@ exports.submitAdoptionForm = async (req, res) => {
 // Function to get adoption statuses for an adopter
 exports.getAdoptionStatusesForAdopter = async (req, res) => {
   try {
-    const adoptionStatuses = await AdoptionStatus.find({ adopterId: req.user.id, status: { $ne: 'Adoption Completed' } })
+    // Change $ne to $nin to allow an array of statuses
+    const adoptionStatuses = await AdoptionStatus.find({ 
+      adopterId: req.user.id, 
+      status: { $nin: ['Adoption Completed', 'Rejected'] } 
+    })
       .populate('adoptionRequestId')
       .populate({
         path: 'petId',
-        match: { status: { $ne: 'removed' } }, 
+        match: { status: { $ne: 'removed' } },
       })
       .populate('adopteeId');
 
@@ -132,7 +136,7 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
   try {
     const adoptionRequests = await AdoptionRequest.find({
       adopteeId: req.user.id,
-      status: { $nin: ['Adoption Completed', 'Rejected'] }  // Exclude both 'Adoption Completed' and 'Rejected'
+      status: { $nin: ['Adoption Completed', 'Rejected'] } 
     })
       .populate('adoptionFormId')
       .populate({
@@ -172,7 +176,7 @@ exports.getAdoptionFormByRequestId = async (req, res) => {
 
 // Function to update the status of an adoption request
 exports.updateAdoptionStatus = async (req, res) => {
-  const { requestId, status } = req.body; 
+  const { requestId, status } = req.body;
   try {
     const adoptionRequest = await AdoptionRequest.findByIdAndUpdate(requestId, { status }, { new: true });
 
@@ -242,6 +246,17 @@ exports.updateAdoptionStatus = async (req, res) => {
         });
         await otherAdoptionHistory.save();
       }
+    } else if (status === 'Rejected') {
+      // Create an adoption history entry for rejected status
+      const rejectionHistory = new AdoptionHistory({
+        adoptionRequestId: requestId,
+        petId: adoptionRequest.petId,
+        adopterId: adoptionRequest.adopterId,
+        adopteeId: adoptionRequest.adopteeId,
+        adoptionDate: Date.now(),
+        status: 'The adoptee has rejected your request',
+      });
+      await rejectionHistory.save();
     }
 
     res.status(200).json({
@@ -253,6 +268,7 @@ exports.updateAdoptionStatus = async (req, res) => {
     res.status(500).json({ message: 'Error updating adoption request status', error: error.message });
   }
 };
+
 
 // ------------------------- Adopter/Adopter function (Updated this for adoption history: 10/20/2024) ------------------------- //
 

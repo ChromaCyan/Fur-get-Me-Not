@@ -8,7 +8,13 @@ class AdoptionHistoryCard extends StatelessWidget {
   const AdoptionHistoryCard({Key? key, required this.adoptionHistory}) : super(key: key);
 
   Color _getStatusColor() {
-    return adoptionHistory.status == 'Completed' ? Colors.green : Colors.grey;
+    if (adoptionHistory.status == 'Completed') {
+      return Colors.green;
+    } else if (adoptionHistory.status == 'The adoptee has rejected your request') {
+      return Colors.red;
+    } else {
+      return Colors.grey;
+    }
   }
 
   @override
@@ -50,19 +56,22 @@ class AdoptionHistoryCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 4),
-                      Text(
-                        'Adopter: ${adoptionHistory.adopterName}',
-                        style: TextStyle(fontSize: 16, color: Colors.black87),
-                      ),
-                      SizedBox(height: 4),
+                      // Display the adopter and adoptee details conditionally
+                      if (adoptionHistory.status != 'The adoptee has rejected your request') ...[
+                        Text(
+                          'Adopter: ${adoptionHistory.adopterName}',
+                          style: TextStyle(fontSize: 16, color: Colors.black87),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Adoption Date: $formattedDate',
+                          style: TextStyle(fontSize: 14, color: Colors.black87),
+                        ),
+                      ],
+                      // Always show the adoptee name
                       Text(
                         'Adoptee: ${adoptionHistory.adopteeName}',
                         style: TextStyle(fontSize: 16, color: Colors.black87),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Adoption Date: $formattedDate',
-                        style: TextStyle(fontSize: 14, color: Colors.black87),
                       ),
                     ],
                   ),

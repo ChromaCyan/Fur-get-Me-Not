@@ -17,12 +17,11 @@ class AdminPetRepository {
     return await storage.read(key: 'jwt');
   }
 
-// Method to download the Excel file
   Future<void> downloadExcel() async {
     try {
       final token = await getToken();
       final response = await _dio.get(
-        '$baseUrl/export-excel', // Ensure this URL points to your export route
+        '$baseUrl/export-excel',
         options: Options(
           responseType: ResponseType.bytes,
           headers: {
@@ -33,9 +32,8 @@ class AdminPetRepository {
 
       if (response.statusCode == 200) {
         // Get the downloads directory
-        final Directory downloadsDirectory =
-            Directory('C:\\Users\\Joaquin\\Downloads');
-        final String filePath = '${downloadsDirectory.path}\\pet_table.xlsx';
+        final Directory downloadsDirectory = await getApplicationDocumentsDirectory();
+        final String filePath = '${downloadsDirectory.path}/pet_table.xlsx';
 
         // Save the file
         final File file = File(filePath);
@@ -43,10 +41,10 @@ class AdminPetRepository {
 
         print('Excel file downloaded at: $filePath');
       } else {
-        throw Exception(
-            'Failed to download Excel file: ${response.statusMessage}');
+        throw Exception('Failed to download Excel file: ${response.statusMessage}');
       }
     } catch (e) {
+      print(e);
       throw Exception('Failed to download Excel file: $e');
     }
   }

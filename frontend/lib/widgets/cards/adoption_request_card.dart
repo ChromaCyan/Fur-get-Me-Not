@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import the intl package
 import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_form.dart';
 import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.dart';
 import 'package:fur_get_me_not/adoptee/screens/adoption_request/adoption_form_details.dart';
@@ -45,6 +46,12 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
     }
   }
 
+  String _formatRequestDate(String dateString) {
+    // Parse the date string into a DateTime object
+    DateTime date = DateTime.parse(dateString); // Assuming the date string is in "yyyy-MM-dd" format
+    return DateFormat('MMMM dd, yyyy').format(date); // Format date as "October 27, 2024"
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -53,7 +60,7 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
         borderRadius: BorderRadius.circular(15),
       ),
       elevation: 5,
-      color: const Color(0xFFE1F5FE), // Change this to a color that fits your theme
+      color: const Color(0xFFE1F5FE),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -78,17 +85,12 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF21899C), // Primary color for pet name
+                          color: Color(0xFF21899C),
                         ),
                       ),
                       SizedBox(height: 4),
                       Text(
                         'Adopter: ${widget.adoptionRequest.adopterName}',
-                        style: TextStyle(color: Colors.black87),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        'Request ID: ${widget.adoptionRequest.requestId}',
                         style: TextStyle(color: Colors.black87),
                       ),
                     ],
@@ -97,8 +99,9 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
               ],
             ),
             SizedBox(height: 10),
+            // Use the formatted date string
             Text(
-              'Request Date: ${widget.adoptionRequest.requestDate}',
+              'Request Date: ${_formatRequestDate(widget.adoptionRequest.requestDate)}',
               style: TextStyle(fontSize: 14, color: Colors.black87),
             ),
             SizedBox(height: 10),
@@ -115,7 +118,7 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(8), // Rounded corners
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: DropdownButton<String>(
                     value: _selectedStatus,
@@ -136,7 +139,7 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Center(child: Text(value)), // Center text inside dropdown
+                        child: Center(child: Text(value)),
                       );
                     }).toList(),
                   ),
@@ -144,7 +147,7 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
               ],
             ),
             SizedBox(height: 10),
-            Center( // Center the button
+            Center(
               child: TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -157,14 +160,14 @@ class _AdoptionRequestCardState extends State<AdoptionRequestCard> {
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Rounded corners
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  backgroundColor: const Color(0xFFFE9879), // Change to fit your theme
+                  backgroundColor: const Color(0xFFFE9879),
                 ),
                 child: Text(
                   'View the Adoption Form',
                   style: TextStyle(
-                    color: Colors.white, // White text color for better visibility
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

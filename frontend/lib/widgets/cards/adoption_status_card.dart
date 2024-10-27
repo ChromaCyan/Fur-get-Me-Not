@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:fur_get_me_not/adopter/models/adoption_status/adoption_status.dart';
 
 class AdoptionStatusCard extends StatelessWidget {
@@ -21,6 +22,17 @@ class AdoptionStatusCard extends StatelessWidget {
     }
   }
 
+  // Format date function to handle a String date
+  String _formatDate(String dateString) {
+    try {
+      DateTime parsedDate = DateTime.parse(dateString);
+      return DateFormat('MM/dd/yyyy').format(parsedDate);
+    } catch (e) {
+      print("Error parsing date: $e");
+      return dateString; // Return the original string if parsing fails
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print('Current status: ${adoption.status}');
@@ -30,7 +42,7 @@ class AdoptionStatusCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       elevation: 5,
-      color: const Color(0xFFE1F5FE), // Background color similar to AdoptionRequestCard
+      color: const Color(0xFFE1F5FE),
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -46,22 +58,22 @@ class AdoptionStatusCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 15),
-                Expanded( // Use Expanded for better layout
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         adoption.petName,
                         style: TextStyle(
-                          fontSize: 20, // Increased font size for pet name
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF21899C), // Primary color for pet name
+                          color: Color(0xFF21899C),
                         ),
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Request Date: ${adoption.requestDate}',
-                        style: TextStyle(fontSize: 14, color: Colors.black87), // Updated style
+                        'Request Date: ${_formatDate(adoption.requestDate)}',
+                        style: TextStyle(fontSize: 14, color: Colors.black87),
                       ),
                     ],
                   ),
