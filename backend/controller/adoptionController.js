@@ -147,7 +147,6 @@ exports.getAdoptionFormByRequestId = async (req, res) => {
 exports.updateAdoptionStatus = async (req, res) => {
   const { requestId, status } = req.body; 
   try {
-
     const adoptionRequest = await AdoptionRequest.findByIdAndUpdate(requestId, { status }, { new: true });
 
     if (!adoptionRequest) {
@@ -161,22 +160,19 @@ exports.updateAdoptionStatus = async (req, res) => {
     );
 
     if (status === 'Adoption Completed') {
-      const adoptionRequest = await AdoptionRequest.findById(requestId)
-        .populate('petId')
-        .populate('adopterId');
-
-      if (!adoptionRequest) {
-        return res.status(404).json({ message: 'Adoption request not found' });
-      }
-
       const pet = await Pet.findById(adoptionRequest.petId);
       if (!pet) {
         return res.status(404).json({ message: 'Pet not found' });
       }
 
       pet.status = 'adopted';
-      await pet.save(); 
+      await pet.save();
 
+      // Delete other adoption requests for this pet
+      const otherRequests = await AdoptionRequest.find({ petId: pet._id, _id: { $ne: requestId } });
+      await AdoptionRequest.deleteMany({ petId: pet._id, _id: { $ne: requestId } });
+
+      // Create adoption history for the successful adopter
       const adoptedPet = new AdoptedPet({
         name: pet.name,
         breed: pet.breed,
@@ -205,6 +201,19 @@ exports.updateAdoptionStatus = async (req, res) => {
         status: 'Completed',
       });
       await adoptionHistory.save();
+
+      // Create adoption history for other users trying to adopt the same pet
+      for (const request of otherRequests) {
+        const otherAdoptionHistory = new AdoptionHistory({
+          adoptionRequestId: request._id,
+          petId: pet._id,
+          adopterId: request.adopterId, // The user who tried to adopt
+          adopteeId: pet.adopteeId,
+          adoptionDate: Date.now(),
+          status: 'Adopted by another user',
+        });
+        await otherAdoptionHistory.save();
+      }
     }
 
     res.status(200).json({
