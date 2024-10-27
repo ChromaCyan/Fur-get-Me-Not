@@ -232,8 +232,8 @@ exports.getAdoptionHistoryForUser = async (req, res) => {
     })
       .populate({
         path: 'petId',
-        select: 'name breed age petImageUrl',
-        match: { status: { $ne: 'removed' } }, 
+        select: 'name petImageUrl',
+        match: { status: { $ne: 'removed' } },
       })
       .populate({
         path: 'adopterId',

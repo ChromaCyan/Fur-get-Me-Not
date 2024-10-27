@@ -16,9 +16,9 @@ router.get("/my-adopted-pets", adoptedPetController.getAdoptedPetsByUser);
 router.get("/:id", adoptedPetController.getAdoptedPetById);
 
 // Route for archiving an adopted pet (soft delete)
-router.patch("/:id/archive", isAdopter, adoptedPetController.archiveAdoptedPet); 
+// router.patch("/:id/archive", isAdopter, adoptedPetController.archiveAdoptedPet); 
 
 // Route for updating an adopted pet's details (excluding status)
-router.put("/:id", adoptedPetController.updateAdoptedPet);
+// router.put("/:id", adoptedPetController.updateAdoptedPet);
 
 module.exports = router;

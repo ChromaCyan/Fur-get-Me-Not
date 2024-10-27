@@ -5,8 +5,8 @@ const {
   getAdoptionRequestsForAdoptee,
   getAdoptionFormsForAdoptee,
   getAdoptionFormByRequestId,  
-  updateAdoptionStatus
-  getAdoptionHistoryForUser
+  updateAdoptionStatus,
+  getAdoptionHistoryForUser,
 } = require('../controller/adoptionController');
 
 const { verifyToken, isAdopter, isAdoptee } = require('../middleware/authMiddleware');
