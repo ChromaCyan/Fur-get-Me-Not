@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_form/adoption_form_bloc.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
 import 'package:fur_get_me_not/adopter/models/adoption_list/adoption_form.dart';
+import 'package:fur_get_me_not/adopter/screens/adoption_list/adoption_list.dart';
 import 'package:fur_get_me_not/adopter/screens/home_screen.dart';
 import 'package:fur_get_me_not/widgets/headers/app_bar.dart';
 
@@ -66,12 +67,12 @@ class _AdoptionFormState extends State<AdoptionForm> {
           child: SingleChildScrollView(
             child: Container(
               width: 400,
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8.0),
                 boxShadow: [
-                  BoxShadow(
+                  const BoxShadow(
                       color: Colors.grey, blurRadius: 10.0, spreadRadius: 2.0),
                 ],
               ),
@@ -119,7 +120,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                             _ownRent,
                           ),
                           if (_ownRent == 'Rent') ...[
-                            Text('Does your landlord allow pets?'),
+                            const Text('Does your landlord allow pets?'),
                             Row(
                               children: [
                                 Radio(
@@ -128,14 +129,14 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                   onChanged: (value) => setState(
                                       () => _landlordAllowsPets = true),
                                 ),
-                                Text('Yes'),
+                                const Text('Yes'),
                                 Radio(
                                   value: false,
                                   groupValue: _landlordAllowsPets,
                                   onChanged: (value) => setState(
                                       () => _landlordAllowsPets = false),
                                 ),
-                                Text('No'),
+                                const Text('No'),
                               ],
                             ),
                           ],
@@ -154,7 +155,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                 onChanged: (value) =>
                                     setState(() => _ownedPetsBefore = value!),
                               ),
-                              Text('Have you owned pets before?'),
+                              const Text('Have you owned pets before?'),
                             ],
                           ),
                           if (_ownedPetsBefore)
@@ -252,7 +253,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                 onChanged: (value) => setState(
                                     () => _longTermCommitment = value!),
                               ),
-                              Expanded(
+                              const Expanded(
                                 child: Text(
                                   'Can you commit to a pet long-term?',
                                   softWrap: true,
@@ -279,18 +280,18 @@ class _AdoptionFormState extends State<AdoptionForm> {
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Center(
         child: Text(title,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF21899C))),
+                color: Color(0xFF21899C))),
       ),
     );
   }
 
   Widget _buildBox(Widget child) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      padding: EdgeInsets.all(16.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xFF21899C).withOpacity(0.5)),
         borderRadius: BorderRadius.circular(12.0),
@@ -345,7 +346,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
             _submitAdoptionForm(context); // Pass context here
           }
         },
-        child: Text('Submit'),
+        child: const Text('Submit', style: TextStyle(color: Colors.white)),
       ),
     );
   }
@@ -378,18 +379,24 @@ class _AdoptionFormState extends State<AdoptionForm> {
     // Call the Bloc to submit the form
     context.read<AdoptionBloc>().add(SubmitAdoptionForm(adoptionForm));
 
-    // Show toast and pop back to the previous page
-    Fluttertoast.showToast(
-      msg: "Form Successfully Submitted",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.green,
-      textColor: Colors.white,
-      fontSize: 16.0,
+    // Show Snackbar and pop back to the previous page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: const Text(
+          "Form Successfully Submitted",
+          style: TextStyle(
+            fontSize: 16.0,
+            // fontFamily: 'YourCustomFont', // Apply your font
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Color(0xFFFE9879),
+        behavior: SnackBarBehavior.floating, // Optional for styling
+      ),
     );
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => AdopterHomeScreen()),
+      MaterialPageRoute(builder: (context) => const AdopterHomeScreen()),
       (route) => false,
     );
   }
