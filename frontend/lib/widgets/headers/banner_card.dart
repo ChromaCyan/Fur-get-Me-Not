@@ -28,16 +28,33 @@ class ReusableCarousel extends StatelessWidget {
             //     offset: const Offset(2, 3),
             //   ),
             // ],
-            borderRadius: BorderRadius.circular(0), // No rounded corners
-            color: const Color(0xFFFE9879),
+            borderRadius: BorderRadius.circular(25), // No rounded corners
+            color: Colors.transparent,
           ),
           child: Stack(
             children: [
               // Image fills the entire container
-              Positioned.fill(
-                child: Image.asset(
-                  item.image,
-                  fit: BoxFit.cover, // Ensures the image covers the whole widget
+              Center(
+                child: Container(
+                  width: 300, // Adjust the width as needed
+                  height: 200, // Adjust the height as needed
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25), // Match the container's radius
+                    child: Image.asset(
+                      item.image,
+                      fit: BoxFit.cover, // Ensures the image covers the whole widget
+                    ),
+                  ),
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 300,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.2), // Darken the image with 50% opacity
+                    borderRadius: BorderRadius.circular(25), // Match the container's radius
+                  ),
                 ),
               ),
               // Text overlay
@@ -57,7 +74,7 @@ class ReusableCarousel extends StatelessWidget {
                           wordSpacing: 2,
                           height: 1.4,
                           letterSpacing: -0.7,
-                          color: Colors.white, // Change text color to improve visibility
+                          color: Color(0xFFF5E6CA), // Change text color to improve visibility
                           fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.center, // Center the text

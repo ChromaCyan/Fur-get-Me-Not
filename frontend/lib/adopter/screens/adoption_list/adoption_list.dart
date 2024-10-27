@@ -37,12 +37,14 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 20),
               Container(
-                width: size.width,
-                height: 284.0,
+                width: 340,
+                height: 235,
                 child: ReusableCarousel(items: carouselData),
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF5E6CA),
+                  borderRadius: BorderRadius.circular(15),
                 ),
               ),
               const SizedBox(height: 20),
