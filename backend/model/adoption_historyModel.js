@@ -1,19 +1,13 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const adoptionHistorySchema = new mongoose.Schema({
-  name: String,
-  breed: String,
-  gender: String,
-  age: Number,
-  height: Number,
-  weight: Number,
-  petImageUrl: String,
-  description: String,
-  specialCareInstructions: String,
-  adopterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Reference to adopter
-  adoptionDate: { type: Date, default: Date.now },
-  status: { type: String, default: 'Adopted' } // Can be 'Adopted' or other statuses
+const adoptionHistorySchema = new Schema({
+  adoptionRequestId: { type: Schema.Types.ObjectId, ref: 'AdoptionRequest', required: true }, 
+  petId: { type: Schema.Types.ObjectId, ref: 'Pet', required: true },  
+  adopterId: { type: Schema.Types.ObjectId, ref: 'User', required: true },  
+  adopteeId: { type: Schema.Types.ObjectId, ref: 'User', required: true },  
+  adoptionDate: { type: Date, required: true },  
+  status: { type: String, default: 'Completed' },
 });
 
-const AdoptionHistory = mongoose.model('AdoptionHistory', adoptionHistorySchema);
-module.exports = AdoptionHistory;
+module.exports = mongoose.model('AdoptionHistory', adoptionHistorySchema);

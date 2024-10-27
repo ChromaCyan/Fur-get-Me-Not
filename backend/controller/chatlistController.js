@@ -7,7 +7,6 @@ exports.getChatListForUser = async (req, res) => {
   try {
     const { id: userId } = req.user;
 
-    // Fetch all chats where the user is a participant
     const chats = await Chat.find({ participants: userId })
       .populate({
         path: 'participants',
@@ -16,11 +15,9 @@ exports.getChatListForUser = async (req, res) => {
       })
       .select('lastMessage updatedAt participants');
 
-    // Format the chat list to return relevant information
     const chatList = chats.map(chat => {
       const otherUser = chat.participants[0];
 
-      // Safely access otherUser properties and handle null cases
       const firstName = otherUser ? otherUser.firstName : 'Unknown First Name';
       const lastName = otherUser ? otherUser.lastName : 'Unknown Last Name';
       const fullName = `${firstName} ${lastName}`; 

@@ -16,7 +16,7 @@ const generateOTP = () => {
     return crypto.randomInt(100000, 999999).toString();
 };
 
-// Function to send email
+// Function to send email (I was fucking stuck here for 2 hours cause i forgot to add gmail on the service lmao)
 const sendEmail = async (email, otp) => {
     try {
         const transporter = nodemailer.createTransport({
@@ -43,7 +43,7 @@ const sendEmail = async (email, otp) => {
 };
 
 
-// OTP verification logic
+// OTP Verification Part here
 exports.verifyOTP = async (req, res) => {
     const { email, otp } = req.body; 
     const storedOTP = otps[email];
@@ -56,7 +56,7 @@ exports.verifyOTP = async (req, res) => {
     }
     
     if (storedOTP.expires < Date.now()) {
-        delete otps[email]; // Remove expired OTP
+        delete otps[email]; 
         return res.status(400).json({ success: false, message: 'OTP has expired' });
     }
     
@@ -74,7 +74,6 @@ exports.createUser = async (req, res) => {
     const { firstName, lastName, email, password, address, role, profileImage } = req.body;
 
     try {
-        // Check if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
@@ -92,13 +91,11 @@ exports.createUser = async (req, res) => {
 
         await newUser.save();
 
-        // Generate and send OTP
         const otp = generateOTP();
         otps[email] = { otp, expires: Date.now() + 300000 };
         await sendEmail(email, otp);
         console.log('Stored OTPs:', otps); 
 
-        // Generate JWT for the newly created user
         const token = jwt.sign({ id: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
 
         res.status(201).json({ message: "User created successfully, OTP sent", userId: newUser._id, token });
@@ -108,7 +105,7 @@ exports.createUser = async (req, res) => {
 };
 
 
-// GET ALL USERS
+// GET ALL USERS (For postman testing to know if creating users work)
 exports.getUser = async (req, res) => {
     try {
         const users = await User.find();
@@ -118,7 +115,7 @@ exports.getUser = async (req, res) => {
     }
 };
 
-// GET USER BY ID
+// GET USER BY ID (For profile display later)
 exports.getUserById = async (req, res) => {
     const { id } = req.params;
 
@@ -133,17 +130,15 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-// Upload a profile image for a user (modified to follow the petController logic)
+// Upload a profile image for a user (Fucking hate this part, got stuck for 8 hours trying to make the filePath work)
 exports.uploadProfileImage = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    // Construct the image URL similar to petController
     const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
 
-    // Respond with the image URL
     res.status(200).json({ imageUrl: filePath });
   } catch (error) {
     console.error(error);
@@ -161,13 +156,11 @@ exports.loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Compare the provided password with the hashed password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Generate JWT
         const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '3h' });
         res.status(200).json({ token, userId: user._id, role: user.role });
 
@@ -182,17 +175,14 @@ exports.updateUser = async (req, res) => {
   const { firstName, lastName, address } = req.body;
 
   try {
-    // Debugging logs to check the request body and file
     console.log('Request Body:', req.body);
     console.log('Uploaded File:', req.file);
 
-    // Find the existing user first
     const existingUser = await User.findById(id);
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Prepare updated data
     const updatedData = {
       ...existingUser.toObject(),  
       ...req.body,               
@@ -206,23 +196,18 @@ exports.updateUser = async (req, res) => {
       console.log('New Profile Image URL:', filePath);
     }
 
-    // Log the fields that are being updated
     console.log('Update Fields:', updatedData);
 
-    // Update the user in the database
     const updatedUser = await User.findByIdAndUpdate(id, updatedData, { new: true });
 
-    // Log the updated user object
     console.log('Updated User:', updatedUser);
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Respond with the updated user object
     res.status(200).json(updatedUser);
   } catch (error) {
-    // Log the error for debugging
     console.error('Error updating user:', error);
     res.status(400).json({ message: error.message });
   }

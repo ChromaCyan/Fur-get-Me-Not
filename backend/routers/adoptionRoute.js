@@ -6,6 +6,7 @@ const {
   getAdoptionFormsForAdoptee,
   getAdoptionFormByRequestId,  
   updateAdoptionStatus
+  getAdoptionHistoryForUser
 } = require('../controller/adoptionController');
 
 const { verifyToken, isAdopter, isAdoptee } = require('../middleware/authMiddleware');
@@ -30,5 +31,10 @@ router.get('/adoption-form/:requestId', verifyToken, isAdoptee, getAdoptionFormB
 
 // Route for updating the status of an adoption request
 router.put('/update-status', verifyToken, isAdoptee, updateAdoptionStatus);
+
+// ------------------------- Shared Routes ------------------------- //
+
+// Route for getting adoption history for the logged-in user (adopter or adoptee)
+router.get('/adoption-history', verifyToken, getAdoptionHistoryForUser);
 
 module.exports = router;

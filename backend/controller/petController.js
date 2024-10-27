@@ -4,17 +4,14 @@ const ExcelJS = require('exceljs');
 const path = require('path');
 const fs = require('fs');
 
-// Export the entire Pet table as an Excel file
+// Create a function to get the pet data and download it as CVS on EDGE (10/22/2024)
 exports.exportPets = async (req, res) => {
   try {
-    // Fetch all pets from the database
     const pets = await Pet.find();
 
-    // Create a new workbook and worksheet
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Pet Table');
 
-    // Define columns for the worksheet
     const columns = [
       { header: 'Name', key: 'name', width: 20 },
       { header: 'Breed', key: 'breed', width: 20 },
@@ -40,10 +37,8 @@ exports.exportPets = async (req, res) => {
       { header: 'Vaccine Clinic Name', key: 'vaccineClinicName', width: 20 },
     ];
 
-    // Add columns to the worksheet
     worksheet.columns = columns;
 
-    // Add each pet as a new row in the worksheet
     pets.forEach((pet) => {
       worksheet.addRow({
         name: pet.name,
@@ -71,15 +66,13 @@ exports.exportPets = async (req, res) => {
       });
     });
 
-    // Write the buffer to an Excel file
     const buffer = await workbook.xlsx.writeBuffer();
 
-    // Set response headers to trigger download
+    // Remember to fix this on the flutter to put header properly lmao
     res.setHeader('Content-Disposition', 'attachment; filename=pet_table.xlsx');
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Length', buffer.length);
 
-    // Send the buffer as the response
     res.status(200).send(buffer);
   } catch (error) {
     console.error('Error exporting pet table:', error);
@@ -113,12 +106,11 @@ exports.getPetsbyadoptee = async (req, res) => {
 // Get a single pet by ID
 exports.getPetById = async (req, res) => {
   try {
-    const { id } = req.params; // Extract id from request parameters
+    const { id } = req.params; 
 
     console.log('Request Body:', req.body);
     console.log('User ID:', req.user.id);
 
-    // Fetch the pet using the id
     const pet = await Pet.findById(id).populate('adopteeId', 'firstName lastName profileImage');
     
     if (!pet || pet.status === 'adopted') { 
@@ -142,17 +134,15 @@ exports.createPet = async (req, res) => {
       return res.status(403).json({ message: 'Access denied. Only Adoptees can create pet listings.' });
     }
 
-    // Create new pet object with adopteeId and combined medical & vaccine history
     const newPetData = {
       ...req.body,
       adopteeId: req.user.id,
       status: 'available',
     };
 
-    // If an image file was uploaded, construct the image URL
     if (req.file) {
       const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-      newPetData.petImageUrl = filePath; // Add image URL to new pet data
+      newPetData.petImageUrl = filePath; 
     }
 
     const newPet = new Pet(newPetData);
@@ -173,10 +163,8 @@ exports.uploadImage = async (req, res) => {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    // Construct the image URL
     const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
 
-    // Respond with the image URL
     res.status(200).json({ imageUrl: filePath });
   } catch (error) {
     console.error(error);
@@ -194,32 +182,27 @@ exports.updatePet = async (req, res) => {
 
     const { id } = req.params;
 
-    // Find the existing pet first
     const existingPet = await Pet.findById(id);
     if (!existingPet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
 
-    // Prepare updated data
     const updatedData = {
       ...existingPet.toObject(),
       ...req.body, 
     };
 
-    // Check if a new image has been uploaded
     if (req.file) {
       const filePath = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
       updatedData.petImageUrl = filePath; 
     }
 
-    // Update the pet in the database
     const updatedPet = await Pet.findByIdAndUpdate(id, updatedData, { new: true });
     
     if (!updatedPet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
     
-    // Respond with the updated pet object
     res.status(200).json(updatedPet);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -236,7 +219,6 @@ exports.deletePet = async (req, res) => {
 
     const { id } = req.params;
     
-    // Update the pet's status to 'removed'
     const updatedPet = await Pet.findByIdAndUpdate(
       id,
       { status: 'removed' },

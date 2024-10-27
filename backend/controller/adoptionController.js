@@ -3,18 +3,13 @@ const AdoptionStatus = require('../model/adoption_statusModel');
 const AdoptionRequest = require('../model/adoption_requestModel');
 const Pet = require('../model/petModel');
 const AdoptedPet = require('../model/adopted_petsModel');
+const AdoptionHistory = require('../model/adoption_historyModel');
 
-// ------------------------- Adopter Functions ------------------------- //
+// ------------------------- Adopter Functions here (10/15/2024) ------------------------- //
 
 // Function to submit an adoption form and create an adoption request
 exports.submitAdoptionForm = async (req, res) => {
   try {
-    // const {
-    //   petId, fullName, email, phone, address, city, zipCode, residenceType,
-    //   ownRent, landlordAllowsPets, ownedPetsBefore, petTypesOwned, petPreference,
-    //   preferredSize, agePreference, hoursAlone, activityLevel, childrenAges,
-    //   carePlan, whatIfNoLongerKeep, longTermCommitment
-    // } = req.body;
 
     const params = req.body
 
@@ -44,21 +39,17 @@ exports.submitAdoptionForm = async (req, res) => {
       longTermCommitment,
     });
 
-    // Save form to the database
     await adoptionForm.save();
 
-    // Get the pet to find the adopteeId
     const pet = await Pet.findById(petId);
     if (!pet) {
       return res.status(404).json({ message: 'Pet not found' });
     }
 
-    // Ensure adopteeId is defined
     if (!pet.adopteeId) {
       return res.status(400).json({ message: 'Adoptee ID is missing for this pet' });
     }
 
-    // Create AdoptionRequest record
     const adoptionRequest = new AdoptionRequest({
       adopterId: req.user.id,
       petId,
@@ -70,7 +61,6 @@ exports.submitAdoptionForm = async (req, res) => {
 
     await adoptionRequest.save();
 
-    // Create AdoptionStatus record
     const adoptionStatus = new AdoptionStatus({
       adoptionRequestId: adoptionRequest._id,
       adopterId: req.user.id,
@@ -100,7 +90,6 @@ exports.getAdoptionStatusesForAdopter = async (req, res) => {
       })
       .populate('adopteeId');
 
-    // Filter out any adoption statuses where petId is null (meaning it was removed)
     const filteredStatuses = adoptionStatuses.filter(status => status.petId !== null);
 
     res.status(200).json(filteredStatuses);
@@ -110,7 +99,7 @@ exports.getAdoptionStatusesForAdopter = async (req, res) => {
   }
 };
 
-// ------------------------- Adoptee Functions ------------------------- //
+// ------------------------- Adoptee Functions below here (Updated this for adoption history: 10/20/2024) ------------------------- //
 
 // Function to get all adoption requests for an adoptee
 exports.getAdoptionRequestsForAdoptee = async (req, res) => {
@@ -140,14 +129,12 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
 exports.getAdoptionFormByRequestId = async (req, res) => {
   const { requestId } = req.params;
   try {
-    // Find the adoption request by ID
     const adoptionRequest = await AdoptionRequest.findById(requestId).populate('adoptionFormId');
 
     if (!adoptionRequest || !adoptionRequest.adoptionFormId) {
       return res.status(404).json({ message: 'Adoption request or form not found' });
     }
 
-    // Return the adoption form details
     res.status(200).json(adoptionRequest.adoptionFormId);
   } catch (error) {
     console.error(error);
@@ -160,23 +147,20 @@ exports.getAdoptionFormByRequestId = async (req, res) => {
 exports.updateAdoptionStatus = async (req, res) => {
   const { requestId, status } = req.body; 
   try {
-    // Update the adoption request status directly
+
     const adoptionRequest = await AdoptionRequest.findByIdAndUpdate(requestId, { status }, { new: true });
 
     if (!adoptionRequest) {
       return res.status(404).json({ message: 'Adoption request not found' });
     }
 
-    // Update the adoption status record associated with this request
     const updatedStatus = await AdoptionStatus.findOneAndUpdate(
       { adoptionRequestId: requestId }, 
       { status }, 
       { new: true }
     );
 
-    // If the status is "Adoption Completed," update the pet's status
     if (status === 'Adoption Completed') {
-      // Find the adoption request by ID and populate the relevant data
       const adoptionRequest = await AdoptionRequest.findById(requestId)
         .populate('petId')
         .populate('adopterId');
@@ -185,17 +169,14 @@ exports.updateAdoptionStatus = async (req, res) => {
         return res.status(404).json({ message: 'Adoption request not found' });
       }
 
-      // Find the pet to update its status
       const pet = await Pet.findById(adoptionRequest.petId);
       if (!pet) {
         return res.status(404).json({ message: 'Pet not found' });
       }
 
-      // Update the pet's status to "adopted"
       pet.status = 'adopted';
-      await pet.save(); // Save the updated pet
+      await pet.save(); 
 
-      // Create an entry in AdoptedPet including medical and vaccine history
       const adoptedPet = new AdoptedPet({
         name: pet.name,
         breed: pet.breed,
@@ -214,9 +195,18 @@ exports.updateAdoptionStatus = async (req, res) => {
       });
 
       await adoptedPet.save();
+
+      const adoptionHistory = new AdoptionHistory({
+        adoptionRequestId: requestId,
+        petId: pet._id,
+        adopterId: adoptionRequest.adopterId,
+        adopteeId: pet.adopteeId,
+        adoptionDate: Date.now(),
+        status: 'Completed',
+      });
+      await adoptionHistory.save();
     }
 
-    // Respond with success
     res.status(200).json({
       message: 'Adoption request and status updated successfully',
       updatedStatus
@@ -224,5 +214,41 @@ exports.updateAdoptionStatus = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error updating adoption request status', error: error.message });
+  }
+};
+
+// ------------------------- Adopter/Adopter function (Updated this for adoption history: 10/20/2024) ------------------------- //
+
+// Get adoption history for a user (adopter/adoptee)
+exports.getAdoptionHistoryForUser = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+
+    const adoptionHistories = await AdoptionHistory.find({
+      $or: [
+        { adopterId: userId },
+        { adopteeId: userId },
+      ],
+    })
+      .populate({
+        path: 'petId',
+        select: 'name breed age petImageUrl',
+        match: { status: { $ne: 'removed' } }, 
+      })
+      .populate({
+        path: 'adopterId',
+        select: 'firstName lastName email address',
+      })
+      .populate({
+        path: 'adopteeId',
+        select: 'firstName lastName email address',
+      });
+
+    const filteredHistories = adoptionHistories.filter(history => history.petId !== null);
+
+    res.status(200).json(filteredHistories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error retrieving adoption history', error });
   }
 };
