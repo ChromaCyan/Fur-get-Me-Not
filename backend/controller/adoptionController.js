@@ -10,12 +10,37 @@ const AdoptionHistory = require('../model/adoption_historyModel');
 // Function to submit an adoption form and create an adoption request
 exports.submitAdoptionForm = async (req, res) => {
   try {
+    const {
+      petId,
+      fullName,
+      email,
+      phone,
+      address,
+      city,
+      zipCode,
+      residenceType,
+      ownRent,
+      landlordAllowsPets,
+      ownedPetsBefore,
+      petTypesOwned,
+      petPreference,
+      preferredSize,
+      agePreference,
+      hoursAlone,
+      activityLevel,
+      childrenAges,
+      carePlan,
+      whatIfNoLongerKeep,
+      longTermCommitment
+    } = req.body;
 
-    const params = req.body
+    if (!petId) {
+      return res.status(400).json({ message: 'Pet ID is required' });
+    }
 
     // Create new AdoptionForm
     const adoptionForm = new AdoptionForm({
-      adopterId: params.user.id,
+      adopterId: req.user.id,
       petId,
       fullName,
       email,
@@ -79,6 +104,7 @@ exports.submitAdoptionForm = async (req, res) => {
   }
 };
 
+
 // Function to get adoption statuses for an adopter
 exports.getAdoptionStatusesForAdopter = async (req, res) => {
   try {
@@ -104,7 +130,10 @@ exports.getAdoptionStatusesForAdopter = async (req, res) => {
 // Function to get all adoption requests for an adoptee
 exports.getAdoptionRequestsForAdoptee = async (req, res) => {
   try {
-    const adoptionRequests = await AdoptionRequest.find({ adopteeId: req.user.id, status: { $ne: 'Adoption Completed' } })
+    const adoptionRequests = await AdoptionRequest.find({
+      adopteeId: req.user.id,
+      status: { $nin: ['Adoption Completed', 'Rejected'] }  // Exclude both 'Adoption Completed' and 'Rejected'
+    })
       .populate('adoptionFormId')
       .populate({
         path: 'petId',
@@ -122,8 +151,6 @@ exports.getAdoptionRequestsForAdoptee = async (req, res) => {
     res.status(500).json({ message: 'Error retrieving adoption requests', error });
   }
 };
-
-
 
 // Function to get the adoption form for a specific adoption request
 exports.getAdoptionFormByRequestId = async (req, res) => {
@@ -172,7 +199,9 @@ exports.updateAdoptionStatus = async (req, res) => {
       const otherRequests = await AdoptionRequest.find({ petId: pet._id, _id: { $ne: requestId } });
       await AdoptionRequest.deleteMany({ petId: pet._id, _id: { $ne: requestId } });
 
-      // Create adoption history for the successful adopter
+      // Find and delete the corresponding adoption statuses
+      await AdoptionStatus.deleteMany({ petId: pet._id, adoptionRequestId: { $in: otherRequests.map(req => req._id) } });
+
       const adoptedPet = new AdoptedPet({
         name: pet.name,
         breed: pet.breed,
@@ -202,12 +231,11 @@ exports.updateAdoptionStatus = async (req, res) => {
       });
       await adoptionHistory.save();
 
-      // Create adoption history for other users trying to adopt the same pet
       for (const request of otherRequests) {
         const otherAdoptionHistory = new AdoptionHistory({
           adoptionRequestId: request._id,
           petId: pet._id,
-          adopterId: request.adopterId, // The user who tried to adopt
+          adopterId: request.adopterId, 
           adopteeId: pet.adopteeId,
           adoptionDate: Date.now(),
           status: 'Adopted by another user',
@@ -236,7 +264,7 @@ exports.getAdoptionHistoryForUser = async (req, res) => {
     const adoptionHistories = await AdoptionHistory.find({
       $or: [
         { adopterId: userId },
-        { adopteeId: userId },
+        { adopteeId: userId, status: 'Completed' },
       ],
     })
       .populate({
