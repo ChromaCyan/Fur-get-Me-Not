@@ -4,6 +4,7 @@ import 'package:fur_get_me_not/adoptee/bloc/adoption_form/adoption_form_bloc.dar
 import 'package:fur_get_me_not/adoptee/repositories/adoption_request/adoption_request_repository.dart';
 import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_form.dart';
 import 'package:fur_get_me_not/widgets/buttons/back_button.dart';
+import 'package:fur_get_me_not/widgets/headers/app_bar.dart';
 
 class AdoptionFormScreen extends StatelessWidget {
   final String requestId;
@@ -44,9 +45,10 @@ class _AdoptionFormState extends State<AdoptionForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Adoption Form'),
-        backgroundColor: const Color(0xFF21899C),
+      appBar: CustomAppBar(
+        title: 'Adoption Form',
+        hasBackButton: true,
+        onBackButtonPressed: () => Navigator.of(context).pop(),
       ),
       body: Center(
         child: SingleChildScrollView(
