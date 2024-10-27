@@ -17,23 +17,23 @@ class PetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     double screenWidth = size.width;
     double cardWidth = (screenWidth / 2) - 16;
-    double cardHeight = cardWidth * 1.00; // Adjusted height similar to first design
+    double cardHeight = cardWidth * 1.00;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 20), // Matching padding
+      padding: const EdgeInsets.only(left: 20),
       child: GestureDetector(
         onTap: onTap,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15), // Rounded corners
+          borderRadius: BorderRadius.circular(15),
           child: Container(
             width: cardWidth,
             height: cardHeight,
             decoration: BoxDecoration(
-              color: const Color(0xFFF5E6CA), // Light cream color
+              color: const Color(0xFFF5E6CA),
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1), // Light shadow
+                  color: Colors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: Offset(0, 4),
                 ),
@@ -75,12 +75,14 @@ class PetCard extends StatelessWidget {
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 1, // Limit to 1 line
+                          overflow: TextOverflow.ellipsis, // Show ellipsis
                         ),
                         const SizedBox(height: 4),
                         Text(
                           pet.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1, // Already set
+                          overflow: TextOverflow.ellipsis, // Show ellipsis
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 12,

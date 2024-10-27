@@ -74,6 +74,8 @@ class PetCard extends StatelessWidget {
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
+                          maxLines: 1, // Limit to 1 line
+                          overflow: TextOverflow.ellipsis, // Show ellipsis
                         ),
                         SizedBox(height: 4),
                         Row(
@@ -88,11 +90,11 @@ class PetCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 pet.adoptee.address,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1, // Limit to 2 lines
+                                overflow: TextOverflow.ellipsis, // Show ellipsis
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: 14, // Slightly larger font
+                                  fontSize: 14,
                                   color: Colors.black,
                                 ),
                               ),
