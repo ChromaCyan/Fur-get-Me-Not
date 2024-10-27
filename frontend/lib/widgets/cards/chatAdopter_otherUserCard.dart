@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/adoptee/models/chat/admin_chat.dart'; // Update if needed
-import 'package:intl/intl.dart'; // Import intl package
+import 'package:fur_get_me_not/adopter/models/chat/chat.dart'; // Update if needed
+import 'package:intl/intl.dart';
 
-class ChatCurrentUserCard extends StatelessWidget {
-  final AdminChatMessage message;
+class ChatAdopterOtherUserCard extends StatelessWidget {
+  final AdopterChatMessage message;
   final String profileImage;
 
-  const ChatCurrentUserCard({
+  const ChatAdopterOtherUserCard({
     Key? key,
     required this.message,
     required this.profileImage,
@@ -17,57 +17,69 @@ class ChatCurrentUserCard extends StatelessWidget {
     double messageWidth = _calculateMessageWidth(message.content);
 
     return Align(
-      alignment: Alignment.centerRight, // Align message card to the right
+      alignment: Alignment.centerLeft,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.end, // Align to the right
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Message content container
+            CircleAvatar(
+              backgroundImage: NetworkImage(profileImage),
+              radius: 20,
+            ),
+            const SizedBox(width: 5), // Space between avatar and message box
             Container(
-              width: messageWidth, // Adjust width dynamically
+              width: messageWidth, // Dynamically adjust the width
               child: Card(
-                color: const Color(
-                    0xFF21899C), // Background color for current user
+                color: Colors.grey[300],
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
+                    topLeft: Radius.zero,
                     topRight: Radius.circular(12),
+                    bottomRight: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.zero,
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(10), // Inner padding
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Message content
+                      // Sender's name in a fixed full-width Text widget
+                      Text(
+                        message.senderName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        maxLines: 1, // Ensure the name doesn’t wrap
+                        overflow: TextOverflow
+                            .ellipsis, // Handle long names gracefully
+                      ),
+                      const SizedBox(height: 2),
+                      // Message content and timestamp with dynamic resizing
                       ConstrainedBox(
                         constraints: BoxConstraints(
-                          minWidth: 100, // Ensure reasonable minimum width
-                          maxWidth: messageWidth, // Adjust for long messages
+                          minWidth: 100, // Ensure a reasonable minimum width
+                          maxWidth:
+                              messageWidth, // Dynamically adjust for long messages
                         ),
                         child: Text(
                           message.content,
                           style: const TextStyle(
                             fontSize: 16,
-                            color: Colors.white,
+                            color: Colors.black87,
                           ),
-                          textAlign:
-                              TextAlign.left, // Align message text to the left
                         ),
                       ),
                       const SizedBox(height: 5),
-                      // Timestamp aligned to the bottom left
                       Align(
-                        alignment: Alignment.bottomLeft,
+                        alignment: Alignment.bottomRight,
                         child: Text(
                           _formatTime(message.timestamp),
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Colors.white70,
+                            color: Colors.black54,
                           ),
                         ),
                       ),
@@ -76,24 +88,17 @@ class ChatCurrentUserCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 5), // Space between message and avatar
-            // Profile image on the right
-            // CircleAvatar(
-            //   backgroundImage: NetworkImage(profileImage),
-            //   radius: 20,
-            // ),
           ],
         ),
       ),
     );
   }
 
-  // Format time to 12-hour format with AM/PM
   String _formatTime(DateTime timestamp) {
-    return DateFormat('hh:mm a').format(timestamp); // Example: 02:05 PM
+    return DateFormat('hh:mm a').format(timestamp);
   }
 
-  // Calculate message width dynamically based on content length
+  /// Calculate the width based on the message length.
   double _calculateMessageWidth(String content) {
     const double minWidth = 150.0; // Minimum width for short messages
     const double maxWidth = 300.0; // Maximum width for long messages
