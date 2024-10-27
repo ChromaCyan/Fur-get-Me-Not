@@ -199,12 +199,29 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
           children: [
             Text(
               widget.pet.name,
-              style: const TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 38,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            // Text(
-            //   widget.pet.breed,
-            //   style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
-            // ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  color: Colors.blue,
+                  size: 24,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  widget.pet.adoptee.address,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ],

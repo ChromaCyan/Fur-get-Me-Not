@@ -4,11 +4,11 @@ import 'package:fur_get_me_not/adopter/bloc/adoption_browse/adoption_browse_bloc
 import 'package:fur_get_me_not/adopter/bloc/adoption_browse/adoption_browse_event.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_browse/adoption_browse_state.dart';
 import 'package:fur_get_me_not/adopter/screens/adoption_list/pet_details_screen.dart';
-import 'package:fur_get_me_not/config/const.dart';
 import 'package:fur_get_me_not/widgets/cards/pet_card.dart';
-import 'package:fur_get_me_not/widgets/headers/banner_card.dart';
-import 'package:fur_get_me_not/adopter/models/widget/carousel.dart';
 import 'package:fur_get_me_not/widgets/headers/search.dart';
+import 'package:fur_get_me_not/adopter/models/widget/carousel.dart';
+import 'package:fur_get_me_not/widgets/headers/banner_card.dart';
+import 'package:fur_get_me_not/widgets/headers/categories.dart';
 
 class AdoptionScreen extends StatefulWidget {
   const AdoptionScreen({super.key});
@@ -20,6 +20,7 @@ class AdoptionScreen extends StatefulWidget {
 class _AdoptionScreenState extends State<AdoptionScreen> {
   TextEditingController searchController = TextEditingController();
   String searchQuery = '';
+  String selectedBreed = 'All';
 
   @override
   void initState() {
@@ -71,19 +72,31 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                     searchQuery = '';
                   });
                 },
-                onSearch: () {
+                onSearch: () {},
+              ),
+              const SizedBox(height: 20),
+              CategoryChip(
+                categories: ['All', 'Dog', 'Cat'],
+                selectedCategory: selectedBreed,
+                onSelected: (String category) {
+                  setState(() {
+                    selectedBreed = category;
+                  });
                 },
               ),
-              const SizedBox(height: 20), // Spacing after search bar
+
+              const SizedBox(height: 20),
+
               BlocBuilder<AdoptionBrowseBloc, AdoptionBrowseState>(
                 builder: (context, state) {
                   if (state is AdoptionBrowseLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is AdoptionBrowseLoaded) {
-                    // Filter pets based on search query
                     final filteredPets = state.pets.where((pet) {
-                      return pet.name.toLowerCase().contains(searchQuery.toLowerCase());
-                    }).toList();
+                      final matchesBreed = selectedBreed == 'All' || pet.breed == selectedBreed;
+                      final matchesQuery = pet.name.toLowerCase().contains(searchQuery.toLowerCase());
+                      return matchesBreed && matchesQuery;
+                    }).toList().reversed.toList();
 
                     if (filteredPets.isEmpty) {
                       return Center(child: Text('No pets found for your search.'));
@@ -94,8 +107,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                       child: GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
@@ -110,8 +122,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      PetDetailsPage(petId: pet.id),
+                                  builder: (context) => PetDetailsPage(petId: pet.id),
                                 ),
                               );
                             },
@@ -133,3 +144,4 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
     );
   }
 }
+

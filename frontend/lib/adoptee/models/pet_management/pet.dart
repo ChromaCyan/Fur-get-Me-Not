@@ -28,7 +28,7 @@ class AdminPet {
     required this.adoptee,
     required this.medicalHistory,
     required this.vaccineHistory,
-    required this.status, // Status is now required
+    required this.status,
   });
 
   factory AdminPet.fromJson(Map<String, dynamic> json) {
@@ -58,7 +58,7 @@ class AdminPet {
         vaccineName: 'N/A',
         vaccinationDate: DateTime.now(),
       ),
-      status: json['status'] ?? 'available', // Add status parsing
+      status: json['status'] ?? 'available',
     );
   }
 
@@ -83,14 +83,16 @@ class AdminPet {
 }
 
 class Adoptee {
-  String id; // Assuming you want to keep the adoptee's ID
+  String id;
   String firstName;
   String lastName;
+  String address;
 
   Adoptee({
     required this.id,
     required this.firstName,
     required this.lastName,
+    required this.address,
   });
 
   factory Adoptee.fromJson(Map<String, dynamic> json) {
@@ -98,6 +100,7 @@ class Adoptee {
       id: json['_id'] ?? '',
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
+      address: json['address'] ?? '',
     );
   }
 
@@ -106,6 +109,7 @@ class Adoptee {
       '_id': id,
       'firstName': firstName,
       'lastName': lastName,
+      'address': address,
     };
   }
 }

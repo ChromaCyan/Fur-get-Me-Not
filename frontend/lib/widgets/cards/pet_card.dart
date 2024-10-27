@@ -76,15 +76,28 @@ class PetCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 4),
-                        Text(
-                          pet.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: Colors.blue,
+                              size: 18,
+                            ),
+                            SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                pet.adoptee.address,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14, // Slightly larger font
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

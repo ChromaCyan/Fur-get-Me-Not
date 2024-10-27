@@ -24,7 +24,6 @@ class _EditPetFormState extends State<EditPetForm> {
 
   // Controllers for the form fields
   final TextEditingController petNameController = TextEditingController();
-  final TextEditingController breedController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController heightController = TextEditingController();
   final TextEditingController weightController = TextEditingController();
@@ -48,6 +47,7 @@ class _EditPetFormState extends State<EditPetForm> {
   final TextEditingController nextDueDateController = TextEditingController();
 
   String? selectedGender;
+  String? selectedBreed;
   String? selectedCategory;
   bool _isLoading = false;
   String? selectedRecoveryStatus;
@@ -60,7 +60,7 @@ class _EditPetFormState extends State<EditPetForm> {
     super.initState();
     // Initialize controllers with existing pet data
     petNameController.text = widget.pet.name;
-    breedController.text = widget.pet.breed;
+    selectedBreed = widget.pet.breed;
     selectedGender = widget.pet.gender;
     ageController.text = widget.pet.age.toString();
     heightController.text = widget.pet.height.toString();
@@ -171,7 +171,7 @@ class _EditPetFormState extends State<EditPetForm> {
         final updatedPet = AdminPet(
           id: widget.pet.id,
           name: petNameController.text,
-          breed: breedController.text,
+          breed: selectedBreed!,
           gender: selectedGender!,
           age: int.parse(ageController.text),
           height: double.tryParse(heightController.text) ?? 0.0,
@@ -321,16 +321,23 @@ class _EditPetFormState extends State<EditPetForm> {
                       ),
                       SizedBox(height: 16),
 
-                      CustomTextFormField(
-                        controller: breedController,
-                        labelText: 'Type (ex: Cat, Dog)',
+                      CustomDropdownFormField(
+                        labelText: 'Type',
+                        value: selectedBreed,
+                        items: ['Cat', 'Dog'],
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedBreed = newValue;
+                          });
+                        },
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter the type';
+                          if (value == null) {
+                            return 'Please select the type';
                           }
                           return null;
                         },
                       ),
+
                       SizedBox(height: 16),
 
                       CustomDropdownFormField(

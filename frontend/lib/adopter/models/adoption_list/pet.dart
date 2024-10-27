@@ -88,6 +88,7 @@ class Adoptee {
   String lastName;
   String chatId;
   String? profileImage;
+  String address;
 
   Adoptee({
     required this.id,
@@ -95,6 +96,7 @@ class Adoptee {
     required this.lastName,
     required this.chatId,
     this.profileImage,
+    required this.address,
   });
 
   factory Adoptee.fromJson(Map<String, dynamic> json) {
@@ -104,6 +106,7 @@ class Adoptee {
       lastName: json['lastName'] ?? '',
       chatId: json['chatId'] ?? '',
       profileImage: json['profileImage'] ?? 'images/images2.png',
+      address: json['address'] ?? '',
     );
   }
 
@@ -114,6 +117,7 @@ class Adoptee {
       'lastName': lastName,
       'chatId': chatId,
       'profileImage': profileImage,
+      'address': address,
     };
   }
 }
