@@ -4,6 +4,9 @@ import 'package:fur_get_me_not/adopter/bloc/chat/chat_bloc.dart';
 import 'package:fur_get_me_not/adopter/bloc/chat/chat_event.dart';
 import 'package:fur_get_me_not/adopter/bloc/chat/chat_state.dart';
 import 'package:fur_get_me_not/widgets/navigations/chat_bar.dart';
+import 'package:fur_get_me_not/adopter/models/chat/chat.dart';
+import 'package:fur_get_me_not/widgets/cards/chatadopter_currentUsercard.dart';
+import 'package:fur_get_me_not/widgets/cards/chatAdopter_otherUserCard.dart';
 
 class ChatScreen extends StatefulWidget {
   final String userName;
@@ -39,7 +42,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _fetchMessages(); // Fetch messages when the screen is initialized
   }
 
-  // Fetch messages based on current chatId or otherUserId
   void _fetchMessages() {
     if (widget.chatId.isNotEmpty) {
       context.read<ChatBloc>().add(FetchMessages(widget.chatId));
@@ -58,9 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void didUpdateWidget(ChatScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Check if the user has switched to a different otherUserId
     if (oldWidget.otherUserId != widget.otherUserId) {
-      // Fetch messages for the new user
       _fetchMessages();
     }
   }
@@ -85,24 +85,35 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: state.messages.isEmpty
                       ? Center(
-                    child: Text(
-                      'Start the conversation!',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  )
+                          child: Text(
+                            'Start the conversation!',
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                        )
                       : ListView.builder(
-                    controller: _scrollController,
-                    reverse: true,
-                    itemCount: state.messages.length,
-                    itemBuilder: (context, index) {
-                      final message = state.messages[state.messages.length - 1 - index];
-                      return MessageCard(
-                        message: message,
-                        isSentByUser: message.senderId == widget.otherUserId,
-                        profileImage: widget.profileImage,
-                      );
-                    },
-                  ),
+                          controller: _scrollController,
+                          reverse: true,
+                          itemCount: state.messages.length,
+                          itemBuilder: (context, index) {
+                            final message = state
+                                .messages[state.messages.length - 1 - index];
+
+                            // Use the appropriate card based on the message sender
+                            if (message.senderId == widget.otherUserId) {
+                              return ChatAdopterOtherUserCard(
+                                message: message,
+                                profileImage: widget
+                                    .profileImage, // The other user's image
+                              );
+                            } else {
+                              return ChatAdopterCurrentUserCard(
+                                message: message,
+                                profileImage:
+                                    widget.profileImage, // Current user's image
+                              );
+                            }
+                          },
+                        ),
                 ),
                 _buildMessageInput(),
               ],
@@ -116,7 +127,7 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           }
 
-          return Center(child: Text('No messages yet! Start chatting.'));
+          return const Center(child: Text('No messages yet! Start chatting.'));
         },
       ),
     );
@@ -133,11 +144,13 @@ class _ChatScreenState extends State<ChatScreen> {
               onSubmitted: (text) {
                 if (text.isNotEmpty) {
                   context.read<ChatBloc>().add(
-                    SendMessage(
-                      text,
-                      widget.chatId.isNotEmpty ? widget.chatId : widget.otherUserId,
-                    ),
-                  );
+                        SendMessage(
+                          text,
+                          widget.chatId.isNotEmpty
+                              ? widget.chatId
+                              : widget.otherUserId,
+                        ),
+                      );
                   _messageController.clear();
                 }
               },
@@ -153,53 +166,18 @@ class _ChatScreenState extends State<ChatScreen> {
               final text = _messageController.text;
               if (text.isNotEmpty) {
                 context.read<ChatBloc>().add(
-                  SendMessage(
-                    text,
-                    widget.chatId.isNotEmpty ? widget.chatId : widget.otherUserId,
-                  ),
-                );
+                      SendMessage(
+                        text,
+                        widget.chatId.isNotEmpty
+                            ? widget.chatId
+                            : widget.otherUserId,
+                      ),
+                    );
                 _messageController.clear();
               }
-
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class MessageCard extends StatelessWidget {
-  final message;
-  final bool isSentByUser;
-  final String profileImage;
-
-  const MessageCard({
-    required this.message,
-    required this.isSentByUser,
-    required this.profileImage,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Card(
-        color: isSentByUser ? Colors.blue[100] : Colors.grey[300],
-        child: ListTile(
-          leading: isSentByUser
-              ? null
-              : CircleAvatar(
-            backgroundImage: NetworkImage(profileImage),
-          ),
-          title: Text(message.senderName),
-          subtitle: Text(message.content),
-          trailing: isSentByUser
-              ? CircleAvatar(
-            backgroundImage: NetworkImage(profileImage),
-          )
-              : null,
-        ),
       ),
     );
   }

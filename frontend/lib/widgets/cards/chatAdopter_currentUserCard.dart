@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:fur_get_me_not/adoptee/models/chat/admin_chat.dart'; // Update if needed
-import 'package:intl/intl.dart'; // Import intl package
+import 'package:fur_get_me_not/adopter/models/chat/chat.dart'; // Update this if needed
+import 'package:intl/intl.dart';
 
-class ChatCurrentUserCard extends StatelessWidget {
-  final AdminChatMessage message;
+class ChatAdopterCurrentUserCard extends StatelessWidget {
+  final AdopterChatMessage message;
   final String profileImage;
 
-  const ChatCurrentUserCard({
+  const ChatAdopterCurrentUserCard({
     Key? key,
     required this.message,
     required this.profileImage,
@@ -17,7 +17,7 @@ class ChatCurrentUserCard extends StatelessWidget {
     double messageWidth = _calculateMessageWidth(message.content);
 
     return Align(
-      alignment: Alignment.centerRight, // Align message card to the right
+      alignment: Alignment.centerRight, // Align message bubble to the right
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Row(
@@ -26,16 +26,14 @@ class ChatCurrentUserCard extends StatelessWidget {
           children: [
             // Message content container
             Container(
-              width: messageWidth, // Adjust width dynamically
+              width: messageWidth, // Dynamic width adjustment
               child: Card(
-                color: const Color(
-                    0xFF21899C), // Background color for current user
+                color: const Color(0xFF21899C), // Background color for user
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
-                    bottomRight: Radius.zero,
                   ),
                 ),
                 child: Padding(
@@ -46,8 +44,8 @@ class ChatCurrentUserCard extends StatelessWidget {
                       // Message content
                       ConstrainedBox(
                         constraints: BoxConstraints(
-                          minWidth: 100, // Ensure reasonable minimum width
-                          maxWidth: messageWidth, // Adjust for long messages
+                          minWidth: 100, // Minimum width for short messages
+                          maxWidth: messageWidth, // Adjust for longer messages
                         ),
                         child: Text(
                           message.content,
@@ -55,12 +53,11 @@ class ChatCurrentUserCard extends StatelessWidget {
                             fontSize: 16,
                             color: Colors.white,
                           ),
-                          textAlign:
-                              TextAlign.left, // Align message text to the left
+                          textAlign: TextAlign.left,
                         ),
                       ),
                       const SizedBox(height: 5),
-                      // Timestamp aligned to the bottom left
+                      // Timestamp aligned at the bottom left
                       Align(
                         alignment: Alignment.bottomLeft,
                         child: Text(
@@ -88,12 +85,12 @@ class ChatCurrentUserCard extends StatelessWidget {
     );
   }
 
-  // Format time to 12-hour format with AM/PM
+  // Function to format timestamp into 12-hour format with AM/PM
   String _formatTime(DateTime timestamp) {
     return DateFormat('hh:mm a').format(timestamp); // Example: 02:05 PM
   }
 
-  // Calculate message width dynamically based on content length
+  // Calculate message bubble width dynamically based on content length
   double _calculateMessageWidth(String content) {
     const double minWidth = 150.0; // Minimum width for short messages
     const double maxWidth = 300.0; // Maximum width for long messages

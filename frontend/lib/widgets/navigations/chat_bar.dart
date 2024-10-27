@@ -19,11 +19,15 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             backgroundImage: NetworkImage(profileImage),
           ),
           SizedBox(width: 10),
-          Text(userName),
+          Text(
+            userName,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
+        color: Colors.white,
         onPressed: () {
           Navigator.pop(context);
         },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fur_get_me_not/adopter/screens/chat/chat_screen.dart';
 import 'package:fur_get_me_not/adopter/repositories/chat/chat_list_repository.dart';
+import 'package:fur_get_me_not/helpers/storage_helper.dart';
 
 class OwnerInfo extends StatelessWidget {
   final String firstName;
@@ -45,21 +46,28 @@ class OwnerInfo extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () {
+          onTap: () async {
             print('Navigating to ChatScreen with:');
             print('chatId: ${chatId ?? 'No chatId available'}');
             print('otherUserId: $otherUserId');
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChatScreen(
-                  chatId: chatId ?? '',
-                  userName: '$firstName $lastName',
-                  profileImage: profileImage.isNotEmpty ? profileImage : 'images/image2.png',
-                  otherUserId: otherUserId,
+            String? userId = await StorageHelper.getUserId();
+            if (userId != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                    chatId: chatId ?? '',
+                    userName: '$firstName $lastName',
+                    profileImage: profileImage.isNotEmpty
+                        ? profileImage
+                        : 'images/image2.png',
+                    otherUserId: otherUserId,
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              print('No user ID found. Cannot open chat.');
+            }
           },
           child: Container(
             padding: const EdgeInsets.all(10),

@@ -5,6 +5,7 @@ import 'package:fur_get_me_not/adopter/bloc/adoption_form/adoption_form_bloc.dar
 import 'package:fur_get_me_not/adopter/repositories/adoption_list/adoption_form_repository.dart';
 import 'package:fur_get_me_not/adopter/models/adoption_list/adoption_form.dart';
 import 'package:fur_get_me_not/adopter/screens/home_screen.dart';
+import 'package:fur_get_me_not/widgets/headers/app_bar.dart';
 
 class AdoptionFormApp extends StatelessWidget {
   final String petId;
@@ -55,9 +56,10 @@ class _AdoptionFormState extends State<AdoptionForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Adoption Form'),
-        backgroundColor: const Color(0xFF21899C),
+      appBar: CustomAppBar(
+        title: 'Adoption Form',
+        hasBackButton: true,
+        onBackButtonPressed: () => Navigator.of(context).pop(),
       ),
       body: Container(
         child: Center(
@@ -107,13 +109,13 @@ class _AdoptionFormState extends State<AdoptionForm> {
                           _buildDropdownFormField(
                             'Type of Residence',
                             ['Apartment', 'House'],
-                                (value) => setState(() => _residenceType = value!),
+                            (value) => setState(() => _residenceType = value!),
                             _residenceType,
                           ),
                           _buildDropdownFormField(
                             'Own or Rent?',
                             ['Own', 'Rent'],
-                                (value) => setState(() => _ownRent = value!),
+                            (value) => setState(() => _ownRent = value!),
                             _ownRent,
                           ),
                           if (_ownRent == 'Rent') ...[
@@ -124,14 +126,14 @@ class _AdoptionFormState extends State<AdoptionForm> {
                                   value: true,
                                   groupValue: _landlordAllowsPets,
                                   onChanged: (value) => setState(
-                                          () => _landlordAllowsPets = true),
+                                      () => _landlordAllowsPets = true),
                                 ),
                                 Text('Yes'),
                                 Radio(
                                   value: false,
                                   groupValue: _landlordAllowsPets,
                                   onChanged: (value) => setState(
-                                          () => _landlordAllowsPets = false),
+                                      () => _landlordAllowsPets = false),
                                 ),
                                 Text('No'),
                               ],
@@ -158,7 +160,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                           if (_ownedPetsBefore)
                             _buildTextFormField(
                               'What types of pets have you owned? (comma-separated)',
-                                  (value) {
+                              (value) {
                                 setState(() {
                                   _petTypesOwned = value
                                       .split(',')
@@ -178,15 +180,15 @@ class _AdoptionFormState extends State<AdoptionForm> {
                           _buildDropdownFormField(
                             'What type of pet are you interested in adopting?',
                             ['Dog', 'Cat'],
-                                (value) => setState(() => _petPreference = value!),
+                            (value) => setState(() => _petPreference = value!),
                             _petPreference,
                           ),
                           _buildTextFormField('Preferred Size or Breed',
-                                  (value) => _preferredSize = value),
+                              (value) => _preferredSize = value),
                           _buildDropdownFormField(
                             'Age Preference',
                             ['Puppy/Kitten', 'Adult', 'Senior'],
-                                (value) => setState(() => _agePreference = value!),
+                            (value) => setState(() => _agePreference = value!),
                             _agePreference,
                           ),
                         ],
@@ -199,7 +201,7 @@ class _AdoptionFormState extends State<AdoptionForm> {
                         children: [
                           _buildTextFormField(
                             'How many hours will the pet be left alone during the day?',
-                                (value) {
+                            (value) {
                               setState(() {
                                 _hoursAlone = int.tryParse(value) ?? 0;
                               });
@@ -213,12 +215,12 @@ class _AdoptionFormState extends State<AdoptionForm> {
                               'Moderately Active',
                               'Low Activity'
                             ],
-                                (value) => setState(() => _activityLevel = value!),
+                            (value) => setState(() => _activityLevel = value!),
                             _activityLevel,
                           ),
                           _buildTextFormField(
                             'If you have children, what are their ages? (comma-separated)',
-                                (value) {
+                            (value) {
                               setState(() {
                                 _childrenAges = value
                                     .split(',')
@@ -237,18 +239,18 @@ class _AdoptionFormState extends State<AdoptionForm> {
                         children: [
                           _buildTextFormField(
                             'How do you plan to care for the pet?',
-                                (value) => _carePlan = value,
+                            (value) => _carePlan = value,
                           ),
                           _buildTextFormField(
                             'What will you do if you can no longer keep the pet?',
-                                (value) => _whatIfNoLongerKeep = value,
+                            (value) => _whatIfNoLongerKeep = value,
                           ),
                           Row(
                             children: [
                               Checkbox(
                                 value: _longTermCommitment,
                                 onChanged: (value) => setState(
-                                        () => _longTermCommitment = value!),
+                                    () => _longTermCommitment = value!),
                               ),
                               Expanded(
                                 child: Text(
@@ -387,10 +389,8 @@ class _AdoptionFormState extends State<AdoptionForm> {
     );
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-          builder: (context) =>
-              AdopterHomeScreen()),
-          (route) => false,
+      MaterialPageRoute(builder: (context) => AdopterHomeScreen()),
+      (route) => false,
     );
   }
 }
