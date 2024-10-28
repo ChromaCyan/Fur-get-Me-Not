@@ -54,23 +54,6 @@ class _AdopteeProfilePageState extends State<AdopteeProfilePage> {
     }
   }
 
-  Future<String?> _uploadImage() async {
-    if (_imageFile != null) {
-      print('Debug: Image file is available: ${_imageFile!.path}');
-      try {
-        // Convert the path string to a File object
-        File imageFile = File(_imageFile!.path);
-        String imageUrl = await AuthRepository().uploadProfileImage(imageFile);
-        print('Debug: Image uploaded successfully. URL: $imageUrl');
-        return imageUrl; // Return the uploaded URL for use in the profile update
-      } catch (e) {
-        print('Error uploading image: $e');
-        return null;
-      }
-    }
-    return null; // No image to upload
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,61 +73,67 @@ class _AdopteeProfilePageState extends State<AdopteeProfilePage> {
               _addressController.text = profile['address'];
             }
 
-            return ListView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                const SizedBox(height: 24),
-                _buildBox(Column(
-                  children: [
-                    buildProfileSection(profile),
-                    const SizedBox(height: 16),
-                    buildName(),
-                    const SizedBox(height: 32),
-                    _buildDetailContainer('Role:', 'Adoptee'),
-                    const SizedBox(height: 20),
-                    _buildDetailField('Email:', profile['email'], false),
-                    const SizedBox(height: 20),
-                    buildAddress(),
-                  ],
-                )),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = !_isEditing;
-                    });
-                  },
-                  child: Text(_isEditing ? "Cancel" : "Edit Profile"),
-                ),
-                const SizedBox(height: 20),
-                if (_isEditing)
+            return Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  const SizedBox(height: 24),
+                  _buildProfileSection(profile),
+                  const SizedBox(height: 16), // Adjust spacing
                   ElevatedButton(
-                    onPressed: () async {
-                      File? profileImageFile;
-                      if (_imageFile != null) {
-                        profileImageFile = File(_imageFile!.path);
-                      }
-
-                      // Update profile
-                      context.read<ProfileBloc>().add(UpdateProfile(
-                        userId: widget.userId,
-                        firstName: _nameController.text.split(' ').first,
-                        lastName: _nameController.text.split(' ').length > 1
-                            ? _nameController.text.split(' ').sublist(1).join(' ')
-                            : '',
-                        address: _addressController.text,
-                        profileImage: profileImageFile,
-                      ));
-
-                      // Reset editing state
+                    onPressed: () {
                       setState(() {
-                        _isEditing = false;
+                        _isEditing = !_isEditing;
                       });
                     },
-                    child: const Text("Save Changes"),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size(200, 50), // Set width and height
+                      backgroundColor: Color(0xFFFE9879),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: Text(
+                      _isEditing ? "Cancel" : "Edit Profile",
+                      style: const TextStyle(fontSize: 18), // Text size
+                    ),
                   ),
-              ],
+                  const SizedBox(height: 16), // Spacing before save button
+                  if (_isEditing)
+                    ElevatedButton(
+                      onPressed: () {
+                        File? profileImageFile;
+                        if (_imageFile != null) {
+                          profileImageFile = File(_imageFile!.path);
+                        }
+
+                        context.read<ProfileBloc>().add(UpdateProfile(
+                          userId: widget.userId,
+                          firstName: _nameController.text.split(' ').first,
+                          lastName: _nameController.text.split(' ').length > 1
+                              ? _nameController.text.split(' ').sublist(1).join(' ')
+                              : '',
+                          address: _addressController.text,
+                          profileImage: profileImageFile,
+                        ));
+
+                        setState(() {
+                          _isEditing = false;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(200, 50), // Set width and height
+                        backgroundColor: Colors.green, // Green background
+                        foregroundColor: Colors.white, // White text
+                      ),
+                      child: const Text("Save Changes", 
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  const SizedBox(height: 32), // Spacing before details
+                  _buildDetailsContainer(profile),
+                ],
+              ),
             );
           } else if (state is ProfileError) {
             return Center(child: Text('Failed to load profile: ${state.message}'));
@@ -155,121 +144,58 @@ class _AdopteeProfilePageState extends State<AdopteeProfilePage> {
     );
   }
 
-  Widget buildProfileSection(Map<String, dynamic> profile) {
-    return GestureDetector(
-      onTap: _isEditing ? _pickImage : null,
-      child: Container(
-        width: 150,
-        height: 150,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey[300],
-          image: DecorationImage(
-            image: _imageFile != null
-                ? FileImage(File(_imageFile!.path))
-                : (profile['profileImage'] != null && profile['profileImage'].isNotEmpty
-                ? NetworkImage(profile['profileImage'])
-                : const AssetImage('assets/default_profile.png') as ImageProvider),
-            fit: BoxFit.cover,
+  Widget _buildProfileSection(Map<String, dynamic> profile) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: _isEditing ? _pickImage : null,
+          child: Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[300],
+              image: DecorationImage(
+                image: _imageFile != null
+                    ? FileImage(File(_imageFile!.path))
+                    : (profile['profileImage'] != null && profile['profileImage'].isNotEmpty
+                        ? NetworkImage(profile['profileImage'])
+                        : const AssetImage('assets/default_profile.png') as ImageProvider),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (_imageFile == null && profile['profileImage'] == null)
+                  const Icon(Icons.camera_alt, color: Colors.white),
+                if (_isEditing) const Icon(Icons.edit, color: Colors.white),
+              ],
+            ),
           ),
         ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            if (_imageFile == null && profile['profileImage'] == null)
-              const Icon(Icons.camera_alt, color: Colors.white),
-            if (_isEditing) const Icon(Icons.edit, color: Colors.white),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailContainer(String title, String value) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAEFF1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(value),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailField(String title, String value, bool isEditing, {bool editable = true}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        if (isEditing && editable)
-          SizedBox(
-            width: 200,
-            child: TextField(
-              controller: title == 'Email' ? null : title == 'Address' ? _addressController : _nameController,
-              enabled: isEditing,
-              decoration: InputDecoration(
-                hintText: value,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-          )
-        else
-          Text(value),
-      ],
-    );
-  }
-
-  Widget buildAddress() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text('Address:', style: TextStyle(fontWeight: FontWeight.bold)),
-        if (_isEditing)
-          SizedBox(
-            width: 200,
-            child: TextField(
-              controller: _addressController,
-              decoration: InputDecoration(
-                hintText: 'Enter address',
-                border: const OutlineInputBorder(),
-              ),
-            ),
-          )
-        else
-          Text(_addressController.text.isNotEmpty ? _addressController.text : 'No address provided'),
-      ],
-    );
-  }
-
-  Widget buildName() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text('Full Name:', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 16),
         if (_isEditing)
           SizedBox(
             width: 200,
             child: TextField(
               controller: _nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Enter full name',
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(),
               ),
             ),
           )
         else
-          Text('${_nameController.text}'),
+          Text(
+            '${_nameController.text}',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 28, color: Colors.black),
+          ),
       ],
     );
   }
 
-  Widget _buildBox(Widget child) {
+  Widget _buildDetailsContainer(Map<String, dynamic> profile) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -279,7 +205,81 @@ class _AdopteeProfilePageState extends State<AdopteeProfilePage> {
           BoxShadow(color: Colors.grey, blurRadius: 5, offset: Offset(0, 2)),
         ],
       ),
-      child: child,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildRoleDetail(profile['role']),
+          const SizedBox(height: 10),
+          _buildEmailDetail(profile['email']),
+          const SizedBox(height: 10),
+          _buildAddressField(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRoleDetail(String role) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      width: double.infinity, // Match the container's width
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5E6CA), // Grey background for the role
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Role:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(role == 'adopter' ? 'Adopter' : 'Adoptee'), // Role value displayed below the title
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailDetail(String email) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      width: double.infinity, // Match the container's width
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Email:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          Text(email), // Email value displayed below the title
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddressField() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      width: double.infinity, // Match the container's width
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Address:', style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          if (_isEditing)
+            SizedBox(
+              width: double.infinity,
+              child: TextField(
+                controller: _addressController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter address',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            )
+          else
+            Text(
+              _addressController.text.isNotEmpty
+                  ? _addressController.text
+                  : 'No address provided',
+            ),
+        ],
+      ),
     );
   }
 }

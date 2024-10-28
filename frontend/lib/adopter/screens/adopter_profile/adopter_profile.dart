@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: Size(200, 50), // Set width and height
-                      backgroundColor: Colors.orange,
+                      backgroundColor: Color(0xFFFE9879),
                       foregroundColor: Colors.white,
                     ),
                     child: Text(
