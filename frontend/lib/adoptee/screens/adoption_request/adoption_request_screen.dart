@@ -8,12 +8,7 @@ import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.
 import 'package:fur_get_me_not/widgets/cards/adoption_request_card.dart';
 
 class AdoptionRequestListScreen extends StatelessWidget {
-  final Function(int, List<String>) onRequestCountUpdated;
-
-  const AdoptionRequestListScreen({
-    Key? key,
-    required this.onRequestCountUpdated,
-  }) : super(key: key);
+  const AdoptionRequestListScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +22,6 @@ class AdoptionRequestListScreen extends StatelessWidget {
             if (state is AdoptionRequestLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is AdoptionRequestLoaded) {
-              // Defer the count update to after the frame
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                // Track unread requests using your criteria
-                List<String> unreadRequestIds = state.requests
-                    .where((request) => isUnread(request)) // Check if request is unread
-                    .map((request) => request.requestId)
-                    .toList();
-
-                onRequestCountUpdated(state.requests.length, unreadRequestIds);
-              });
-
               if (state.requests.isEmpty) {
                 return Center(child: Text('No adoption requests found.'));
               }
@@ -69,9 +53,4 @@ class AdoptionRequestListScreen extends StatelessWidget {
       ),
     );
   }
-
-  bool isUnread(AdoptionRequest request) {
-    return request.requestStatus == "pending";
-  }
 }
-

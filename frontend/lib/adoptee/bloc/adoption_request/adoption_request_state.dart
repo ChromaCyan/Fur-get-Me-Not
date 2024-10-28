@@ -16,6 +16,8 @@ class AdoptionRequestLoaded extends AdoptionRequestState {
   final List<AdoptionRequest> requests;
   final int unreadCount;
 
+  int get adoptionrequestCount => requests.length;
+
   const AdoptionRequestLoaded({required this.requests, required this.unreadCount});
 
   @override

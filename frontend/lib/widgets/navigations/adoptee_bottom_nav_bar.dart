@@ -4,8 +4,8 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemTapped;
-  final int notificationCount; // For adoption requests
-  final int chatNotificationCount; // For chat notifications
+  final int notificationCount;
+  final int chatNotificationCount;
 
   const CustomBottomNavBar({
     Key? key,
@@ -15,63 +15,56 @@ class CustomBottomNavBar extends StatelessWidget {
     this.chatNotificationCount = 0,
   }) : super(key: key);
 
+  // Badge widget for overlaying notifications
+  Widget _buildBadge(int count) {
+    return count > 0
+        ? Positioned(
+      right: 0,
+      top: 0,
+      child: Container(
+        padding: EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          shape: BoxShape.circle,
+        ),
+        constraints: BoxConstraints(
+          minWidth: 18,
+          minHeight: 18,
+        ),
+        child: Center(
+          child: Text(
+            '$count',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    )
+        : SizedBox.shrink();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CurvedNavigationBar(
       items: <Widget>[
         Icon(Icons.pets, size: 30, color: Colors.white),
-        Icon(Icons.message_outlined, size: 30, color: Colors.white),
+
+        // Messages icon with badge overlay
+        Stack(
+          children: [
+            Icon(Icons.message_outlined, size: 30, color: Colors.white),
+            _buildBadge(chatNotificationCount), // Use the badge method here
+          ],
+        ),
+
+        // Adoption Status icon with badge overlay
         Stack(
           children: [
             Icon(Icons.fact_check, size: 30, color: Colors.white),
-            if (notificationCount > 0)
-              Positioned(
-                top: 5,
-                right: 0,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 10,
-                    minHeight: 10,
-                  ),
-                  child: Text(
-                    '$notificationCount',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            if (chatNotificationCount > 0) // For chat notifications
-              Positioned(
-                top: 5,
-                right: 40,
-                child: Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 10,
-                    minHeight: 10,
-                  ),
-                  child: Text(
-                    '$chatNotificationCount',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+            _buildBadge(notificationCount), // Use the badge method here
           ],
         ),
       ],

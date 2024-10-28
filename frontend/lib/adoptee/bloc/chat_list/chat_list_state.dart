@@ -14,6 +14,8 @@ class ChatListLoaded extends ChatListState {
   final List<AdminChatList> chats;
   final int unreadCount;
 
+  int get chatlistCount => chats.length;
+
   ChatListLoaded(this.chats, this.unreadCount);
 
   @override

@@ -12,6 +12,8 @@ class AdoptionHistoryCard extends StatelessWidget {
       return Colors.green;
     } else if (adoptionHistory.status == 'The adoptee has rejected your request') {
       return Colors.red;
+    } else if (adoptionHistory.status == 'Adopted by another user') {
+      return Colors.yellow;
     } else {
       return Colors.grey;
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fur_get_me_not/adoptee/bloc/adoption_request/adoption_request_bloc.dart';
 import 'package:fur_get_me_not/adoptee/bloc/adoption_request/adoption_request_event.dart';
 import 'package:fur_get_me_not/adoptee/bloc/adoption_request/adoption_request_state.dart';
@@ -12,6 +13,7 @@ import 'package:fur_get_me_not/adoptee/screens/pages.dart';
 import 'package:fur_get_me_not/widgets/navigations/adoptee_bottom_nav_bar.dart';
 import 'package:fur_get_me_not/widgets/navigations/adoptee_drawer.dart';
 import 'package:fur_get_me_not/adoptee/models/adoption_request/adoption_request.dart';
+import 'package:fur_get_me_not/adoptee/repositories/chat/admin_chat_list_repository.dart';
 
 class AdopteeHomeScreen extends StatefulWidget {
   const AdopteeHomeScreen({Key? key}) : super(key: key);
@@ -23,14 +25,8 @@ class AdopteeHomeScreen extends StatefulWidget {
 class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
   late PageController _pageController;
   int _selectedIndex = 0;
-  int _adoptionRequestCount = 0; // Local unread count for adoption requests
-  int _chatNotificationCount = 0; // Local unread count for chats
-  List<String> _unreadRequestIds = []; // Stores unread request IDs
-
-  // Check if a given request is unread (i.e., pending)
-  bool isUnread(AdoptionRequest request) {
-    return request.requestStatus.toLowerCase() == "pending";
-  }
+  int _adoptionRequestCount = 0;
+  int _chatNotificationCount = 0;
 
   @override
   void initState() {
@@ -39,7 +35,24 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
 
     // Load adoption requests and chats when the screen initializes
     context.read<AdoptionRequestBloc>().add(LoadAdoptionRequests());
-    context.read<AdminChatListBloc>().add(FetchChats());
+    _fetchChatListCount();
+  }
+
+  // Fetch chat list count
+  Future<void> _fetchChatListCount() async {
+    final adminChatRepository = AdminChatRepository();
+    final chatBloc = AdminChatListBloc(adminChatRepository);
+    chatBloc.add(FetchChats());
+
+    final state = await chatBloc.stream.firstWhere(
+          (s) => s is ChatListLoaded,
+    );
+
+    if (state is ChatListLoaded) {
+      setState(() {
+        _chatNotificationCount = state.chatlistCount;
+      });
+    }
   }
 
   // Handle navigation item taps
@@ -52,7 +65,6 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
       }
       if (index == 2) {
         // Clear unread request IDs and reset the unread count when viewing requests
-        _unreadRequestIds.clear();
         _adoptionRequestCount = 0;
       }
       _pageController.animateToPage(
@@ -61,6 +73,11 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
         curve: Curves.easeInOut,
       );
     });
+  }
+
+  // Check if a given request is unread (i.e., pending)
+  bool isUnread(AdoptionRequest request) {
+    return request.requestStatus.toLowerCase() == "pending";
   }
 
   // Define _getDynamicTitle to change the title based on the selected index
@@ -85,10 +102,9 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: const Color(0xFF21899C),
-          // Set the icon theme to customize the hamburger menu icon color and size
           iconTheme: const IconThemeData(
-            color: Colors.white, // Hamburger icon color
-            size: 28.0, // Optional: Adjust the size of the icon
+            color: Colors.white,
+            size: 28.0,
           ),
           title: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
@@ -96,9 +112,9 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
               _getDynamicTitle(),
               key: ValueKey<int>(_selectedIndex),
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -106,7 +122,6 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
         drawer: AdopteeDrawer(), // Drawer for navigation
         body: SafeArea(
           child: BlocListener<AdoptionRequestBloc, AdoptionRequestState>(
-            // Listener for adoption requests
             listener: (context, state) {
               if (state is AdoptionRequestLoaded) {
                 // Track unread requests locally
@@ -116,7 +131,6 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
                     .toList();
                 setState(() {
                   _adoptionRequestCount = unreadRequestIds.length;
-                  _unreadRequestIds = unreadRequestIds;
                 });
               }
             },
@@ -125,15 +139,7 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
               children: [
                 PetManagementScreen(), // Screen for managing listed pets
                 ChatListScreen(), // Chat list screen
-                AdoptionRequestListScreen(
-                  // Adoption request screen with a callback for updating counts
-                  onRequestCountUpdated: (count, unreadRequestIds) {
-                    setState(() {
-                      _adoptionRequestCount = count;
-                      _unreadRequestIds = unreadRequestIds;
-                    });
-                  },
-                ),
+                AdoptionRequestListScreen(),
               ],
             ),
           ),
@@ -141,8 +147,8 @@ class _AdopteeHomeScreenState extends State<AdopteeHomeScreen> {
         bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: _selectedIndex,
           onItemTapped: _onNavItemTapped,
-          notificationCount: _adoptionRequestCount, // Unread request count
-          chatNotificationCount: _chatNotificationCount, // Unread chat count
+          notificationCount: _adoptionRequestCount,
+          chatNotificationCount: _chatNotificationCount,
         ),
       ),
     );

@@ -24,7 +24,11 @@ class AdoptionHistoryLoading extends AdoptionHistoryState {}
 class AdoptionHistoryLoaded extends AdoptionHistoryState {
   final List<AdoptionHistory> adoptionHistory;
 
+  int get adoptionCount => adoptionHistory.length;
+
   AdoptionHistoryLoaded(this.adoptionHistory);
+
+
 
   @override
   List<Object> get props => [adoptionHistory];

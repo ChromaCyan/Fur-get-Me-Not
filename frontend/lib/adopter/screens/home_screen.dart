@@ -6,7 +6,11 @@ import 'package:fur_get_me_not/adopter/bloc/adoption_status/adoption_status_even
 import 'package:fur_get_me_not/adopter/bloc/adoption_status/adoption_status_state.dart';
 import 'package:fur_get_me_not/adopter/screens/pages.dart';
 import 'package:fur_get_me_not/adopter/bloc/adoption_status/adoption_status_bloc.dart';
+import 'package:fur_get_me_not/adoptee/bloc/chat_list/chat_list_bloc.dart';
+import 'package:fur_get_me_not/adoptee/bloc/chat_list/chat_list_event.dart';
+import 'package:fur_get_me_not/adoptee/bloc/chat_list/chat_list_state.dart';
 import 'package:fur_get_me_not/adopter/repositories/adoption_status/adoption_status_repository.dart';
+import 'package:fur_get_me_not/adoptee/repositories/chat/admin_chat_list_repository.dart';
 import 'adoption_status/adoption_status.dart';
 import 'package:fur_get_me_not/widgets/navigations/botton_nav_bar.dart';
 import 'package:fur_get_me_not/widgets/navigations/drawer.dart';
@@ -21,17 +25,21 @@ class AdopterHomeScreen extends StatefulWidget {
 class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
-  final FlutterSecureStorage _storage =
-      FlutterSecureStorage();
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
   int _adoptionStatusCount = 0;
+  int _messageCount = 0;
 
   // Handle tab selection changes
   void _onTabSelected(int index) {
     setState(() {
       _selectedIndex = index;
 
-      if (index == 3) { // Assuming 3 is the index for AdoptionStatusScreen
-        _adoptionStatusCount = 0; // Reset the badge count
+      if (index == 2) {
+        _messageCount = 0;
+      }
+
+      if (index == 3) {
+        _adoptionStatusCount = 0;
       }
 
       _pageController.animateToPage(
@@ -45,19 +53,17 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize the page controller with the first page
     _pageController = PageController(initialPage: 0);
     _fetchAdoptionStatusCount();
+    _fetchChatListCount();
   }
 
   Future<void> _fetchAdoptionStatusCount() async {
-    // Create a bloc instance and load adoption statuses
     final bloc = AdoptionStatusBloc(
       adoptionStatusRepository: AdoptionStatusRepository(),
     );
     bloc.add(LoadAdoptionStatus());
 
-    // Listen for the loaded state
     final state = await bloc.stream.firstWhere(
           (s) => s is AdoptionStatusLoaded,
     );
@@ -69,58 +75,61 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
     }
   }
 
+  Future<void> _fetchChatListCount() async {
+    final adminChatRepository = AdminChatRepository();
+
+    final chatBloc = AdminChatListBloc(adminChatRepository);
+
+    chatBloc.add(FetchChats());
+
+    final state = await chatBloc.stream.firstWhere(
+          (s) => s is ChatListLoaded,
+    );
+
+    if (state is ChatListLoaded) {
+      setState(() {
+        _messageCount = state.unreadCount;
+      });
+    }
+  }
+
   @override
   void dispose() {
-    // Dispose of the page controller to free resources
     _pageController.dispose();
     super.dispose();
   }
 
-  // Define the main widget structure
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          BottomNavCubit(), // Provide the nav bar state management cubit
+      create: (context) => BottomNavCubit(),
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0, // Remove shadow under the AppBar
+          elevation: 0,
           backgroundColor: const Color(0xFF21899C),
-
-          // Customize the hamburger menu icon (drawer icon)
           iconTheme: const IconThemeData(
-            color: Colors.white, // Set the icon color to match the theme
-            size: 28.0, // Optional: Customize the size of the icon
+            color: Colors.white,
+            size: 28.0,
           ),
-
-          // Dynamic title for the AppBar
           title: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             child: Text(
-              _getDynamicTitle(
-                  context), // Get the title based on the selected index
-              key: ValueKey<int>(
-                  _selectedIndex), // Use the index as the key for switching animations
+              _getDynamicTitle(context),
+              key: ValueKey<int>(_selectedIndex),
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
         ),
-
-        drawer: AppDrawer(), // Drawer navigation for the app
-
-        // Safe area to handle screen insets
+        drawer: AppDrawer(),
         body: SafeArea(
           child: PageView(
-            controller:
-                _pageController, // Control the page view with the PageController
+            controller: _pageController,
             onPageChanged: (index) {
-              // Update the selected index when the page changes
-              BlocProvider.of<BottomNavCubit>(context)
-                  .changeSelectedIndex(index);
+              BlocProvider.of<BottomNavCubit>(context).changeSelectedIndex(index);
             },
             children: [
               AdoptionScreen(),
@@ -130,10 +139,9 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
             ],
           ),
         ),
-
-        // Custom bottom navigation bar
         bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: _selectedIndex,
+          messageBadgeCount: _messageCount, // Pass the message count
           adoptionStatusBadgeCount: _adoptionStatusCount,
           onItemTapped: _onTabSelected,
         ),
@@ -141,19 +149,18 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
     );
   }
 
-  // Determine the dynamic title based on the current page index
   String _getDynamicTitle(BuildContext context) {
     switch (_selectedIndex) {
       case 0:
-        return 'Adopt a pet'; // Title for adoption screen
+        return 'Adopt a pet';
       case 1:
-        return 'My Adopted Pets'; // Title for pet list screen
+        return 'My Adopted Pets';
       case 2:
-        return 'Chat'; // Title for chat screen
+        return 'Chat';
       case 3:
-        return 'Adoption Status'; // Title for adoption status screen
+        return 'Adoption Status';
       default:
-        return 'Home'; // Default title
+        return 'Home';
     }
   }
 }
