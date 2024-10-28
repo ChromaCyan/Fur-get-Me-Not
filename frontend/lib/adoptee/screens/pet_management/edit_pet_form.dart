@@ -183,7 +183,6 @@ class _EditPetFormState extends State<EditPetForm> {
           medicalHistory: medicalHistory,
           vaccineHistory: vaccineHistory,
           status: widget.pet.status,
-
         );
 
         // Dispatch the UpdatePetEvent to the BLoC
@@ -376,7 +375,7 @@ class _EditPetFormState extends State<EditPetForm> {
 
                       CustomTextFormField(
                         controller: heightController,
-                        labelText: 'Height',
+                        labelText: 'Height (cm)',
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -392,7 +391,7 @@ class _EditPetFormState extends State<EditPetForm> {
 
                       CustomTextFormField(
                         controller: weightController,
-                        labelText: 'Weight',
+                        labelText: 'Weight (kg)',
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {

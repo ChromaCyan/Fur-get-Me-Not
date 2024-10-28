@@ -72,8 +72,7 @@ class _AddPetFormState extends State<AddPetForm> {
       lastDate: DateTime(2101),
     );
     if (picked != null) {
-      controller.text =
-          '${picked.toLocal()}'.split(' ')[0];
+      controller.text = '${picked.toLocal()}'.split(' ')[0];
     }
   }
 
@@ -315,7 +314,7 @@ class _AddPetFormState extends State<AddPetForm> {
 
                       CustomTextFormField(
                         controller: heightController,
-                        labelText: 'Height',
+                        labelText: 'Height (cm)',
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -331,7 +330,7 @@ class _AddPetFormState extends State<AddPetForm> {
 
                       CustomTextFormField(
                         controller: weightController,
-                        labelText: 'Weight',
+                        labelText: 'Weight (kg)',
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
