@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fur_get_me_not/adopter/bloc/nav_bar/nav_cubit.dart';
-import 'package:fur_get_me_not/adopter/screens/adoption_list/pet_details_screen.dart';
+import 'package:fur_get_me_not/adopter/bloc/adoption_status/adoption_status_event.dart';
+import 'package:fur_get_me_not/adopter/bloc/adoption_status/adoption_status_state.dart';
 import 'package:fur_get_me_not/adopter/screens/pages.dart';
+import 'package:fur_get_me_not/adopter/bloc/adoption_status/adoption_status_bloc.dart';
+import 'package:fur_get_me_not/adopter/repositories/adoption_status/adoption_status_repository.dart';
 import 'adoption_status/adoption_status.dart';
 import 'package:fur_get_me_not/widgets/navigations/botton_nav_bar.dart';
 import 'package:fur_get_me_not/widgets/navigations/drawer.dart';
@@ -16,15 +19,21 @@ class AdopterHomeScreen extends StatefulWidget {
 }
 
 class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
-  int _selectedIndex = 0; // Track the selected index of the bottom nav bar
-  late PageController _pageController; // Controller to manage page views
+  int _selectedIndex = 0;
+  late PageController _pageController;
   final FlutterSecureStorage _storage =
-      FlutterSecureStorage(); // Secure storage instance
+      FlutterSecureStorage();
+  int _adoptionStatusCount = 0;
 
   // Handle tab selection changes
   void _onTabSelected(int index) {
     setState(() {
       _selectedIndex = index;
+
+      if (index == 3) { // Assuming 3 is the index for AdoptionStatusScreen
+        _adoptionStatusCount = 0; // Reset the badge count
+      }
+
       _pageController.animateToPage(
         index,
         duration: const Duration(milliseconds: 300),
@@ -38,6 +47,26 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
     super.initState();
     // Initialize the page controller with the first page
     _pageController = PageController(initialPage: 0);
+    _fetchAdoptionStatusCount();
+  }
+
+  Future<void> _fetchAdoptionStatusCount() async {
+    // Create a bloc instance and load adoption statuses
+    final bloc = AdoptionStatusBloc(
+      adoptionStatusRepository: AdoptionStatusRepository(),
+    );
+    bloc.add(LoadAdoptionStatus());
+
+    // Listen for the loaded state
+    final state = await bloc.stream.firstWhere(
+          (s) => s is AdoptionStatusLoaded,
+    );
+
+    if (state is AdoptionStatusLoaded) {
+      setState(() {
+        _adoptionStatusCount = state.statusCount;
+      });
+    }
   }
 
   @override
@@ -105,6 +134,7 @@ class _AdopterHomeScreenState extends State<AdopterHomeScreen> {
         // Custom bottom navigation bar
         bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: _selectedIndex,
+          adoptionStatusBadgeCount: _adoptionStatusCount,
           onItemTapped: _onTabSelected,
         ),
       ),

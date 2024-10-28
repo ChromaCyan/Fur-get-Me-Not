@@ -15,6 +15,8 @@ class AdoptionStatusLoaded extends AdoptionStatusState {
 
   AdoptionStatusLoaded(this.adoptionStatusList);
 
+  int get statusCount => adoptionStatusList.length;
+
   @override
   List<Object> get props => [adoptionStatusList];
 }
