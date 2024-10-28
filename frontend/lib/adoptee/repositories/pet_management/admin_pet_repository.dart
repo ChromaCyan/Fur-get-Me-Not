@@ -5,12 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:fur_get_me_not/adoptee/models/pet_management/pet.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
-// import 'package:flutter/foundation.dart' show kIsWeb;
-// import 'dart:html' as html;
+import 'package:flutter/foundation.dart' show kIsWeb; // Comment in mobile
+import 'dart:html' as html; // Comment in mobile
 import 'package:path/path.dart';
 
 class AdminPetRepository {
-  final String baseUrl = 'http://192.168.18.235:5000/pets';
+  final String baseUrl = 'http://localhost:5000/pets';
 
   final FlutterSecureStorage storage = FlutterSecureStorage();
   final Dio _dio = Dio();
@@ -34,30 +34,37 @@ class AdminPetRepository {
 
       if (response.statusCode == 200) {
         String filePath;
-        // Mobile implementation: Get the downloads directory
-        final Directory downloadsDirectory = await getApplicationDocumentsDirectory();
-        filePath = '${downloadsDirectory.path}/pet_table.xlsx';
+        // Comment in web ==========
+        // // Mobile implementation: Get the downloads directory
+        // final Directory downloadsDirectory =
+        //     await getApplicationDocumentsDirectory();
+        // filePath = '${downloadsDirectory.path}/pet_table.xlsx';
 
-        // Save the file
-        final File file = File(filePath);
-        await file.writeAsBytes(response.data);
+        // // Save the file
+        // final File file = File(filePath);
+        // await file.writeAsBytes(response.data);
 
-        print('Excel file downloaded at: $filePath');
+        // print('Excel file downloaded at: $filePath');
+        // ============
 
-        // if (kIsWeb) {
-        //
-        //   final blob = html.Blob([response.data]);
-        //   final url = html.Url.createObjectUrlFromBlob(blob);
-        //
-        //   final anchor = html.AnchorElement(href: url)
-        //     ..setAttribute('download', 'pet_table.xlsx')
-        //     ..click();
-        //
-        //   html.Url.revokeObjectUrl(url);
-        //   print('Excel file downloaded for web');
-        //   return;
-        // } else {
-        // Mobile implementation: Get the downloads directory
+        // Comment in mobile ==========
+        if (kIsWeb) {
+          final blob = html.Blob([response.data]);
+          final url = html.Url.createObjectUrlFromBlob(blob);
+
+          final anchor = html.AnchorElement(href: url)
+            ..setAttribute('download', 'pet_table.xlsx')
+            ..click();
+
+          html.Url.revokeObjectUrl(url);
+          print('Excel file downloaded for web');
+          return;
+        }
+        // ============
+        
+        // Comment in web ==========
+        //else {
+        // // Mobile implementation: Get the downloads directory
         // final Directory downloadsDirectory = await getApplicationDocumentsDirectory();
         // filePath = '${downloadsDirectory.path}/pet_table.xlsx';
         //
@@ -67,8 +74,10 @@ class AdminPetRepository {
         //
         // print('Excel file downloaded at: $filePath');
         // }
+        // ============
       } else {
-        throw Exception('Failed to download Excel file: ${response.statusMessage}');
+        throw Exception(
+            'Failed to download Excel file: ${response.statusMessage}');
       }
     } catch (e) {
       print(e);
