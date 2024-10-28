@@ -48,7 +48,7 @@ class PetInfoWidget extends StatelessWidget {
             Text("${pet.description}"),
             const SizedBox(height: 8),
             const Text(
-              "Breed",
+              "Type",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
             ),
             Text("${pet.breed}"),

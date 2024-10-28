@@ -8,24 +8,19 @@ class PetInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen size using MediaQuery
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
-      // Set width and height relative to the screen size
-      width: screenWidth * 0.85, // 90% of the screen width
-      // height: screenHeight * 0.4, // Optional: 40% of the screen height
-
+      width: screenWidth * 0.85, // 85% of the screen width
       decoration: BoxDecoration(
         color: Colors.white, // Background color
-        borderRadius: BorderRadius.circular(12), // Optional: rounded corners
+        borderRadius: BorderRadius.circular(25), // Rounded corners
         boxShadow: [
           BoxShadow(
             color: Colors.black26, // Shadow color
-            blurRadius: 7.0, // How blurred the shadow is
-            spreadRadius: 0.3, // How much the shadow spreads
-            offset: Offset(0, 0), // Direction of the shadow
+            blurRadius: 7.0, // Blur effect on the shadow
+            spreadRadius: 0.3, // Spread of the shadow
+            offset: const Offset(0, 0), // Direction of the shadow
           ),
         ],
       ),
@@ -33,119 +28,68 @@ class PetInfoWidget extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min, // Allow height to adjust based on content
           children: [
             const SizedBox(height: 8),
-            // Text(
-            //   "Name: ${pet.name}",
-            //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            // ),
             Row(
-              mainAxisAlignment: MainAxisAlignment
-                  .spaceBetween, // Ensures equal spacing between columns
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(
-                        4.0), // Optional: Spacing between containers
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10.0), // Inner padding
-                    decoration: BoxDecoration(
-                      color: Colors
-                          .grey[200], // Light background color for containers
-                      borderRadius:
-                          BorderRadius.circular(8.0), // Rounded corners
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min, // Wrap content size
-                      children: [
-                        Text(
-                          "Age",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "${pet.age}",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFE9879)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(4.0),
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Height",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "${pet.height} cm",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFE9879)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.all(4.0),
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Weight",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "${pet.weight} kg",
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFE9879)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildInfoContainer("Age", "${pet.age} years"),
+                _buildInfoContainer("Height", "${pet.height} cm"),
+                _buildInfoContainer("Weight", "${pet.weight} kg"),
               ],
             ),
-            Text(
+            const SizedBox(height: 8),
+            const Text(
               "Description",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
             ),
-            Text(
-              "${pet.description}",
+            Text("${pet.description}"),
+            const SizedBox(height: 8),
+            const Text(
+              "Type",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
             ),
-
+            Text("${pet.breed}"),
+            const SizedBox(height: 8),
             Text(
               "Special Care: ${pet.specialCareInstructions}",
-              style: TextStyle(
+              style: const TextStyle(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Reusable method to create containers for label-value pairs
+  Widget _buildInfoContainer(String label, String value) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Ensure it adjusts height based on content
+          children: [
+            Text(
+              label,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFE9879)),
+            ),
           ],
         ),
       ),

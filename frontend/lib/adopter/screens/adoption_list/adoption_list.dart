@@ -35,6 +35,7 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
               const SizedBox(height: 20),

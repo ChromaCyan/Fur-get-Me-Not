@@ -107,7 +107,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                         //   end: Alignment.bottomRight,
                         // ),
 
-                        color: Colors.white,
+                        color: Color(0xFFF5E6CA),
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(0),
                         ),
@@ -191,21 +191,25 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
   }
 
   Widget nameAddressAndFavoriteButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Container(
+        width: 300, // Set your desired fixed width
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               widget.pet.name,
               style: const TextStyle(
-                fontSize: 38,
+                fontSize: 35,
                 fontWeight: FontWeight.bold,
               ),
+              softWrap: true, // Allow text to wrap
             ),
             const SizedBox(height: 8),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start, // Align icons with text
               children: [
                 const Icon(
                   Icons.location_on,
@@ -213,20 +217,25 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                   size: 24,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  widget.pet.adoptee.address,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
+                Expanded( // Use Expanded to allow address to take available space
+                  child: Text(
+                    widget.pet.adoptee.address,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                    softWrap: true, // Allow text to wrap
                   ),
                 ),
               ],
             ),
           ],
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
 
   Widget buildToggleButtons() {
     return Row(

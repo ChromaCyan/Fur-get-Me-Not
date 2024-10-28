@@ -112,7 +112,7 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
                         //   end: Alignment.bottomRight,
                         // ),
 
-                        color: Colors.white,
+                        color: Color(0xFFF5E6CA),
                         borderRadius: BorderRadius.vertical(
                           top: Radius.circular(0),
                         ),
@@ -198,18 +198,23 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.pet.name,
-              style: const TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
-            ),
-          ],
+        Container(
+          width: 300, // Set your desired fixed width
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.pet.name,
+                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                softWrap: true, // Allow text to wrap
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
+
 
   // Widget buildToggleButtons() {
   //   return Row(

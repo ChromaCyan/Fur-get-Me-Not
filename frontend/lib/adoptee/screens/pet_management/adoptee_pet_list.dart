@@ -37,6 +37,7 @@ class _PetManagementScreenState extends State<PetManagementScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView( // Make the content scrollable
+        physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
               const SizedBox(height: 20),

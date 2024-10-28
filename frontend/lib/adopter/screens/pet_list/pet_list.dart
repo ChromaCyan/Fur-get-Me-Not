@@ -53,6 +53,7 @@ class _PetListScreenState extends State<PetListScreen> {
               }
 
               return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
