@@ -101,7 +101,7 @@ class ChatAdopterOtherUserCard extends StatelessWidget {
   /// Calculate the width based on the message length.
   double _calculateMessageWidth(String content) {
     const double minWidth = 150.0; // Minimum width for short messages
-    const double maxWidth = 300.0; // Maximum width for long messages
+    const double maxWidth = 285.0; // Maximum width for long messages
     double contentWidth =
         content.length * 7.0; // Approximate width per character
 

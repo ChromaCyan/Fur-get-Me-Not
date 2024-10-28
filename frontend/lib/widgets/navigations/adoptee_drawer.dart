@@ -26,16 +26,43 @@ class AdopteeDrawer extends StatelessWidget {
   }
 
   Future<void> _downloadExcel(BuildContext context) async {
+    Navigator.pop(context); // Close the drawer before showing SnackBar
     try {
       await _petRepository.downloadExcel();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pet table downloaded successfully!')),
+      _showSnackBar(
+        context,
+        "Pet table downloaded successfully!",
+        const Color(0xFFFE9879), // Success color
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to download pet table: $e')),
+      _showSnackBar(
+        context,
+        "Failed to download pet table: $e",
+        Colors.redAccent, // Error color
       );
     }
+  }
+
+// Helper function to show styled SnackBar
+  void _showSnackBar(BuildContext context, String message, Color bgColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+            fontSize: 16.0,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: bgColor,
+        behavior: SnackBarBehavior.floating, // Optional: Makes it float
+        margin: const EdgeInsets.all(16.0), // Optional: Adds margin around
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(12.0), // Optional: Rounded corners
+        ),
+      ),
+    );
   }
 
   @override
