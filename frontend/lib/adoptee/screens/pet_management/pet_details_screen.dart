@@ -168,51 +168,63 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     );
   }
 
-  Widget nameAddressAndFavoriteButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
+Widget nameAddressAndFavoriteButton() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Expanded( // Use Expanded to allow the text to take available space
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.pet.name,
-              style: const TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
+            Container(
+              constraints: BoxConstraints(maxWidth: 315), // Set a fixed maximum width
+              child: Text(
+                widget.pet.name,
+                style: const TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.visible, // Ensure text wraps to the next line
+              ),
             ),
           ],
         ),
-        buildEditDeleteButtons(context), // Add buttons here
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
-  Widget buildEditDeleteButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.orange), // Edit icon
-          tooltip: 'Edit Pet',
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditPetForm(pet: widget.pet),
-              ),
-            );
-          },
+
+ Widget buildEditDeleteButtons(BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.orange, // Background color for the edit button
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         ),
-
-        IconButton(
-        icon: const Icon(Icons.delete, color: Colors.red), // Delete icon
-        tooltip: 'Delete Pet',
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditPetForm(pet: widget.pet),
+            ),
+          );
+        },
+        child: const Text('Edit Pet', style: TextStyle(color: Colors.white)),
+      ),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red, // Background color for the delete button
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        ),
         onPressed: () {
           _deletePet(context, widget.pet.id ?? '');
         },
+        child: const Text('Delete Pet', style: TextStyle(color: Colors.white)),
       ),
-      ],
-    );
-  }
+    ],
+  );
+}
+
 
   void _deletePet(BuildContext context, String petId) {
     showDialog(
@@ -252,99 +264,106 @@ class _PetDetailsViewState extends State<_PetDetailsView> {
     );
   }
 
-  Widget buildToggleButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+Widget buildToggleButtons() {
+  return Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16),
+              backgroundColor: const Color(0xFF21899C),
+              elevation: 5,
+            ).copyWith(
+              overlayColor: MaterialStateProperty.all(Color(0xFFFE9879)),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16),
-            backgroundColor: const Color(0xFF21899C),
-            elevation: 5,
-          ).copyWith(
-            overlayColor: MaterialStateProperty.all(Color(0xFFFE9879)),
-          ),
-          onPressed: () {
-            // Show vaccine history dialog
-            showDialog(
-              context: context,
-              builder: (context) {
-                return Dialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        VaccineHistoryWidget(vaccineHistory: widget.pet.vaccineHistory),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Close', style: TextStyle(color: Colors.red))
-                            )
-                          ],
-                        ),
-                      ],
+            onPressed: () {
+              // Show vaccine history dialog
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          VaccineHistoryWidget(vaccineHistory: widget.pet.vaccineHistory),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Close', style: TextStyle(color: Colors.red))
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
-          child: const Text('Vaccine History', style: TextStyle(color: Colors.white)),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+                  );
+                },
+              );
+            },
+            child: const Text('Vaccine History', style: TextStyle(color: Colors.white)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16),
+              backgroundColor: const Color(0xFF21899C),
+              elevation: 5,
+            ).copyWith(
+              overlayColor: MaterialStateProperty.all(Color(0xFFFE9879)),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 16),
-            backgroundColor: const Color(0xFF21899C),
-            elevation: 5,
-          ).copyWith(
-            overlayColor: MaterialStateProperty.all(Color(0xFFFE9879)),
-          ),
-          onPressed: () {
-            // Show medical history dialog
-            showDialog(
-              context: context,
-              builder: (context) {
-                return Dialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        MedicalHistoryWidget(medicalHistory: widget.pet.medicalHistory),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Close', style: TextStyle(color: Colors.red)),
-                            ),
-                          ],
-                        ),
-                      ],
+            onPressed: () {
+              // Show medical history dialog
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          MedicalHistoryWidget(medicalHistory: widget.pet.medicalHistory),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Close', style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            );
-          },
-          child: const Text('Medical History', style: TextStyle(color: Colors.white)),
-        ),
-      ],
-    );
-  }
+                  );
+                },
+              );
+            },
+            child: const Text('Medical History', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+      const SizedBox(height: 20), // Add some spacing
+      buildEditDeleteButtons(context), // Move edit and delete buttons here
+    ],
+  );
+}
+
 
   Container itemsImageAndBackground(Size size) {
     return Container(

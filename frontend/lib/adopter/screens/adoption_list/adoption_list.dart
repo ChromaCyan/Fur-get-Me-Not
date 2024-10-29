@@ -119,16 +119,18 @@ class _AdoptionScreenState extends State<AdoptionScreen> {
                         itemCount: filteredPets.length,
                         itemBuilder: (context, index) {
                           final pet = filteredPets[index];
-                          return PetCard(
-                            pet: pet,
-                            size: size,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => PetDetailsPage(petId: pet.id),
-                                ),
-                              );
-                            },
+                          return Center(
+                            child: PetCard(
+                              pet: pet,
+                              size: size,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => PetDetailsPage(petId: pet.id),
+                                  ),
+                                );
+                              },
+                            ),
                           );
                         },
                       ),
